@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:id="@+id/group_main_page">
         <item
             android:id="@+id/main_page"
             android:icon="@drawable/ic_assignment_24dp"
             android:title="Pagina Principal" />
+    </group>
+
+    <group android:id="@+id/group_sign_in">
 
         <item
             android:id="@+id/login"
             android:icon="@drawable/ic_account_box_24dp"
             android:title="Iniciar sesión" />
         <item
-            android:id="@+id/sign_on"
+            android:id="@+id/sign_up"
             android:icon="@drawable/ic_person_add_24dp"
             android:title="Registrarse" />
+    </group>
 
+    <group android:id="@+id/group_function">
         <item
             android:id="@+id/publish"
             android:icon="@drawable/ic_cloud_upload_24dp"
@@ -24,11 +29,13 @@
             android:id="@+id/search"
             android:icon="@drawable/ic_search_24dp"
             android:title="Buscar" />
+    </group>
 
+    <group android:id="@+id/group_info">
         <item
-            android:id="@+id/help"
-            android:icon="@drawable/ic_help_24dp"
-            android:title="Ayuda" />
+            android:id="@+id/info"
+            android:icon="@drawable/ic_info_24dp"
+            android:title="Información" />
     </group>
 
 </menu>

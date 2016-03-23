@@ -377,13 +377,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             startActivity(new Intent(this, MainActivity.class));
         } else if (id == R.id.login) {
             startActivity(new Intent(this, LoginActivity.class));
-        } else if (id == R.id.sign_on) {
+        } else if (id == R.id.sign_up) {
             //startActivity(new Intent(this, SignonActivity.class));
         } else if (id == R.id.publish) {
             startActivity(new Intent(this, PublishActivity.class));
         } else if (id == R.id.search) {
             //startActivity(new Intent(this, SearchActivity.class));
-        } else if (id == R.id.help) {
+        } else if (id == R.id.info) {
             //startActivity(new Intent(this, HelpActivity.class));
         }
 
