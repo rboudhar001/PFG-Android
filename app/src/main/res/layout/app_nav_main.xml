@@ -7,13 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".MainActivity"
     tools:openDrawer="start" >
 
-    <!-- Layout real de la actividad -->
-    <include layout="@layout/content_main" />
-
-    <!-- Layout del menú lateral (Navigation View) -->
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"

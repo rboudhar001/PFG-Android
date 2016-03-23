@@ -7,11 +7,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".MainActivity"
+    tools:context=".LoginActivity"
     tools:openDrawer="start" >
 
     <!-- Layout real de la actividad -->
-    <include layout="@layout/content_main" />
+    <include layout="@layout/content_login" />
 
     <!-- Layout del menú lateral (Navigation View) -->
     <android.support.design.widget.NavigationView
