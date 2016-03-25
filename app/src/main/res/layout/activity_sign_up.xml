@@ -10,7 +10,7 @@
     tools:openDrawer="start">
 
     <!-- Layout real de la actividad -->
-    <include layout="@layout/content_publish" />
+    <include layout="@layout/content_sign_up" />
 
     <!-- Layout del menú lateral (Navigation View) -->
     <android.support.design.widget.NavigationView
@@ -23,4 +23,3 @@
         app:menu="@menu/activity_main_drawer" />
 
 </android.support.v4.widget.DrawerLayout>
-

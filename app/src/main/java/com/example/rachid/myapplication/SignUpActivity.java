@@ -10,12 +10,15 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-public class PublishActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+/**
+ * Created by Rachid on 25/03/2016.
+ */
+public class SignUpActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_publish);
+        setContentView(R.layout.activity_sign_up);
 
         //AÑADIDO
         // ----------------------------------------------------------------------------------------
@@ -32,6 +35,10 @@ public class PublishActivity extends AppCompatActivity implements NavigationView
         navigationView.setNavigationItemSelectedListener(this);
         //-----------------------------------------------------------------------------------------
     }
+
+    //AÑADIDO
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
 
     //AÑADIDO
     // ----------------------------------------------------------------------------------------
@@ -52,15 +59,15 @@ public class PublishActivity extends AppCompatActivity implements NavigationView
         int id = item.getItemId();
 
         if (id == R.id.main_page) {
-            startActivity(new Intent(PublishActivity.this, MainActivity.class));
+            startActivity(new Intent(SignUpActivity.this, MainActivity.class));
         } else if (id == R.id.login) {
-            startActivity(new Intent(PublishActivity.this, LoginActivity.class));
-        } else if (id == R.id.sign_up) {
-            startActivity(new Intent(PublishActivity.this, SignUpActivity.class));
+            startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+        } else if (id == R.id.publish) {
+            startActivity(new Intent(SignUpActivity.this, PublishActivity.class));
         } else if (id == R.id.search) {
-            startActivity(new Intent(PublishActivity.this, SearchActivity.class));
+            startActivity(new Intent(SignUpActivity.this, SearchActivity.class));
         } else if (id == R.id.info) {
-            startActivity(new Intent(PublishActivity.this, InfoActivity.class));
+            startActivity(new Intent(SignUpActivity.this, InfoActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

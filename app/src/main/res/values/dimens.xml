@@ -11,6 +11,7 @@
     <!-- AÑADIDO -->
     <dimen name="circle_image">80dp</dimen>
     <dimen name="text_size_user_name">14dp</dimen>
-    <dimen name="text_size_email_name">11dp</dimen>
+    <dimen name="text_size_email_name">10dp</dimen>
+    <dimen name="text_size_user_location">12dp</dimen>
 
 </resources>

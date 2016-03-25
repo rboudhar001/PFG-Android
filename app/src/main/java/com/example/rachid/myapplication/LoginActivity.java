@@ -318,6 +318,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
 
                 break;
+            case R.id.circle_image_profile:
+                startActivity(new Intent(LoginActivity.this, ProfileActivity.class));
+                break;
         }
     }
     // ----------------------------------------------------------------------------------------
@@ -373,45 +376,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         int id = item.getItemId();
 
         if (id == R.id.main_page) {
-            // Handle the main_page action
-            startActivity(new Intent(this, MainActivity.class));
-        } else if (id == R.id.login) {
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
         } else if (id == R.id.sign_up) {
-            //startActivity(new Intent(this, SignonActivity.class));
+            startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
         } else if (id == R.id.publish) {
-            startActivity(new Intent(this, PublishActivity.class));
+            startActivity(new Intent(LoginActivity.this, PublishActivity.class));
         } else if (id == R.id.search) {
-            //startActivity(new Intent(this, SearchActivity.class));
+            startActivity(new Intent(LoginActivity.this, SearchActivity.class));
         } else if (id == R.id.info) {
-            //startActivity(new Intent(this, HelpActivity.class));
+            startActivity(new Intent(LoginActivity.this, InfoActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
     //-----------------------------------------------------------------------------------------
 
