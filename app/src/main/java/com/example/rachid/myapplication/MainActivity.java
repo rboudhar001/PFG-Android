@@ -56,13 +56,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             circleImageProfile = (CircleImageView) navViewHeaderMain.findViewById(R.id.circle_image_profile);
             //circleImageProfile.setBackground(/*Imagen tipo DRAWANBLE*/);
 
-            textUserName = (TextView) findViewById(R.id.text_user_name);
+            textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
             textUserName.setText("");
 
-            textUserEmail = (TextView) findViewById(R.id.text_user_email);
+            textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
             textUserEmail.setText("");
 
-            textUserLocation = (TextView) findViewById(R.id.text_user_location);
+            textUserLocation = (TextView) navViewHeaderMain.findViewById(R.id.text_user_location);
             textUserLocation.setText("");
 
             // AÑADIDO: CLICK EVENT - CIRCLE_IMAGE_PROFILE

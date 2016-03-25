@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#0077e6</color>
-    <!-- AÑADIDO -->
-    <!-- ************************************************************************************** -->
-    <color name="colorRealPrimaryDark">#303F9F</color>
-    <!-- ************************************************************************************** -->
+    <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
     <!-- AÑADIDO -->
@@ -18,10 +14,13 @@
     <color name="ROJO">#DE0814</color>
     <color name="ROSA">#E13157</color>
     <color name="SALMON">#FA8071</color>
-    <color name="VVIVO">#7EF40A</color>
+    <color name="VERDE">#7EF40A</color>
     <color name="AMARILLO">#FCFA36</color>
     <color name="CELESTE">#ADDBD9</color>
     <color name="COBALTO">#0C23B1</color>
-    <color name="AZUL_CLARO">#0084ff</color>
+
+    <color name="AZUL_CLARO_1">#0084ff</color> <!-- Aplicación -->
+    <color name="AZUL_CLARO_APP">#0077e6</color> <!-- Barra -->
+    <color name="AZUL_CLARO_BAR">#006acd</color>
     <!-- ************************************************************************************** -->
 </resources>

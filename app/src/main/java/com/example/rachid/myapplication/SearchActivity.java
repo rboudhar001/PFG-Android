@@ -62,8 +62,6 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
             startActivity(new Intent(SearchActivity.this, SignUpActivity.class));
         } else if (id == R.id.publish) {
             startActivity(new Intent(SearchActivity.this, PublishActivity.class));
-        } else if (id == R.id.search) {
-            startActivity(new Intent(SearchActivity.this, SearchActivity.class));
         } else if (id == R.id.info) {
             startActivity(new Intent(SearchActivity.this, InfoActivity.class));
         }

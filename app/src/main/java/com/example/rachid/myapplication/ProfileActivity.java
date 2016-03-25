@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 /**
  * Created by Rachid on 25/03/2016.
@@ -35,6 +36,10 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         //-----------------------------------------------------------------------------------------
+
+        //AÑADIDO
+        // ----------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------
     }
 
     //AÑADIDO
@@ -94,6 +99,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(ProfileActivity.this, SettingsActivity.class));
             return true;
         }
 

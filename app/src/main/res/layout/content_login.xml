@@ -13,7 +13,7 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:minHeight="?attr/actionBarSize"
-        android:background="@color/AZUL_CLARO"
+        android:background="@color/AZUL_CLARO_APP"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
@@ -56,7 +56,7 @@
                         android:id="@+id/text_info"
                         android:text="@string/text_login"
                         android:textSize="38sp"
-                        android:textColor="@color/AZUL_CLARO"
+                        android:textColor="@color/AZUL_CLARO_APP"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="10dp"
@@ -114,7 +114,7 @@
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:id="@+id/text_or"
                         android:text="@string/or"
-                        android:textColor="@color/AZUL_CLARO"
+                        android:textColor="@color/AZUL_CLARO_APP"
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true" />
 
@@ -181,7 +181,7 @@
                         android:text="@string/login_button"
                         android:textColor="@color/BLANCO"
                         android:textStyle="bold"
-                        android:background="@color/AZUL_CLARO"
+                        android:background="@color/AZUL_CLARO_APP"
                         android:layout_marginRight="10dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="15dp" />
