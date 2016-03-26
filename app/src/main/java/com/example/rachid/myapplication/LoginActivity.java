@@ -337,6 +337,8 @@ public class LoginActivity extends AppCompatActivity implements
 
         boolean account_exist = false;
 
+        Log.i(TAG, "ENTRO A 1");
+
         // GOOGLE
         if (requestCode == RC_GOOGLE) {
 
@@ -350,10 +352,14 @@ public class LoginActivity extends AppCompatActivity implements
                 //Abrimos la base de datos
                 DBActivity mDB_Activity = new DBActivity(this, null);
 
+                Log.i(TAG, "ENTRO A 2");
+
                 SQLiteDatabase db = mDB_Activity.getReadableDatabase();
                 if (db != null) {
+                    Log.i(TAG, "ENTRO A 3");
                     Cursor c = db.rawQuery("SELECT email FROM Users WHERE email=\'" + acct.getEmail() + "\'", null);
                     if (c.moveToFirst()) { //Comprobar si existe la cuenta
+                        Log.i(TAG, "ENTRO A 4");
                         account_exist = true;
                     }
                     c.close();
@@ -361,11 +367,13 @@ public class LoginActivity extends AppCompatActivity implements
                 }
 
                 db = mDB_Activity.getWritableDatabase();
-                if (account_exist) { //Si la cuenta no existe, la creamos
+                if (!account_exist) { //Si la cuenta no existe, la creamos
+                    Log.i(TAG, "ENTRO A 5");
                     if (db != null) {
+                        Log.i(TAG, "ENTRO A 6");
                         //Insertamos la nueva cuenta
-                        db.execSQL("INSERT INTO Users (email, name, gender, birthdate, location) VALUES ("
-                                + acct.getEmail() + acct.getDisplayName() + null + null + null + ")");
+                        db.execSQL("INSERT INTO Users (email, password, name, gender, birthdate, location) VALUES (\'"
+                                + acct.getEmail() + "\', " + null + ", \'"+ acct.getDisplayName() + "\', " + null + ", " + null + ", " + null+ ")");
                         db.close();
                     }
                 }

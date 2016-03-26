@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements
                 Cursor c = db.rawQuery("SELECT * FROM Users WHERE email=\'" + acct.getEmail() + "\'", null);
                 if (c.moveToFirst()) {
                     textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
-                    textUserName.setText(c.getString(1));
+                    textUserName.setText(c.getString(2));
 
                     textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
                     textUserEmail.setText(c.getString(0));
