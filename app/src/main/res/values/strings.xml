@@ -24,10 +24,12 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="forgotten_password">¿Has olvidado tu contraseña?</string>
 
-    <!--AÑADIDO -->
+    <!--AÑADIDO: FACEBOOK y GOOGLE-->
     <!-- *************************************************************************************** -->
-    <string name="facebook_app_id">1592965991028641</string>
+
     <integer name="google_play_services_version">8298000</integer>
+    <string name="loading">Cargando...</string>
+    <string name="facebook_app_id">1592965991028641</string>
     <!-- *************************************************************************************** -->
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -35,6 +37,7 @@
 
     <!-- Strings related to Settings -->
     <string name="action_settings">Opciones</string>
+    <string name="action_log_out">Cerrar sesión</string>
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>

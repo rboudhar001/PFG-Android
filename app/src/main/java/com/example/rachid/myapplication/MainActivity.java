@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -21,12 +22,20 @@ import android.support.design.widget.NavigationView;
 //AÑADIDO: GOOGLE
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.plus.Plus;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        GoogleApiClient.OnConnectionFailedListener {
 
-    //AÑADIDO: CIRCLE_IMAGE_PROFILE
+    //AÑADIDO: PROFILE
     // -----------------------------------------------------------------------------------------
     private CircleImageView circleImageProfile;
     private NavigationView navHeaderMain;
@@ -36,19 +45,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView textUserLocation;
     // -----------------------------------------------------------------------------------------
 
-    //AÑADIDO: GOOGLE // POSIBLEMENTE BORRAR ESTO
-    // -----------------------------------------------------------------------------------------
-    private GoogleApiClient client;
-    // -----------------------------------------------------------------------------------------
+    //AÑADIDO: GOOGLE
+    // ----------------------------------------------------------------------------------------
+    private static final String TAG = "ProfileActivity";
+    private GoogleApiClient mGoogleApiClient;
+    // ----------------------------------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //AÑADIDO: GOOGLE
+        // ----------------------------------------------------------------------------------------
+        // [START configure_signin]
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        // [END configure_signin]
+
+        // [START build_client]
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        // [END build_client]
+
+        mGoogleApiClient.connect();
+        // ----------------------------------------------------------------------------------------
+
         // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN
         // -----------------------------------------------------------------------------------------
-        if (true) { // Si el usuario esta logeado
+        //if ( (googleApiClient.isConnected()) || () || () ) { // Si el usuario esta logeado
+
+        if (mGoogleApiClient.isConnected()) {// Si el usuario esta logeado
+
             navHeaderMain = (NavigationView) findViewById(R.id.nav_view);
             navViewHeaderMain = navHeaderMain.inflateHeaderView(R.layout.nav_header_main);
 
@@ -78,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         // -----------------------------------------------------------------------------------------
 
+        //AÑADIDO: MENU
+        // ----------------------------------------------------------------------------------------
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -99,15 +136,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        //AÑADIDO: GOOGLE
         // ----------------------------------------------------------------------------------------
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        //-----------------------------------------------------------------------------------------
     }
 
+    //AÑADIDO: GOOGLE
+    // ----------------------------------------------------------------------------------------
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    }
+    // ----------------------------------------------------------------------------------------
+
+    //AÑADIDO: MENU
+    // ----------------------------------------------------------------------------------------
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -124,9 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.main_page) {
-            startActivity(new Intent(MainActivity.this, MainActivity.class));
-        } else if (id == R.id.login) {
+        if (id == R.id.login) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         } else if (id == R.id.sign_up) {
             startActivity(new Intent(MainActivity.this, SignUpActivity.class));
@@ -142,71 +183,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-    /*
-    // AÑADIDO: OPCIONES
-    // --------------------------------------------------------------------------------------------
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-    // --------------------------------------------------------------------------------------------
-    */
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Main Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.example.rachid.myapplication/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Main Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.example.rachid.myapplication/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
-    }
+    // ----------------------------------------------------------------------------------------
 }

@@ -1,5 +1,6 @@
 package com.example.rachid.myapplication;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -8,21 +9,57 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+
 /**
  * Created by Rachid on 25/03/2016.
  */
-public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ProfileActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        GoogleApiClient.OnConnectionFailedListener {
+
+    //AÑADIDO: GOOGLE
+    // ----------------------------------------------------------------------------------------
+    private static final String TAG = "ProfileActivity";
+    private GoogleApiClient mGoogleApiClient;
+    // ----------------------------------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        //AÑADIDO
+        //AÑADIDO: GOOGLE
+        // ----------------------------------------------------------------------------------------
+        // [START configure_signin]
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        // [END configure_signin]
+
+        // [START build_client]
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        // [END build_client]
+        // ----------------------------------------------------------------------------------------
+
+        //AÑADIDO: MENU
         // ----------------------------------------------------------------------------------------
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -36,17 +73,19 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         //-----------------------------------------------------------------------------------------
-
-        //AÑADIDO
-        // ----------------------------------------------------------------------------------------
-        // ----------------------------------------------------------------------------------------
     }
 
-    //AÑADIDO
+    //AÑADIDO: GOOGLE
     // ----------------------------------------------------------------------------------------
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    }
     // ----------------------------------------------------------------------------------------
 
-    //AÑADIDO
+    //AÑADIDO: MENU
     // ----------------------------------------------------------------------------------------
     @Override
     public void onBackPressed() {
@@ -100,6 +139,29 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startActivity(new Intent(ProfileActivity.this, SettingsActivity.class));
+            return true;
+        }
+        else if (id == R.id.action_log_out) {
+
+            if (mGoogleApiClient.isConnected()) {// Si estoy logeado con Google
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
+                                mGoogleApiClient.disconnect();
+                                startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                            }
+                        });
+            }
+            /*
+            else if () { // Si estoy logeado con facebook
+
+            }
+            else {
+
+            }
+            */
+
             return true;
         }
 
