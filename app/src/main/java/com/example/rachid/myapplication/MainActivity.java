@@ -3,6 +3,8 @@ package com.example.rachid.myapplication;
 // AÑADIDOS: ANDROID
 // ----------------------------------------------------------------------------------------
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements
     private static final String TAG = "MainActivity";
     private static final int RC_GOOGLE = 9001;
     private GoogleApiClient mGoogleApiClient;
+    private GoogleSignInResult result;
+    private GoogleSignInAccount acct;
     // ----------------------------------------------------------------------------------------
 
     @Override
@@ -88,6 +92,8 @@ public class MainActivity extends AppCompatActivity implements
         // -----------------------------------------------------------------------------------------
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         if (opr.isDone()) {
+            result = opr.get();
+            acct = result.getSignInAccount();
             isLoged = true;
         }
         // -----------------------------------------------------------------------------------------
@@ -103,14 +109,28 @@ public class MainActivity extends AppCompatActivity implements
             circleImageProfile = (CircleImageView) navViewHeaderMain.findViewById(R.id.circle_image_profile);
             //circleImageProfile.setBackground(/*Imagen tipo DRAWANBLE*/);
 
-            textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
-            textUserName.setText("DETECTADA SESIÓN");
+            //AÑADIDO: BASE DE DATOS
+            // ----------------------------------------------------------------------------------------
+            //Abrimos la base de datos
+            DBActivity mDB_Activity = new DBActivity(this, null);
 
-            textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
-            textUserEmail.setText("");
+            SQLiteDatabase db = mDB_Activity.getReadableDatabase();
+            if (db != null) {
+                Cursor c = db.rawQuery("SELECT * FROM Users WHERE email=\'" + acct.getEmail() + "\'", null);
+                if (c.moveToFirst()) {
+                    textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
+                    textUserName.setText(c.getString(1));
 
-            textUserLocation = (TextView) navViewHeaderMain.findViewById(R.id.text_user_location);
-            textUserLocation.setText("");
+                    textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
+                    textUserEmail.setText(c.getString(0));
+
+                    textUserLocation = (TextView) navViewHeaderMain.findViewById(R.id.text_user_location);
+                    textUserLocation.setText("PEDIR_LOCALIZACIÓN");
+                }
+                c.close();
+                db.close();
+            }
+            // ----------------------------------------------------------------------------------------
 
             // AÑADIDO: CLICK EVENT - CIRCLE_IMAGE_PROFILE
             // ----------------------------------------------------------------------------------------

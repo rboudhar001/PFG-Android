@@ -42,6 +42,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import android.database.sqlite.SQLiteDatabase;
 // ----------------------------------------------------------------------------------------
 
 // AÑADIDOS JAVA
@@ -333,16 +335,48 @@ public class LoginActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_GOOGLE) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+        boolean account_exist = false;
 
+        // GOOGLE
+        if (requestCode == RC_GOOGLE) {
+
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
+
+                GoogleSignInAccount acct = result.getSignInAccount();
+
+                //AÑADIDO: BASE DE DATOS
+                // ----------------------------------------------------------------------------------------
+                //Abrimos la base de datos
+                DBActivity mDB_Activity = new DBActivity(this, null);
+
+                SQLiteDatabase db = mDB_Activity.getReadableDatabase();
+                if (db != null) {
+                    Cursor c = db.rawQuery("SELECT email FROM Users WHERE email=\'" + acct.getEmail() + "\'", null);
+                    if (c.moveToFirst()) { //Comprobar si existe la cuenta
+                        account_exist = true;
+                    }
+                    c.close();
+                    db.close();
+                }
+
+                db = mDB_Activity.getWritableDatabase();
+                if (account_exist) { //Si la cuenta no existe, la creamos
+                    if (db != null) {
+                        //Insertamos la nueva cuenta
+                        db.execSQL("INSERT INTO Users (email, name, gender, birthdate, location) VALUES ("
+                                + acct.getEmail() + acct.getDisplayName() + null + null + null + ")");
+                        db.close();
+                    }
+                }
+                // ----------------------------------------------------------------------------------------
+
+                // Re-direct to Main_Page
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
             }
         }
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        // FACEBOOK
         if (requestCode == RC_FACEBOOK) {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
