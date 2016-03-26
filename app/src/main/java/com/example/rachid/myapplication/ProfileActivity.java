@@ -1,5 +1,7 @@
 package com.example.rachid.myapplication;
 
+// AÑADIDOS: ANDROID
+// ----------------------------------------------------------------------------------------
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,13 +15,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+// ----------------------------------------------------------------------------------------
 
+// AÑADIDOS: GOOGLE
+// ----------------------------------------------------------------------------------------
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.plus.Plus;
+// ----------------------------------------------------------------------------------------
 
 /**
  * Created by Rachid on 25/03/2016.
@@ -54,6 +61,7 @@ public class ProfileActivity extends AppCompatActivity implements
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         // [END build_client]

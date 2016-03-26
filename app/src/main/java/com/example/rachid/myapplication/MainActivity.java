@@ -1,7 +1,8 @@
 package com.example.rachid.myapplication;
 
+// AÑADIDOS: ANDROID
+// ----------------------------------------------------------------------------------------
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,28 +13,33 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-
-//AÑADIDO
-import android.widget.FrameLayout;
 import android.widget.TextView;
-import de.hdodenhof.circleimageview.CircleImageView;
-import android.support.design.widget.NavigationView;
 
-//AÑADIDO: GOOGLE
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
+import de.hdodenhof.circleimageview.CircleImageView;
+// ----------------------------------------------------------------------------------------
+
+// AÑADIDOS: GOOGLE
+// ----------------------------------------------------------------------------------------
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
+import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.Plus;
+// ----------------------------------------------------------------------------------------
 
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.OnConnectionFailedListener {
+
+    private boolean isLoged = false;
 
     //AÑADIDO: PROFILE
     // -----------------------------------------------------------------------------------------
@@ -47,7 +53,8 @@ public class MainActivity extends AppCompatActivity implements
 
     //AÑADIDO: GOOGLE
     // ----------------------------------------------------------------------------------------
-    private static final String TAG = "ProfileActivity";
+    private static final String TAG = "MainActivity";
+    private static final int RC_GOOGLE = 9001;
     private GoogleApiClient mGoogleApiClient;
     // ----------------------------------------------------------------------------------------
 
@@ -71,18 +78,23 @@ public class MainActivity extends AppCompatActivity implements
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         // [END build_client]
-
-        mGoogleApiClient.connect();
         // ----------------------------------------------------------------------------------------
+
+        // AÑADIDO: Comprobar si el usuario esta logeado
+        // -----------------------------------------------------------------------------------------
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        if (opr.isDone()) {
+            isLoged = true;
+        }
+        // -----------------------------------------------------------------------------------------
 
         // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN
         // -----------------------------------------------------------------------------------------
-        //if ( (googleApiClient.isConnected()) || () || () ) { // Si el usuario esta logeado
-
-        if (mGoogleApiClient.isConnected()) {// Si el usuario esta logeado
+        if (isLoged) {
 
             navHeaderMain = (NavigationView) findViewById(R.id.nav_view);
             navViewHeaderMain = navHeaderMain.inflateHeaderView(R.layout.nav_header_main);
@@ -92,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements
             //circleImageProfile.setBackground(/*Imagen tipo DRAWANBLE*/);
 
             textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
-            textUserName.setText("");
+            textUserName.setText("DETECTADA SESIÓN");
 
             textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
             textUserEmail.setText("");
@@ -141,6 +153,55 @@ public class MainActivity extends AppCompatActivity implements
 
     //AÑADIDO: GOOGLE
     // ----------------------------------------------------------------------------------------
+    /*
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        if (opr.isDone()) {
+
+            GoogleSignInResult result = opr.get();
+            GoogleSignInAccount acct = result.getSignInAccount();
+
+            // Get account information
+            textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
+            textUserName.setText(acct.getDisplayName());
+
+            textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
+            textUserEmail.setText(acct.getEmail());
+
+            textUserLocation = (TextView) navViewHeaderMain.findViewById(R.id.text_user_location);
+            textUserLocation.setText("PEDIR_LOCALIZACIÓN");
+        }
+    }
+    */
+
+    /*
+    @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from
+        //   GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_GOOGLE) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                GoogleSignInAccount acct = result.getSignInAccount();
+
+                // Get account information
+                textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
+                textUserName.setText(acct.getDisplayName());
+
+                textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
+                textUserEmail.setText(acct.getEmail());
+
+                textUserLocation = (TextView) navViewHeaderMain.findViewById(R.id.text_user_location);
+                textUserLocation.setText("PEDIR_LOCALIZACIÓN");
+            }
+        }
+    }
+    */
+
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not

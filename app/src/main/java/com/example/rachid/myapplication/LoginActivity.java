@@ -136,13 +136,8 @@ public class LoginActivity extends AppCompatActivity implements
 
         //AÑADIDO GOOGLE
         // ----------------------------------------------------------------------------------------
-        // Views
-        //mStatusTextView = (TextView) findViewById(R.id.status);
-
         // Button listeners
         findViewById(R.id.login_google_button).setOnClickListener(this);
-        //findViewById(R.id.sign_out_button).setOnClickListener(this);
-        //findViewById(R.id.disconnect_button).setOnClickListener(this);
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -207,7 +202,6 @@ public class LoginActivity extends AppCompatActivity implements
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        //drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -254,7 +248,10 @@ public class LoginActivity extends AppCompatActivity implements
             // and the GoogleSignInResult will be available instantly.
             Log.d(TAG, "Got cached sign-in");
             GoogleSignInResult result = opr.get();
-            handleSignInResult(result);
+
+            if (result.isSuccess()) {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            }
         } else {
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
@@ -264,25 +261,23 @@ public class LoginActivity extends AppCompatActivity implements
                 @Override
                 public void onResult(GoogleSignInResult googleSignInResult) {
                     hideProgressDialog();
-                    handleSignInResult(googleSignInResult);
+
+                    if (googleSignInResult.isSuccess()) {
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    }
                 }
             });
         }
     }
 
-    // [START handleSignInResult]
-    private void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
-            updateUI(true);
-        } else {
-            // Signed out, show unauthenticated UI.
-            updateUI(false);
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.login_google_button:
+                signIn();
+                break;
         }
     }
-    // [END handleSignInResult]
 
     // [START signIn]
     private void signIn() {
@@ -290,41 +285,6 @@ public class LoginActivity extends AppCompatActivity implements
         startActivityForResult(signInIntent, RC_GOOGLE);
     }
     // [END signIn]
-
-    // [START signOut]
-    private void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        // [START_EXCLUDE]
-                        updateUI(false);
-                        // [END_EXCLUDE]
-                    }
-                });
-    }
-    // [END signOut]
-
-    // [START revokeAccess]
-    private void revokeAccess() {
-        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        // [START_EXCLUDE]
-                        updateUI(false);
-                        // [END_EXCLUDE]
-                    }
-                });
-    }
-    // [END revokeAccess]
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
-    }
 
     private void showProgressDialog() {
         if (mProgressDialog == null) {
@@ -342,27 +302,11 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }
 
-    private void updateUI(boolean signedIn) {
-        if (signedIn) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-        }
-    }
-
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.login_google_button:
-                signIn();
-                break;
-            /*
-            case R.id.sign_out_button:
-                signOut();
-                break;
-            case R.id.disconnect_button:
-                revokeAccess();
-                break;
-            */
-        }
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
     // ----------------------------------------------------------------------------------------
 
@@ -392,7 +336,10 @@ public class LoginActivity extends AppCompatActivity implements
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_GOOGLE) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
+
+            if (result.isSuccess()) {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            }
         }
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
@@ -589,7 +536,7 @@ public class LoginActivity extends AppCompatActivity implements
                 // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE +
                         " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                                                                     .CONTENT_ITEM_TYPE},
+                .CONTENT_ITEM_TYPE},
 
                 // Show primary email addresses first. Note that there won't be
                 // a primary email address if the user hasn't specified one.
@@ -690,4 +637,3 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }
 }
-
