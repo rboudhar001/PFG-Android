@@ -22,7 +22,13 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
-    <string name="forgotten_password">¿Has olvidado tu contraseña?</string>
+    <string name="link_forgotten_password">¿Has olvidado tu contraseña?</string>
+    <string name="link_create_account">¿No tienes cuenta? Registrate</string>
+
+    <!-- SIGN UP -->
+    <string name="text_sign_up">Registrate</string>
+    <string name="sign_up_button">REGISTRARSE</string>
+    <string name="link_login_account">¿Tienes un cuenta? Inicia sesión</string>
 
     <!-- PROFILE -->
     <string name="text_name">Nombre</string>
@@ -45,6 +51,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!-- Strings related to Settings -->
+    <string name="action_edit">Editar</string>
     <string name="action_settings">Opciones</string>
     <string name="action_log_out">Cerrar sesión</string>
 

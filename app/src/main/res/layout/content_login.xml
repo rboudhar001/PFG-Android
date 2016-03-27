@@ -187,24 +187,36 @@
                         android:layout_marginTop="15dp" />
                 </LinearLayout>
 
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/relative_text_no_account"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="5dp">
+                    android:orientation="vertical" >
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="@string/forgotten_password"
-                        android:id="@+id/text_info_no_account"
-                        android:textSize="16sp"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
-                        android:editable="false" />
-                </RelativeLayout>
+                        android:text="@string/link_forgotten_password"
+                        android:id="@+id/text_forget_password"
+                        android:textSize="18sp"
+                        android:textColor="@color/AZUL_CLARO_APP"
+                        android:layout_marginTop="20dp"
+                        android:editable="false"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="@string/link_create_account"
+                        android:id="@+id/text_create_account"
+                        android:textSize="18sp"
+                        android:textColor="@color/AZUL_CLARO_APP"
+                        android:layout_marginTop="20dp"
+                        android:editable="false"
+                        android:gravity="center" />
+                </LinearLayout>
 
             </LinearLayout>
         </ScrollView>
