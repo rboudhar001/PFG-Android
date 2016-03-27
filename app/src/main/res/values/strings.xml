@@ -24,6 +24,15 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="forgotten_password">¿Has olvidado tu contraseña?</string>
 
+    <!-- PROFILE -->
+    <string name="text_name">Nombre</string>
+    <string name="text_about_me">About Me</string>
+    <string name="text_gender">Genero</string>
+    <string name="text_birthday">Cumpleaños</string>
+    <string name="text_phone">Telefono</string>
+    <string name="text_email">Email</string>
+    <string name="text_change_password">Cambiar Contraseña</string>
+
     <!--AÑADIDO: FACEBOOK y GOOGLE-->
     <!-- *************************************************************************************** -->
 
