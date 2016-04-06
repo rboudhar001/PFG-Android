@@ -40,8 +40,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by Rachid on 25/03/2016.
  */
-public class ProfileActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener {
+public class ProfileActivity extends AppCompatActivity {
+
+    private static final String TAG = "ProfileActivity";
+
+    //AÑADIDO: STATE
+    // -----------------------------------------------------------------------------------------
+    State state = new State();
+    // -----------------------------------------------------------------------------------------
 
     //AÑADIDO: PROFILE
     // -----------------------------------------------------------------------------------------
@@ -52,39 +58,12 @@ public class ProfileActivity extends AppCompatActivity implements
     private TextView textEditEmail;
     // -----------------------------------------------------------------------------------------
 
-    //AÑADIDO: GOOGLE
-    // ----------------------------------------------------------------------------------------
-    private static final String TAG = "ProfileActivity";
-    private GoogleApiClient mGoogleApiClient;
-    // ----------------------------------------------------------------------------------------
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        //AÑADIDO: GOOGLE
-        // ----------------------------------------------------------------------------------------
-        // [START configure_signin]
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        // [END configure_signin]
-
-        // [START build_client]
-        // Build a GoogleApiClient with access to the Google Sign-In API and the
-        // options specified by gso.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .enableAutoManage(this, this)
-                .addApi(Plus.API)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-        // [END build_client]
-        // ----------------------------------------------------------------------------------------
-
+        /*
         //AÑADIDO: BASE DE DATOS
         // ----------------------------------------------------------------------------------------
         //Abrimos la base de datos
@@ -93,17 +72,7 @@ public class ProfileActivity extends AppCompatActivity implements
         SQLiteDatabase db = mDB_Activity.getReadableDatabase();
         if (db != null) {
 
-            // AÑADIDO: Comprobar si el usuario esta logeado
-            // -----------------------------------------------------------------------------------------
-            GoogleSignInAccount acct = null;
-            OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-            if (opr.isDone()) {
-                GoogleSignInResult result = opr.get();
-                acct = result.getSignInAccount();
-            }
-            // -----------------------------------------------------------------------------------------
-
-            Cursor c = db.rawQuery("SELECT * FROM Users WHERE email=\'" + acct.getEmail() + "\'", null);
+            Cursor c = db.rawQuery("SELECT * FROM Users WHERE email=\'" + state.getUser().getEmail() + "\'", null);
             if (c.moveToFirst()) {
 
                 circleImageProfile = (CircleImageView) findViewById(R.id.circle_image_profile);
@@ -125,17 +94,8 @@ public class ProfileActivity extends AppCompatActivity implements
             db.close();
         }
         // ----------------------------------------------------------------------------------------
+        */
     }
-
-    //AÑADIDO: GOOGLE
-    // ----------------------------------------------------------------------------------------
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
-    }
-    // ----------------------------------------------------------------------------------------
 
     //AÑADIDO: OPTIONS
     // ----------------------------------------------------------------------------------------
@@ -160,6 +120,10 @@ public class ProfileActivity extends AppCompatActivity implements
         }
         else if (id == R.id.action_log_out) {
 
+            state.setUser(null);
+            state.setState(false);
+
+            /*
             if (mGoogleApiClient.isConnected()) {// Si estoy logeado con Google
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                         new ResultCallback<Status>() {
@@ -170,15 +134,9 @@ public class ProfileActivity extends AppCompatActivity implements
                             }
                         });
             }
-            /*
-            else if () { // Si estoy logeado con facebook
-
-            }
-            else {
-
-            }
             */
 
+            startActivity(new Intent(ProfileActivity.this, MainActivity.class));
             return true;
         }
 

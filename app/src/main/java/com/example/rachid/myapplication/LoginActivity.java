@@ -57,6 +57,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 // ----------------------------------------------------------------------------------------
@@ -70,6 +71,15 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.facebook.Profile;
+import com.facebook.AccessToken;
+
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 // ----------------------------------------------------------------------------------------
 
 // AÑADIDOS GOOGLE
@@ -123,16 +133,16 @@ public class LoginActivity extends AppCompatActivity implements
     private View mProgressView;
     private View mScrollLoginFormView;
 
+    private static final String TAG = "LoginActivity";
 
-    //AÑADIDO: PROFILE
-    // ----------------------------------------------------------------------------------------
-    private byte[] img = null;
-    // ----------------------------------------------------------------------------------------
-
+    //AÑADIDO: STATE
+    // -----------------------------------------------------------------------------------------
+    State state = new State();
+    boolean account_exist = false;
+    // -----------------------------------------------------------------------------------------
 
     //AÑADIDO: GOOGLE
     // ----------------------------------------------------------------------------------------
-    private static final String TAG = "LoginActivity";
     private static final int RC_GOOGLE = 9001;
     private GoogleApiClient mGoogleApiClient;
     private ProgressDialog mProgressDialog;
@@ -201,9 +211,87 @@ public class LoginActivity extends AppCompatActivity implements
         loginFacebookButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                // App code
-                //"User ID: " + loginResult.getAccessToken().getUserId()
-                //"Auth Token: " + loginResult.getAccessToken().getToken()
+
+                String accessToken = loginResult.getAccessToken().getToken();
+                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+
+                        // Get facebook data from login
+                        state.getUser().setID(object.optString("id"));
+                        state.getUser().setUrlImageProfile("https://graph.facebook.com/" + state.getUser().getID() + "/picture?width=120&height=120");
+
+                        if ( object.has("first_name") && object.has("last_name") ) {
+                            state.getUser().setName(object.optString("first_name") + " " + object.optString("last_name"));
+                        }
+
+                        if (object.has("email")) {
+                            state.getUser().setEmail(object.optString("email"));
+                            Log.i(TAG, "ESTADO Face-Email-1: " + object.optString("email"));
+                        }
+
+                        Log.i(TAG, "ESTADO Face-Email-2: " + state.getUser().getEmail());
+
+                        if (object.has("gender")) {
+                            state.getUser().setGender(object.optString("gender"));
+                        }
+
+                        if (object.has("birthday")) {
+                            state.getUser().setBirthday(object.optString("birthday"));
+                        }
+                    }
+                });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id, first_name, last_name, email, gender, birthday"); // Parámetros que pedimos a facebook
+                request.setParameters(parameters);
+                request.executeAsync();
+
+                //AÑADIDO: BASE DE DATOS
+                // ----------------------------------------------------------------------------------------
+                //Abrimos la base de datos
+                DBActivity mDB_Activity = new DBActivity(getApplicationContext(), null);
+
+                SQLiteDatabase db = mDB_Activity.getReadableDatabase();
+                if (db != null) {
+                    Cursor c = db.rawQuery("SELECT email FROM Users WHERE email=\'" + state.getUser().getEmail() + "\'", null);
+                    if (c.moveToFirst()) { //Comprobar si existe la cuenta
+                        account_exist = true;
+                    }
+                    c.close();
+                    db.close();
+                }
+
+                db = mDB_Activity.getWritableDatabase();
+                if (!account_exist) { //Si la cuenta no existe, la creamos
+                    if (db != null) {
+
+                        // Get Profile of Facebook
+                        //-------------------------------------------------------------------------
+                        //Save the Email
+                        String email = state.getUser().getEmail();
+                        // Save the Name
+                        String name = state.getUser().getName();
+                        // Save the Gender
+                        String gender = state.getUser().getGender();
+                        // Save the Birthday
+                        String birthday = state.getUser().getBirthday();
+                        // Save the circle image
+                        String url_image_profile = state.getUser().getUrlImageProfile();
+
+                        Log.i(TAG, "ESTADO Face-Email-3: " + email);
+
+                        state.setState(true);
+
+                        //Insertamos la nueva cuenta
+                        db.execSQL("INSERT INTO Users (email, password, name, gender, birthdate, location, image) VALUES (\'"
+                                + email + "\', " + null + ", \'"+ name + "\', \'" + gender + "\', \'" + birthday + "\', " + null + ", \'" + url_image_profile + "\')");
+                        db.close();
+                    }
+                }
+
+                // Re-direct to Main_Page
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                // ----------------------------------------------------------------------------------------
             }
 
             @Override
@@ -385,8 +473,6 @@ public class LoginActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        boolean account_exist = false;
-
         Log.i(TAG, "ENTRO A 1");
 
         // GOOGLE
@@ -427,6 +513,10 @@ public class LoginActivity extends AppCompatActivity implements
                         //-------------------------------------------------------------------------
                         Person personProfile = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
 
+                        //Save the Email
+                        String email = acct.getEmail();
+                        // Save the Name
+                        String name = acct.getDisplayName();
                         // Save the Gender
                         String gender = "Otro";
                         if (personProfile.hasGender()) { // it's not guaranteed
@@ -438,13 +528,11 @@ public class LoginActivity extends AppCompatActivity implements
                                 gender = "Mujer";
                             }
                         }
-
                         // Save the birthday
                         String birthday = "";
                         if (personProfile.hasBirthday()) { // it's not guaranteed
                             birthday = personProfile.getBirthday();
                         }
-
                         // Save the circle image
                         String url_image_profile = "";
                         if (personProfile.hasImage()) {
@@ -453,13 +541,31 @@ public class LoginActivity extends AppCompatActivity implements
 
                         Log.i(TAG, "ENTRO A 1.6");
 
+                        User user = new User(null, email, name, gender, birthday, url_image_profile);
+                        state.setUser(user);
+
+                        Log.i(TAG, "ESTADO Login: " + state.getUser().getEmail());
+
                         //Insertamos la nueva cuenta
                         db.execSQL("INSERT INTO Users (email, password, name, gender, birthdate, location, image) VALUES (\'"
                                 + acct.getEmail() + "\', " + null + ", \'"+ acct.getDisplayName() + "\', \'" + gender + "\', \'" + birthday + "\', " + null + ", \'" + url_image_profile + "\')");
                         db.close();
                     }
                 }
+
+                state.setState(true);
                 // ----------------------------------------------------------------------------------------
+
+                // Close Google login
+                // --------------------------------------------------------------------------------
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
+                                mGoogleApiClient.disconnect();
+                            }
+                        });
+                // --------------------------------------------------------------------------------
 
                 // Re-direct to Main_Page
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));

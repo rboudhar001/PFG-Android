@@ -46,10 +46,14 @@ import com.google.android.gms.plus.Plus;
 
 
 public class MainActivity extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener,
-        GoogleApiClient.OnConnectionFailedListener {
+        NavigationView.OnNavigationItemSelectedListener {
 
-    private boolean isLoged = false;
+    private static final String TAG = "MainActivity";
+
+    //AÑADIDO: STATE
+    // -----------------------------------------------------------------------------------------
+    State state = new State();
+    // -----------------------------------------------------------------------------------------
 
     //AÑADIDO: PROFILE
     // -----------------------------------------------------------------------------------------
@@ -61,55 +65,16 @@ public class MainActivity extends AppCompatActivity implements
     private TextView textUserLocation;
     // -----------------------------------------------------------------------------------------
 
-    //AÑADIDO: GOOGLE
-    // ----------------------------------------------------------------------------------------
-    private static final String TAG = "MainActivity";
-    private static final int RC_GOOGLE = 9001;
-    private GoogleApiClient mGoogleApiClient;
-    private GoogleSignInResult result;
-    private GoogleSignInAccount acct;
-    // ----------------------------------------------------------------------------------------
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //AÑADIDO: GOOGLE
-        // ----------------------------------------------------------------------------------------
-        // [START configure_signin]
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        // [END configure_signin]
-
-        // [START build_client]
-        // Build a GoogleApiClient with access to the Google Sign-In API and the
-        // options specified by gso.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .enableAutoManage(this, this)
-                .addApi(Plus.API)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-        // [END build_client]
-        // ----------------------------------------------------------------------------------------
-
-        // AÑADIDO: Comprobar si el usuario esta logeado
-        // -----------------------------------------------------------------------------------------
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-        if (opr.isDone()) {
-            result = opr.get();
-            acct = result.getSignInAccount();
-            isLoged = true;
-        }
-        // -----------------------------------------------------------------------------------------
+        Log.i(TAG, "ESTADO-getState: " + state.getState());
 
         // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN
         // -----------------------------------------------------------------------------------------
-        if (isLoged) {
+        if (state.getState()) { // Si el usuario esta con sesion iniciada
 
             navHeaderMain = (NavigationView) findViewById(R.id.nav_view);
             navViewHeaderMain = navHeaderMain.inflateHeaderView(R.layout.nav_header_main);
@@ -121,7 +86,10 @@ public class MainActivity extends AppCompatActivity implements
 
             SQLiteDatabase db = mDB_Activity.getReadableDatabase();
             if (db != null) {
-                Cursor c = db.rawQuery("SELECT * FROM Users WHERE email=\'" + acct.getEmail() + "\'", null);
+
+                Log.i(TAG, "ESTADO Main-Email: " + state.getUser().getEmail());
+
+                Cursor c = db.rawQuery("SELECT * FROM Users WHERE email=\'" + state.getUser().getEmail() + "\'", null);
                 if (c.moveToFirst()) {
 
                     circleImageProfile = (CircleImageView) navViewHeaderMain.findViewById(R.id.circle_image_profile);
@@ -230,13 +198,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
     */
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
-    }
     // ----------------------------------------------------------------------------------------
 
     //AÑADIDO: MENU
