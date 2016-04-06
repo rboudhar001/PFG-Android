@@ -17,11 +17,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "336627266264-ieqtm7poiniu1ojbrpvicm15mmjf68at.apps.googleusercontent.com",
+          "client_id": "336627266264-c8kdf73j8kcktfjmmkbpij4um0qe9mib.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.rachid.myapplication",
-            "certificate_hash": "D91A5A6C318748EE88AAF911927129CAC326C5B0"
+            "certificate_hash": "C85A168F95831C34BFAB47DEB933BFBEA49DDFF2"
           }
         }
       ],

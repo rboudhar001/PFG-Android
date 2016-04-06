@@ -5,6 +5,7 @@ package com.example.rachid.myapplication;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +17,13 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 // ----------------------------------------------------------------------------------------
@@ -83,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .enableAutoManage(this, this)
+                .addApi(Plus.API)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         // [END build_client]
@@ -105,10 +114,6 @@ public class MainActivity extends AppCompatActivity implements
             navHeaderMain = (NavigationView) findViewById(R.id.nav_view);
             navViewHeaderMain = navHeaderMain.inflateHeaderView(R.layout.nav_header_main);
 
-            // TODO: Mirar si existe (foto, nombre, email) del usuario en local, sino traerlo desde el servidor.
-            circleImageProfile = (CircleImageView) navViewHeaderMain.findViewById(R.id.circle_image_profile);
-            //circleImageProfile.setBackground(/*Imagen tipo DRAWANBLE*/);
-
             //AÑADIDO: BASE DE DATOS
             // ----------------------------------------------------------------------------------------
             //Abrimos la base de datos
@@ -118,6 +123,10 @@ public class MainActivity extends AppCompatActivity implements
             if (db != null) {
                 Cursor c = db.rawQuery("SELECT * FROM Users WHERE email=\'" + acct.getEmail() + "\'", null);
                 if (c.moveToFirst()) {
+
+                    circleImageProfile = (CircleImageView) navViewHeaderMain.findViewById(R.id.circle_image_profile);
+                    Picasso.with(getApplicationContext()).load(c.getString(6)).into(circleImageProfile);
+
                     textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
                     textUserName.setText(c.getString(2));
 

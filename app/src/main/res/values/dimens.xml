@@ -8,10 +8,15 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <!-- AÑADIDO -->
+    <!-- AÑADIDO : Menu-->
     <dimen name="circle_image">80dp</dimen>
     <dimen name="text_size_user_name">14dp</dimen>
     <dimen name="text_size_email_name">10dp</dimen>
     <dimen name="text_size_user_location">12dp</dimen>
+
+    <!-- AÑADIDO : Profile -->
+    <dimen name="circle_image_profile">100dp</dimen>
+    <dimen name="text_about_me">36sp</dimen>
+    <dimen name="text_characteristics">20sp</dimen>
 
 </resources>

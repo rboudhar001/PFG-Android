@@ -4,6 +4,8 @@ package com.example.rachid.myapplication;
 // ----------------------------------------------------------------------------------------
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,25 +17,40 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 // ----------------------------------------------------------------------------------------
 
 // AÑADIDOS: GOOGLE
 // ----------------------------------------------------------------------------------------
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 // ----------------------------------------------------------------------------------------
 
 /**
  * Created by Rachid on 25/03/2016.
  */
 public class ProfileActivity extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.OnConnectionFailedListener {
+
+    //AÑADIDO: PROFILE
+    // -----------------------------------------------------------------------------------------
+    private CircleImageView circleImageProfile;
+    private TextView textEditName;
+    private TextView textEditGender;
+    private TextView textEditBirthday;
+    private TextView textEditEmail;
+    // -----------------------------------------------------------------------------------------
 
     //AÑADIDO: GOOGLE
     // ----------------------------------------------------------------------------------------
@@ -62,25 +79,52 @@ public class ProfileActivity extends AppCompatActivity implements
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .enableAutoManage(this, this)
+                .addApi(Plus.API)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         // [END build_client]
         // ----------------------------------------------------------------------------------------
 
-        //AÑADIDO: MENU
+        //AÑADIDO: BASE DE DATOS
         // ----------------------------------------------------------------------------------------
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Abrimos la base de datos
+        DBActivity mDB_Activity = new DBActivity(this, null);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        //drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        SQLiteDatabase db = mDB_Activity.getReadableDatabase();
+        if (db != null) {
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        //-----------------------------------------------------------------------------------------
+            // AÑADIDO: Comprobar si el usuario esta logeado
+            // -----------------------------------------------------------------------------------------
+            GoogleSignInAccount acct = null;
+            OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+            if (opr.isDone()) {
+                GoogleSignInResult result = opr.get();
+                acct = result.getSignInAccount();
+            }
+            // -----------------------------------------------------------------------------------------
+
+            Cursor c = db.rawQuery("SELECT * FROM Users WHERE email=\'" + acct.getEmail() + "\'", null);
+            if (c.moveToFirst()) {
+
+                circleImageProfile = (CircleImageView) findViewById(R.id.circle_image_profile);
+                Picasso.with(getApplicationContext()).load(c.getString(6)).into(circleImageProfile);
+
+                textEditName = (TextView) findViewById(R.id.text_edit_name);
+                textEditName.setText(c.getString(2));
+
+                textEditGender = (TextView) findViewById(R.id.text_edit_gender);
+                textEditGender.setText(c.getString(3));
+
+                textEditBirthday = (TextView) findViewById(R.id.text_edit_birthday);
+                textEditBirthday.setText(c.getString(4));
+
+                textEditEmail = (TextView) findViewById(R.id.text_edit_email);
+                textEditEmail.setText(c.getString(0));
+            }
+            c.close();
+            db.close();
+        }
+        // ----------------------------------------------------------------------------------------
     }
 
     //AÑADIDO: GOOGLE
@@ -93,43 +137,8 @@ public class ProfileActivity extends AppCompatActivity implements
     }
     // ----------------------------------------------------------------------------------------
 
-    //AÑADIDO: MENU
+    //AÑADIDO: OPTIONS
     // ----------------------------------------------------------------------------------------
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.main_page) {
-            startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-        } else if (id == R.id.login) {
-            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-        } else if (id == R.id.sign_up) {
-            startActivity(new Intent(ProfileActivity.this, SignUpActivity.class));
-        } else if (id == R.id.publish) {
-            startActivity(new Intent(ProfileActivity.this, PublishActivity.class));
-        } else if (id == R.id.search) {
-            startActivity(new Intent(ProfileActivity.this, SearchActivity.class));
-        } else if (id == R.id.info) {
-            startActivity(new Intent(ProfileActivity.this, InfoActivity.class));
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

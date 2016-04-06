@@ -4,6 +4,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 
 // AÑADIDOS: ANDROID
 // ----------------------------------------------------------------------------------------
+import android.content.ContentValues;
 import android.content.IntentSender.SendIntentException;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -43,11 +44,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import android.database.sqlite.SQLiteDatabase;
 // ----------------------------------------------------------------------------------------
 
 // AÑADIDOS JAVA
 // ----------------------------------------------------------------------------------------
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 // ----------------------------------------------------------------------------------------
@@ -75,6 +84,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.plus.model.people.Person;
+import com.google.android.gms.plus.Plus;
 // ----------------------------------------------------------------------------------------
 
 /**
@@ -109,6 +122,13 @@ public class LoginActivity extends AppCompatActivity implements
     private EditText mPasswordView;
     private View mProgressView;
     private View mScrollLoginFormView;
+
+
+    //AÑADIDO: PROFILE
+    // ----------------------------------------------------------------------------------------
+    private byte[] img = null;
+    // ----------------------------------------------------------------------------------------
+
 
     //AÑADIDO: GOOGLE
     // ----------------------------------------------------------------------------------------
@@ -154,6 +174,7 @@ public class LoginActivity extends AppCompatActivity implements
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Plus.API)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         // [END build_client]
@@ -244,17 +265,26 @@ public class LoginActivity extends AppCompatActivity implements
     public void onStart() {
         super.onStart();
 
+        Log.i(TAG, "ENTRO A 0.1");
+
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         if (opr.isDone()) {
+
+            Log.i(TAG, "ENTRO A 0.2");
+
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
             // and the GoogleSignInResult will be available instantly.
             Log.d(TAG, "Got cached sign-in");
             GoogleSignInResult result = opr.get();
 
             if (result.isSuccess()) {
+                Log.i(TAG, "ENTRO A 0.3");
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
             }
         } else {
+
+            Log.i(TAG, "ENTRO A 0.4");
+
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
             // single sign-on will occur in this branch.
@@ -265,6 +295,9 @@ public class LoginActivity extends AppCompatActivity implements
                     hideProgressDialog();
 
                     if (googleSignInResult.isSuccess()) {
+
+                        Log.i(TAG, "ENTRO A 0.5");
+
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     }
                 }
@@ -283,6 +316,9 @@ public class LoginActivity extends AppCompatActivity implements
 
     // [START signIn]
     private void signIn() {
+
+        Log.i(TAG, "ENTRO A 3.1");
+
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_GOOGLE);
     }
@@ -331,6 +367,20 @@ public class LoginActivity extends AppCompatActivity implements
         AppEventsLogger.deactivateApp(this);
     }
 
+    /*
+    @Override
+    public void onConnected() {
+
+        if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+            String personName = currentPerson.getDisplayName();
+            String personPhoto = currentPerson.getImage();
+            String personGooglePlusProfile = currentPerson.getUrl();
+        }
+
+    }
+    */
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -342,6 +392,8 @@ public class LoginActivity extends AppCompatActivity implements
         // GOOGLE
         if (requestCode == RC_GOOGLE) {
 
+            Log.i(TAG, "ENTRO A 1.1");
+
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
 
@@ -352,14 +404,14 @@ public class LoginActivity extends AppCompatActivity implements
                 //Abrimos la base de datos
                 DBActivity mDB_Activity = new DBActivity(this, null);
 
-                Log.i(TAG, "ENTRO A 2");
+                Log.i(TAG, "ENTRO A 1.2");
 
                 SQLiteDatabase db = mDB_Activity.getReadableDatabase();
                 if (db != null) {
-                    Log.i(TAG, "ENTRO A 3");
+                    Log.i(TAG, "ENTRO A 1.3");
                     Cursor c = db.rawQuery("SELECT email FROM Users WHERE email=\'" + acct.getEmail() + "\'", null);
                     if (c.moveToFirst()) { //Comprobar si existe la cuenta
-                        Log.i(TAG, "ENTRO A 4");
+                        Log.i(TAG, "ENTRO A 1.4");
                         account_exist = true;
                     }
                     c.close();
@@ -368,12 +420,42 @@ public class LoginActivity extends AppCompatActivity implements
 
                 db = mDB_Activity.getWritableDatabase();
                 if (!account_exist) { //Si la cuenta no existe, la creamos
-                    Log.i(TAG, "ENTRO A 5");
+                    Log.i(TAG, "ENTRO A 1.5");
                     if (db != null) {
-                        Log.i(TAG, "ENTRO A 6");
+
+                        // Get Profile of Google
+                        //-------------------------------------------------------------------------
+                        Person personProfile = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+
+                        // Save the Gender
+                        String gender = "Otro";
+                        if (personProfile.hasGender()) { // it's not guaranteed
+                            int g = personProfile.getGender();
+                            if (g == 0) {
+                                gender = "Hombre";
+                            }
+                            else if (g == 1) {
+                                gender = "Mujer";
+                            }
+                        }
+
+                        // Save the birthday
+                        String birthday = "";
+                        if (personProfile.hasBirthday()) { // it's not guaranteed
+                            birthday = personProfile.getBirthday();
+                        }
+
+                        // Save the circle image
+                        String url_image_profile = "";
+                        if (personProfile.hasImage()) {
+                            url_image_profile = personProfile.getImage().getUrl();
+                        }
+
+                        Log.i(TAG, "ENTRO A 1.6");
+
                         //Insertamos la nueva cuenta
-                        db.execSQL("INSERT INTO Users (email, password, name, gender, birthdate, location) VALUES (\'"
-                                + acct.getEmail() + "\', " + null + ", \'"+ acct.getDisplayName() + "\', " + null + ", " + null + ", " + null+ ")");
+                        db.execSQL("INSERT INTO Users (email, password, name, gender, birthdate, location, image) VALUES (\'"
+                                + acct.getEmail() + "\', " + null + ", \'"+ acct.getDisplayName() + "\', \'" + gender + "\', \'" + birthday + "\', " + null + ", \'" + url_image_profile + "\')");
                         db.close();
                     }
                 }
