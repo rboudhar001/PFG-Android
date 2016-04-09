@@ -14,9 +14,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PublishActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    //AÑADIDO: STATE
+    // -----------------------------------------------------------------------------------------
+    State state = new State();
+    // -----------------------------------------------------------------------------------------
 
     //AÑADIDO: PROFILE
     // -----------------------------------------------------------------------------------------
@@ -35,23 +42,40 @@ public class PublishActivity extends AppCompatActivity implements NavigationView
 
         // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN
         // -----------------------------------------------------------------------------------------
-        if (true) {
+        if (state.getState()) { // Si el usuario esta con sesion iniciada
 
             navHeaderMain = (NavigationView) findViewById(R.id.nav_view);
             navViewHeaderMain = navHeaderMain.inflateHeaderView(R.layout.nav_header_main);
 
-            // TODO: Mirar si existe (foto, nombre, email) del usuario en local, sino traerlo desde el servidor.
-            circleImageProfile = (CircleImageView) navViewHeaderMain.findViewById(R.id.circle_image_profile);
-            //circleImageProfile.setBackground(/*Imagen tipo DRAWANBLE*/);
-
             //AÑADIDO: BASE DE DATOS
             // ----------------------------------------------------------------------------------------
+            //Abrimos la base de datos
+            DBActivity mDB_Activity = new DBActivity(this, null);
+
+            SQLiteDatabase db = mDB_Activity.getReadableDatabase();
+            if (db != null) {
+                Cursor c = db.rawQuery("SELECT * FROM Users", null);
+                if (c.moveToFirst()) {
+                    circleImageProfile = (CircleImageView) navViewHeaderMain.findViewById(R.id.circle_image_profile);
+                    Picasso.with(getApplicationContext()).load(c.getString(6)).into(circleImageProfile);
+
+                    textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
+                    textUserName.setText(c.getString(3));
+
+                    textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
+                    textUserEmail.setText(c.getString(1));
+
+                    textUserLocation = (TextView) navViewHeaderMain.findViewById(R.id.text_user_location);
+                    textUserLocation.setText("PEDIR_LOCALIZACIÓN");
+                }
+                c.close();
+                db.close();
+            }
             // ----------------------------------------------------------------------------------------
 
             // AÑADIDO: CLICK EVENT - CIRCLE_IMAGE_PROFILE
             // ----------------------------------------------------------------------------------------
             circleImageProfile.setOnClickListener(new View.OnClickListener() {
-
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(PublishActivity.this, ProfileActivity.class));
@@ -61,7 +85,7 @@ public class PublishActivity extends AppCompatActivity implements NavigationView
         }
         // -----------------------------------------------------------------------------------------
 
-        //AÑADIDO
+        //AÑADIDO MENU
         // ----------------------------------------------------------------------------------------
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -77,7 +101,7 @@ public class PublishActivity extends AppCompatActivity implements NavigationView
         //-----------------------------------------------------------------------------------------
     }
 
-    //AÑADIDO
+    //AÑADIDO MENU
     // ----------------------------------------------------------------------------------------
     @Override
     public void onBackPressed() {
@@ -97,10 +121,12 @@ public class PublishActivity extends AppCompatActivity implements NavigationView
 
         if (id == R.id.main_page) {
             startActivity(new Intent(PublishActivity.this, MainActivity.class));
-        } else if (id == R.id.login) {
-            startActivity(new Intent(PublishActivity.this, LoginActivity.class));
-        } else if (id == R.id.sign_up) {
-            startActivity(new Intent(PublishActivity.this, SignUpActivity.class));
+        } else if (id == R.id.account) {
+            if (state.getState()) {
+                startActivity(new Intent(PublishActivity.this, ProfileActivity.class));
+            } else {
+                startActivity(new Intent(PublishActivity.this, LoginActivity.class));
+            }
         } else if (id == R.id.search) {
             startActivity(new Intent(PublishActivity.this, SearchActivity.class));
         } else if (id == R.id.info) {

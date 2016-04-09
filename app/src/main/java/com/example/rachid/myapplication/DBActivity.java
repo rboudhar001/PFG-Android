@@ -15,7 +15,7 @@ public class DBActivity extends SQLiteOpenHelper {
 
     //Sentencia SQL para crear la tabla de Usuarios
     //String sqlCreate = "CREATE TABLE Users (codigo INTEGER, nombre TEXT)";
-    String sqlCreate = "CREATE TABLE Users (email TEXT PRIMART KEY, password TEXT, name TEXT, gender TEXT, birthdate DATETIME, location TEXT, image TEXT)";
+    String sqlCreate = "CREATE TABLE Users (id TEXT, email TEXT PRIMART KEY, password TEXT, name TEXT, gender TEXT, birthday TEXT, image TEXT, location TEXT)";
     //DATETIME = YYYY-MM-DD
 
     public DBActivity(Context contexto, CursorFactory factory) {

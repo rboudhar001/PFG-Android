@@ -6,18 +6,6 @@
     android:orientation="vertical"
     android:clickable="true" >
 
-    <!-- Toolbar -->
-    <android.support.v7.widget.Toolbar
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/toolbar"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_width="match_parent"
-        android:minHeight="?attr/actionBarSize"
-        android:background="@color/AZUL_CLARO_APP"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
     <!-- Resto de la interfaz de usuario -->
     <FrameLayout
         android:id="@+id/content_frame"
@@ -59,7 +47,7 @@
                         android:textColor="@color/AZUL_CLARO_APP"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="20dp"
                         android:editable="false" />
                 </RelativeLayout>
 
@@ -67,7 +55,7 @@
                     android:id="@+id/login_buttons_form"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="10dp" >
+                    android:layout_marginTop="15dp" >
 
                     <!-- AÑADIDO: LOGIN GOOGLE AND FACEBOOK -->
                     <!-- ******************************************************** -->
@@ -95,10 +83,12 @@
                     android:id="@+id/relative_separator"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="15dp" >
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp">
 
                     <View
-                        android:layout_width="100dp"
+                        android:layout_width="120dp"
                         android:layout_height="1dp"
                         android:background="@android:color/darker_gray"
                         android:id="@+id/view_separator1"
@@ -119,7 +109,7 @@
                         android:layout_centerHorizontal="true" />
 
                     <View
-                        android:layout_width="100dp"
+                        android:layout_width="120dp"
                         android:layout_height="1dp"
                         android:background="@android:color/darker_gray"
                         android:id="@+id/view_separator2"
@@ -203,19 +193,9 @@
                         android:textColor="@color/AZUL_CLARO_APP"
                         android:layout_marginTop="20dp"
                         android:editable="false"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="@string/link_create_account"
-                        android:id="@+id/text_create_account"
-                        android:textSize="18sp"
-                        android:textColor="@color/AZUL_CLARO_APP"
-                        android:layout_marginTop="20dp"
-                        android:editable="false"
-                        android:gravity="center" />
+                        android:gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp" />
                 </LinearLayout>
 
             </LinearLayout>

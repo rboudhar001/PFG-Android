@@ -1,5 +1,7 @@
 package com.example.rachid.myapplication;
 
+import java.util.Date;
+
 /**
  * Created by Rachid on 06/04/2016.
  */
@@ -7,21 +9,33 @@ public class User {
 
     private String id;
     private String email;
+    private String password;
     private String name;
     private String gender;
     private String birthday;
     private String url_image_profile;
+    private String location;
 
     public User() {
+        id = "";
+        email = "";
+        password = "";
+        name = "";
+        gender = "";
+        birthday = "";
+        url_image_profile = "";
+        location = "";
     }
 
-    public User(String id, String email, String name, String gender, String birthday, String url_image_profile) {
+    public User(String id, String email, String password, String name, String gender, String birthday, String url_image_profile, String location) {
         this.id = id;
-        this.name = name;
         this.email = email;
+        this.password = password;
+        this.name = name;
         this.gender = gender;
         this.birthday = birthday;
         this.url_image_profile = url_image_profile;
+        this.location = location;
     }
 
     // ID
@@ -33,15 +47,6 @@ public class User {
         return id;
     }
 
-    // Name
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     // Email
     public void setEmail(String email) {
         this.email = email;
@@ -49,6 +54,24 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    // Password
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    // Name
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     // Gender
@@ -61,7 +84,7 @@ public class User {
     }
 
     // Birthday
-    public void setBirthday(String birthday) {
+    public void setBirthday (String birthday) {
         this.birthday = birthday;
     }
 
@@ -76,5 +99,14 @@ public class User {
 
     public String getUrlImageProfile() {
         return url_image_profile;
+    }
+
+    // Location
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getLocation() {
+        return location;
     }
 }

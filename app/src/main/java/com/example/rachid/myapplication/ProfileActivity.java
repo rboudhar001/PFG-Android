@@ -63,7 +63,6 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        /*
         //AÑADIDO: BASE DE DATOS
         // ----------------------------------------------------------------------------------------
         //Abrimos la base de datos
@@ -72,29 +71,27 @@ public class ProfileActivity extends AppCompatActivity {
         SQLiteDatabase db = mDB_Activity.getReadableDatabase();
         if (db != null) {
 
-            Cursor c = db.rawQuery("SELECT * FROM Users WHERE email=\'" + state.getUser().getEmail() + "\'", null);
+            Cursor c = db.rawQuery("SELECT * FROM Users", null);
             if (c.moveToFirst()) {
-
                 circleImageProfile = (CircleImageView) findViewById(R.id.circle_image_profile);
                 Picasso.with(getApplicationContext()).load(c.getString(6)).into(circleImageProfile);
 
                 textEditName = (TextView) findViewById(R.id.text_edit_name);
-                textEditName.setText(c.getString(2));
+                textEditName.setText(c.getString(3));
 
                 textEditGender = (TextView) findViewById(R.id.text_edit_gender);
-                textEditGender.setText(c.getString(3));
+                textEditGender.setText(c.getString(4));
 
                 textEditBirthday = (TextView) findViewById(R.id.text_edit_birthday);
-                textEditBirthday.setText(c.getString(4));
+                textEditBirthday.setText(c.getString(5));
 
                 textEditEmail = (TextView) findViewById(R.id.text_edit_email);
-                textEditEmail.setText(c.getString(0));
+                textEditEmail.setText(c.getString(1));
             }
             c.close();
             db.close();
         }
         // ----------------------------------------------------------------------------------------
-        */
     }
 
     //AÑADIDO: OPTIONS
@@ -120,21 +117,28 @@ public class ProfileActivity extends AppCompatActivity {
         }
         else if (id == R.id.action_log_out) {
 
+            //AÑADIDO: BASE DE DATOS
+            // ----------------------------------------------------------------------------------------
+            //Abrimos la base de datos
+            DBActivity mDB_Activity = new DBActivity(this, null);
+
+            SQLiteDatabase db = mDB_Activity.getWritableDatabase();
+            if (db != null) {
+                /*
+                db.execSQL("UPDATE Users SET id=\'" + null + "\', email=\'" + null + "\', password=\'"
+                        + null + "\', name=\'" + null + "\', gender=\'" + null + "\', birthday=\'"
+                        + null + "\', image=\'" + null + "\' WHERE location=\'" + state.getUser().getLocation() + "\'");
+                */
+                db.execSQL("UPDATE Users SET id=" + null + ", email=" + null + ", password="
+                        + null + ", name=" + null + ", gender=" + null + ", birthday="
+                        + null + ", image=" + null + " WHERE location=\'" + state.getUser().getLocation() + "\'");
+
+                db.close();
+            }
+            // ----------------------------------------------------------------------------------------
+
             state.setUser(null);
             state.setState(false);
-
-            /*
-            if (mGoogleApiClient.isConnected()) {// Si estoy logeado con Google
-                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                        new ResultCallback<Status>() {
-                            @Override
-                            public void onResult(Status status) {
-                                mGoogleApiClient.disconnect();
-                                startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-                            }
-                        });
-            }
-            */
 
             startActivity(new Intent(ProfileActivity.this, MainActivity.class));
             return true;

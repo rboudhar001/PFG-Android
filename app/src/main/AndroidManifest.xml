@@ -49,13 +49,9 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:parentActivityName=".MainActivity">
 
-        <activity
-            android:name=".SignUpActivity"
-            android:label="@string/title_activity_sign_up"
-            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.MainActivity" />
         </activity>
 
         <activity

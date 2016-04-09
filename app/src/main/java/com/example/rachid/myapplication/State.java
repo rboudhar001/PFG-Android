@@ -5,11 +5,15 @@ package com.example.rachid.myapplication;
  */
 public class State {
 
-    private static boolean state = false;
-    private static User user;
+    private static boolean state;
+    private static User user = new User();
 
     public State(){
-        this.user = new User();
+        /*
+        if (this.user == null) {
+            this.user = new User();
+        }
+        */
     }
 
     // STATE

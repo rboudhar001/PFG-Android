@@ -44,11 +44,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 import android.database.sqlite.SQLiteDatabase;
 // ----------------------------------------------------------------------------------------
 
@@ -71,12 +66,20 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.Profile;
+import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.facebook.Profile;
-import com.facebook.AccessToken;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -105,7 +108,6 @@ import com.google.android.gms.plus.Plus;
  */
 public class LoginActivity extends AppCompatActivity implements
         LoaderCallbacks<Cursor>,
-        NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
 
@@ -138,7 +140,8 @@ public class LoginActivity extends AppCompatActivity implements
     //AÑADIDO: STATE
     // -----------------------------------------------------------------------------------------
     State state = new State();
-    boolean account_exist = false;
+    User user = new User();
+    boolean location = false;
     // -----------------------------------------------------------------------------------------
 
     //AÑADIDO: GOOGLE
@@ -212,113 +215,69 @@ public class LoginActivity extends AppCompatActivity implements
             @Override
             public void onSuccess(LoginResult loginResult) {
 
-                String accessToken = loginResult.getAccessToken().getToken();
                 GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
 
-                        // Get facebook data from login
-                        state.getUser().setID(object.optString("id"));
-                        state.getUser().setUrlImageProfile("https://graph.facebook.com/" + state.getUser().getID() + "/picture?width=120&height=120");
-
-                        if ( object.has("first_name") && object.has("last_name") ) {
-                            state.getUser().setName(object.optString("first_name") + " " + object.optString("last_name"));
-                        }
-
+                        // Get profile of facebook
+                        //-------------------------------------------------------------------------
+                        // Save the ID
+                        user.setID(object.optString("id"));
+                        // Save the Email
                         if (object.has("email")) {
-                            state.getUser().setEmail(object.optString("email"));
-                            Log.i(TAG, "ESTADO Face-Email-1: " + object.optString("email"));
+                            user.setEmail(object.optString("email"));
                         }
-
-                        Log.i(TAG, "ESTADO Face-Email-2: " + state.getUser().getEmail());
-
+                        // Save the Password
+                        user.setPassword(null);
+                        // Save the Name
+                        if (object.has("first_name") && object.has("last_name")) {
+                            user.setName(object.optString("first_name") + " " + object.optString("last_name"));
+                        }
+                        // Save the Gender
                         if (object.has("gender")) {
-                            state.getUser().setGender(object.optString("gender"));
+                            user.setGender(object.optString("gender"));
                         }
-
+                        // Save the Birthday
                         if (object.has("birthday")) {
-                            state.getUser().setBirthday(object.optString("birthday"));
+                            user.setBirthday(object.optString("birthday"));
                         }
+                        // Save the Url Image Profile
+                        user.setUrlImageProfile("https://graph.facebook.com/" + user.getID() + "/picture?width=120&height=120");
+                        // Save the Location
+                        user.setLocation(null);
+
+                        //Insert or Update DataBase
+                        dataBase(user);
+
+                        state.setUser(user);
+                        state.setState(true);
+
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        // ----------------------------------------------------------------------------------------
                     }
                 });
                 Bundle parameters = new Bundle();
                 parameters.putString("fields", "id, first_name, last_name, email, gender, birthday"); // Parámetros que pedimos a facebook
                 request.setParameters(parameters);
                 request.executeAsync();
-
-                //AÑADIDO: BASE DE DATOS
-                // ----------------------------------------------------------------------------------------
-                //Abrimos la base de datos
-                DBActivity mDB_Activity = new DBActivity(getApplicationContext(), null);
-
-                SQLiteDatabase db = mDB_Activity.getReadableDatabase();
-                if (db != null) {
-                    Cursor c = db.rawQuery("SELECT email FROM Users WHERE email=\'" + state.getUser().getEmail() + "\'", null);
-                    if (c.moveToFirst()) { //Comprobar si existe la cuenta
-                        account_exist = true;
-                    }
-                    c.close();
-                    db.close();
-                }
-
-                db = mDB_Activity.getWritableDatabase();
-                if (!account_exist) { //Si la cuenta no existe, la creamos
-                    if (db != null) {
-
-                        // Get Profile of Facebook
-                        //-------------------------------------------------------------------------
-                        //Save the Email
-                        String email = state.getUser().getEmail();
-                        // Save the Name
-                        String name = state.getUser().getName();
-                        // Save the Gender
-                        String gender = state.getUser().getGender();
-                        // Save the Birthday
-                        String birthday = state.getUser().getBirthday();
-                        // Save the circle image
-                        String url_image_profile = state.getUser().getUrlImageProfile();
-
-                        Log.i(TAG, "ESTADO Face-Email-3: " + email);
-
-                        state.setState(true);
-
-                        //Insertamos la nueva cuenta
-                        db.execSQL("INSERT INTO Users (email, password, name, gender, birthdate, location, image) VALUES (\'"
-                                + email + "\', " + null + ", \'"+ name + "\', \'" + gender + "\', \'" + birthday + "\', " + null + ", \'" + url_image_profile + "\')");
-                        db.close();
-                    }
-                }
-
-                // Re-direct to Main_Page
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                // ----------------------------------------------------------------------------------------
             }
 
             @Override
             public void onCancel() {
                 // App code
+                Toast.makeText(getBaseContext(), "Login Cancelled", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException exception) {
                 // App code
+                Toast.makeText(getBaseContext(), "Problem connecting to Facebook", Toast.LENGTH_SHORT).show();
             }
         });
         // ----------------------------------------------------------------------------------------
 
-        //AÑADIDO MENU
+        // AÑADIDO : LOGIN EMAIL
         // ----------------------------------------------------------------------------------------
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        //-----------------------------------------------------------------------------------------
-
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -345,54 +304,51 @@ public class LoginActivity extends AppCompatActivity implements
 
         mScrollLoginFormView = findViewById(R.id.scroll_login_form);
         mProgressView = findViewById(R.id.login_progress);
+        // ----------------------------------------------------------------------------------------
     }
 
-    //AÑADIDO GOOGLE
+    // AÑADIDO : DATA BASE
     // ----------------------------------------------------------------------------------------
-    @Override
-    public void onStart() {
-        super.onStart();
+    public void dataBase(User user) {
+        //Abrimos la base de datos
+        DBActivity mDB_Activity = new DBActivity(getApplicationContext(), null);
 
-        Log.i(TAG, "ENTRO A 0.1");
-
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-        if (opr.isDone()) {
-
-            Log.i(TAG, "ENTRO A 0.2");
-
-            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-            // and the GoogleSignInResult will be available instantly.
-            Log.d(TAG, "Got cached sign-in");
-            GoogleSignInResult result = opr.get();
-
-            if (result.isSuccess()) {
-                Log.i(TAG, "ENTRO A 0.3");
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        SQLiteDatabase db = mDB_Activity.getReadableDatabase();
+        if (db != null) {
+            Cursor c = db.rawQuery("SELECT * FROM Users", null);
+            if (c.moveToFirst()) { // Comprobar que existe la localizacion del usuario
+                location = true;
+                user.setLocation(c.getString(7));
             }
-        } else {
+            c.close();
+            db.close();
+        }
 
-            Log.i(TAG, "ENTRO A 0.4");
-
-            // If the user has not previously signed in on this device or the sign-in has expired,
-            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-            // single sign-on will occur in this branch.
-            showProgressDialog();
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-                    hideProgressDialog();
-
-                    if (googleSignInResult.isSuccess()) {
-
-                        Log.i(TAG, "ENTRO A 0.5");
-
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    }
-                }
-            });
+        db = mDB_Activity.getWritableDatabase();
+        if (location) { //Existe la localizacion
+            if (db != null) {
+                //Actualizamos la cuenta
+                db.execSQL("UPDATE Users SET id=\'" + user.getID() + "\', email=\'" + user.getEmail() + "\', password=\'"
+                        + user.getPassword() + "\', name=\'" + user.getName() + "\', gender=\'" + user.getGender() + "\', birthday=\'"
+                        + user.getBirthday() + "\', image=\'" + user.getUrlImageProfile() + "\' WHERE location=\'" + user.getLocation() + "\'");
+                db.close();
+            }
+        }
+        else { // No existe la localizacion
+            if (db != null) {
+                //Insertamos la nueva cuenta
+                db.execSQL("INSERT INTO Users (id, email, password, name, gender, birthday, image, location) VALUES (\'"
+                        + user.getID() + "\', \'" +  user.getEmail() + "\', \'" + user.getPassword()  + "\', \'" + user.getName()
+                        + "\', \'" + user.getGender() + "\', \'" + user.getBirthday() + "\', \'" + user.getUrlImageProfile()
+                        + "\', \'" + user.getLocation() + "\')");
+                db.close();
+            }
         }
     }
+    // ----------------------------------------------------------------------------------------
 
+    //AÑADIDO : GOOGLE
+    // ----------------------------------------------------------------------------------------
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -404,29 +360,10 @@ public class LoginActivity extends AppCompatActivity implements
 
     // [START signIn]
     private void signIn() {
-
-        Log.i(TAG, "ENTRO A 3.1");
-
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_GOOGLE);
     }
     // [END signIn]
-
-    private void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage(getString(R.string.loading));
-            mProgressDialog.setIndeterminate(true);
-        }
-
-        mProgressDialog.show();
-    }
-
-    private void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
-        }
-    }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -436,7 +373,7 @@ public class LoginActivity extends AppCompatActivity implements
     }
     // ----------------------------------------------------------------------------------------
 
-    //AÑADIDO FACEBOOK
+    //AÑADIDO : FACEBOOK
     // ----------------------------------------------------------------------------------------
     @Override
     protected void onResume() {
@@ -455,166 +392,106 @@ public class LoginActivity extends AppCompatActivity implements
         AppEventsLogger.deactivateApp(this);
     }
 
-    /*
-    @Override
-    public void onConnected() {
-
-        if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
-            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-            String personName = currentPerson.getDisplayName();
-            String personPhoto = currentPerson.getImage();
-            String personGooglePlusProfile = currentPerson.getUrl();
-        }
-
-    }
-    */
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.i(TAG, "ENTRO A 1");
+        Log.i(TAG, "ENTRO A 0");
 
         // GOOGLE
         if (requestCode == RC_GOOGLE) {
-
-            Log.i(TAG, "ENTRO A 1.1");
-
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-
-                GoogleSignInAccount acct = result.getSignInAccount();
-
-                //AÑADIDO: BASE DE DATOS
-                // ----------------------------------------------------------------------------------------
-                //Abrimos la base de datos
-                DBActivity mDB_Activity = new DBActivity(this, null);
-
-                Log.i(TAG, "ENTRO A 1.2");
-
-                SQLiteDatabase db = mDB_Activity.getReadableDatabase();
-                if (db != null) {
-                    Log.i(TAG, "ENTRO A 1.3");
-                    Cursor c = db.rawQuery("SELECT email FROM Users WHERE email=\'" + acct.getEmail() + "\'", null);
-                    if (c.moveToFirst()) { //Comprobar si existe la cuenta
-                        Log.i(TAG, "ENTRO A 1.4");
-                        account_exist = true;
-                    }
-                    c.close();
-                    db.close();
-                }
-
-                db = mDB_Activity.getWritableDatabase();
-                if (!account_exist) { //Si la cuenta no existe, la creamos
-                    Log.i(TAG, "ENTRO A 1.5");
-                    if (db != null) {
-
-                        // Get Profile of Google
-                        //-------------------------------------------------------------------------
-                        Person personProfile = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-
-                        //Save the Email
-                        String email = acct.getEmail();
-                        // Save the Name
-                        String name = acct.getDisplayName();
-                        // Save the Gender
-                        String gender = "Otro";
-                        if (personProfile.hasGender()) { // it's not guaranteed
-                            int g = personProfile.getGender();
-                            if (g == 0) {
-                                gender = "Hombre";
-                            }
-                            else if (g == 1) {
-                                gender = "Mujer";
-                            }
-                        }
-                        // Save the birthday
-                        String birthday = "";
-                        if (personProfile.hasBirthday()) { // it's not guaranteed
-                            birthday = personProfile.getBirthday();
-                        }
-                        // Save the circle image
-                        String url_image_profile = "";
-                        if (personProfile.hasImage()) {
-                            url_image_profile = personProfile.getImage().getUrl();
-                        }
-
-                        Log.i(TAG, "ENTRO A 1.6");
-
-                        User user = new User(null, email, name, gender, birthday, url_image_profile);
-                        state.setUser(user);
-
-                        Log.i(TAG, "ESTADO Login: " + state.getUser().getEmail());
-
-                        //Insertamos la nueva cuenta
-                        db.execSQL("INSERT INTO Users (email, password, name, gender, birthdate, location, image) VALUES (\'"
-                                + acct.getEmail() + "\', " + null + ", \'"+ acct.getDisplayName() + "\', \'" + gender + "\', \'" + birthday + "\', " + null + ", \'" + url_image_profile + "\')");
-                        db.close();
-                    }
-                }
-
-                state.setState(true);
-                // ----------------------------------------------------------------------------------------
-
-                // Close Google login
-                // --------------------------------------------------------------------------------
-                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                        new ResultCallback<Status>() {
-                            @Override
-                            public void onResult(Status status) {
-                                mGoogleApiClient.disconnect();
-                            }
-                        });
-                // --------------------------------------------------------------------------------
-
-                // Re-direct to Main_Page
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            }
+            loginGoogle(requestCode, resultCode, data);
         }
 
         // FACEBOOK
         if (requestCode == RC_FACEBOOK) {
-            callbackManager.onActivityResult(requestCode, resultCode, data);
+            loginFacebook(requestCode, resultCode, data);
         }
     }
     // ----------------------------------------------------------------------------------------
 
-    //AÑADIDO MENU
-    // ----------------------------------------------------------------------------------------
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
+    // LOGIN GOOGLE
+    public void loginGoogle(int requestCode, int resultCode, Intent data) {
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        Log.i(TAG, "ENTRO A G.1");
 
-        if (id == R.id.main_page) {
+        GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+        if (result.isSuccess()) {
+
+            GoogleSignInAccount acct = result.getSignInAccount();
+
+            // Get Profile of Google
+            //-------------------------------------------------------------------------
+            Person personProfile = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+
+            // Save the ID
+            user.setID(null);
+            // Save the Email
+            user.setEmail(acct.getEmail());
+            // Save the Name
+            user.setPassword(null);
+            // Save the Name
+            user.setName(acct.getDisplayName());
+            // Save the Gender
+            String gender = "Otro";
+            if (personProfile.hasGender()) { // it's not guaranteed
+                int g = personProfile.getGender();
+                if (g == 0) {
+                    gender = "Hombre";
+                }
+                else if (g == 1) {
+                    gender = "Mujer";
+                }
+            }
+            user.setGender(gender);
+            // Save the birthday
+            String birthday = "";
+            if (personProfile.hasBirthday()) { // it's not guaranteed
+                birthday = personProfile.getBirthday();
+            }
+            user.setBirthday(birthday);
+            // Save the Url Image Profile
+            String url_image_profile = "";
+            if (personProfile.hasImage()) {
+                url_image_profile = personProfile.getImage().getUrl();
+            }
+            user.setUrlImageProfile(url_image_profile);
+            // Save the location
+            user.setLocation(null);
+            // ----------------------------------------------------------------------------------------
+
+            //Insert or Update DataBase
+            dataBase(user);
+
+            state.setUser(user);
+            state.setState(true);
+
+            // LogOut Google
+            // --------------------------------------------------------------------------------
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            mGoogleApiClient.disconnect();
+                        }
+                    });
+            // --------------------------------------------------------------------------------
+
+            // Re-direct to Main_Page
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
-        } else if (id == R.id.sign_up) {
-            startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
-        } else if (id == R.id.publish) {
-            startActivity(new Intent(LoginActivity.this, PublishActivity.class));
-        } else if (id == R.id.search) {
-            startActivity(new Intent(LoginActivity.this, SearchActivity.class));
-        } else if (id == R.id.info) {
-            startActivity(new Intent(LoginActivity.this, InfoActivity.class));
         }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
-    //-----------------------------------------------------------------------------------------
 
+    // LOGIN FACEBOOK
+    public void loginFacebook(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        //LogOut Facebook
+        LoginManager.getInstance().logOut();
+    }
+
+    //AÑADIDO : LOGIN EMAIL
+    // ----------------------------------------------------------------------------------------
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -649,8 +526,7 @@ public class LoginActivity extends AppCompatActivity implements
      * Callback received when a permissions request has been completed.
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_READ_CONTACTS) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 populateAutoComplete();
@@ -710,11 +586,14 @@ public class LoginActivity extends AppCompatActivity implements
             mAuthTask.execute((Void) null);
         }
     }
+
+    //
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
     }
 
+    //
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 4;
@@ -787,9 +666,9 @@ public class LoginActivity extends AppCompatActivity implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
     }
 
+    //
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -800,7 +679,7 @@ public class LoginActivity extends AppCompatActivity implements
         int IS_PRIMARY = 1;
     }
 
-
+    //
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
@@ -866,4 +745,5 @@ public class LoginActivity extends AppCompatActivity implements
             showProgress(false);
         }
     }
+    // ----------------------------------------------------------------------------------------
 }

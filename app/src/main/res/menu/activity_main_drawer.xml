@@ -8,16 +8,11 @@
             android:title="Pagina Principal" />
     </group>
 
-    <group android:id="@+id/group_sign_in">
-
+    <group android:id="@+id/group_account">
         <item
-            android:id="@+id/login"
+            android:id="@+id/account"
             android:icon="@drawable/ic_account_box_24dp"
-            android:title="Iniciar sesión" />
-        <item
-            android:id="@+id/sign_up"
-            android:icon="@drawable/ic_person_add_24dp"
-            android:title="Registrarse" />
+            android:title="Cuenta" />
     </group>
 
     <group android:id="@+id/group_function">

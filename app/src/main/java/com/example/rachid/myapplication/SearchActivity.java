@@ -1,6 +1,8 @@
 package com.example.rachid.myapplication;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -9,18 +11,84 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Rachid on 25/03/2016.
  */
 public class SearchActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    //AÑADIDO: STATE
+    // -----------------------------------------------------------------------------------------
+    State state = new State();
+    // -----------------------------------------------------------------------------------------
+
+    //AÑADIDO: PROFILE
+    // -----------------------------------------------------------------------------------------
+    private CircleImageView circleImageProfile;
+    private NavigationView navHeaderMain;
+    private View navViewHeaderMain;
+    private TextView textUserName;
+    private TextView textUserEmail;
+    private TextView textUserLocation;
+    // -----------------------------------------------------------------------------------------
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        //AÑADIDO
+        // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN
+        // -----------------------------------------------------------------------------------------
+        if (state.getState()) { // Si el usuario esta con sesion iniciada
+
+            navHeaderMain = (NavigationView) findViewById(R.id.nav_view);
+            navViewHeaderMain = navHeaderMain.inflateHeaderView(R.layout.nav_header_main);
+
+            //AÑADIDO: BASE DE DATOS
+            // ----------------------------------------------------------------------------------------
+            //Abrimos la base de datos
+            DBActivity mDB_Activity = new DBActivity(this, null);
+
+            SQLiteDatabase db = mDB_Activity.getReadableDatabase();
+            if (db != null) {
+                Cursor c = db.rawQuery("SELECT * FROM Users", null);
+                if (c.moveToFirst()) {
+                    circleImageProfile = (CircleImageView) navViewHeaderMain.findViewById(R.id.circle_image_profile);
+                    Picasso.with(getApplicationContext()).load(c.getString(6)).into(circleImageProfile);
+
+                    textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
+                    textUserName.setText(c.getString(3));
+
+                    textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
+                    textUserEmail.setText(c.getString(1));
+
+                    textUserLocation = (TextView) navViewHeaderMain.findViewById(R.id.text_user_location);
+                    textUserLocation.setText("PEDIR_LOCALIZACIÓN");
+                }
+                c.close();
+                db.close();
+            }
+            // ----------------------------------------------------------------------------------------
+
+            // AÑADIDO: CLICK EVENT - CIRCLE_IMAGE_PROFILE
+            // ----------------------------------------------------------------------------------------
+            circleImageProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(SearchActivity.this, ProfileActivity.class));
+                }
+            });
+            //-----------------------------------------------------------------------------------------
+        }
+        // -----------------------------------------------------------------------------------------
+
+        //AÑADIDO MENU
         // ----------------------------------------------------------------------------------------
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -36,7 +104,7 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         //-----------------------------------------------------------------------------------------
     }
 
-    //AÑADIDO
+    //AÑADIDO MENU
     // ----------------------------------------------------------------------------------------
     @Override
     public void onBackPressed() {
@@ -56,10 +124,12 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
 
         if (id == R.id.main_page) {
             startActivity(new Intent(SearchActivity.this, MainActivity.class));
-        } else if (id == R.id.login) {
-            startActivity(new Intent(SearchActivity.this, LoginActivity.class));
-        } else if (id == R.id.sign_up) {
-            startActivity(new Intent(SearchActivity.this, SignUpActivity.class));
+        } else if (id == R.id.account) {
+            if (state.getState()) {
+                startActivity(new Intent(SearchActivity.this, ProfileActivity.class));
+            } else {
+                startActivity(new Intent(SearchActivity.this, LoginActivity.class));
+            }
         } else if (id == R.id.publish) {
             startActivity(new Intent(SearchActivity.this, PublishActivity.class));
         } else if (id == R.id.info) {

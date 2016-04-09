@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.facebook.Profile;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -70,7 +71,25 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.i(TAG, "ESTADO-getState: " + state.getState());
+        //AÑADIDO: LOGIN
+        // ----------------------------------------------------------------------------------------
+        if (!state.getState()) {
+            //Abrimos la base de datos
+            DBActivity mDB_Activity = new DBActivity(this, null);
+            SQLiteDatabase db = mDB_Activity.getReadableDatabase();
+            if (db != null) {
+                Cursor c = db.rawQuery("SELECT * FROM Users", null);
+                if (c.moveToFirst()) {
+                    if (c.getString(1) != null) {
+                        state.setState(true);
+                        state.setUser(new User(c.getString(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7)));
+                    }
+                }
+                c.close();
+                db.close();
+            }
+        }
+        // ----------------------------------------------------------------------------------------
 
         // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN
         // -----------------------------------------------------------------------------------------
@@ -86,20 +105,16 @@ public class MainActivity extends AppCompatActivity implements
 
             SQLiteDatabase db = mDB_Activity.getReadableDatabase();
             if (db != null) {
-
-                Log.i(TAG, "ESTADO Main-Email: " + state.getUser().getEmail());
-
-                Cursor c = db.rawQuery("SELECT * FROM Users WHERE email=\'" + state.getUser().getEmail() + "\'", null);
+                Cursor c = db.rawQuery("SELECT * FROM Users", null);
                 if (c.moveToFirst()) {
-
                     circleImageProfile = (CircleImageView) navViewHeaderMain.findViewById(R.id.circle_image_profile);
                     Picasso.with(getApplicationContext()).load(c.getString(6)).into(circleImageProfile);
 
                     textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
-                    textUserName.setText(c.getString(2));
+                    textUserName.setText(c.getString(3));
 
                     textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
-                    textUserEmail.setText(c.getString(0));
+                    textUserEmail.setText(c.getString(1));
 
                     textUserLocation = (TextView) navViewHeaderMain.findViewById(R.id.text_user_location);
                     textUserLocation.setText("PEDIR_LOCALIZACIÓN");
@@ -112,7 +127,6 @@ public class MainActivity extends AppCompatActivity implements
             // AÑADIDO: CLICK EVENT - CIRCLE_IMAGE_PROFILE
             // ----------------------------------------------------------------------------------------
             circleImageProfile.setOnClickListener(new View.OnClickListener() {
-
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(MainActivity.this, ProfileActivity.class));
@@ -138,67 +152,13 @@ public class MainActivity extends AppCompatActivity implements
         */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        //drawer.setDrawerListener(toggle);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         // ----------------------------------------------------------------------------------------
     }
-
-    //AÑADIDO: GOOGLE
-    // ----------------------------------------------------------------------------------------
-    /*
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-        if (opr.isDone()) {
-
-            GoogleSignInResult result = opr.get();
-            GoogleSignInAccount acct = result.getSignInAccount();
-
-            // Get account information
-            textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
-            textUserName.setText(acct.getDisplayName());
-
-            textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
-            textUserEmail.setText(acct.getEmail());
-
-            textUserLocation = (TextView) navViewHeaderMain.findViewById(R.id.text_user_location);
-            textUserLocation.setText("PEDIR_LOCALIZACIÓN");
-        }
-    }
-    */
-
-    /*
-    @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from
-        //   GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_GOOGLE) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-                GoogleSignInAccount acct = result.getSignInAccount();
-
-                // Get account information
-                textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
-                textUserName.setText(acct.getDisplayName());
-
-                textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
-                textUserEmail.setText(acct.getEmail());
-
-                textUserLocation = (TextView) navViewHeaderMain.findViewById(R.id.text_user_location);
-                textUserLocation.setText("PEDIR_LOCALIZACIÓN");
-            }
-        }
-    }
-    */
-    // ----------------------------------------------------------------------------------------
 
     //AÑADIDO: MENU
     // ----------------------------------------------------------------------------------------
@@ -218,10 +178,12 @@ public class MainActivity extends AppCompatActivity implements
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.login) {
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        } else if (id == R.id.sign_up) {
-            startActivity(new Intent(MainActivity.this, SignUpActivity.class));
+        if (id == R.id.account) {
+            if (state.getState()) {
+                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+            } else {
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            }
         } else if (id == R.id.publish) {
             startActivity(new Intent(MainActivity.this, PublishActivity.class));
         } else if (id == R.id.search) {
