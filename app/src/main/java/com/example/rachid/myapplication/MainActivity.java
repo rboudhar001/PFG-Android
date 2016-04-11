@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.InputStream;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements
 
     //AÑADIDO: STATE
     // -----------------------------------------------------------------------------------------
-    State state = new State();
+    private State state = new State();
     // -----------------------------------------------------------------------------------------
 
     //AÑADIDO: PROFILE
@@ -64,6 +65,11 @@ public class MainActivity extends AppCompatActivity implements
     private TextView textUserName;
     private TextView textUserEmail;
     private TextView textUserLocation;
+    // -----------------------------------------------------------------------------------------
+
+    //AÑADIDO: GEOLOCATION
+    // -----------------------------------------------------------------------------------------
+    private Button buttonGeolocation;
     // -----------------------------------------------------------------------------------------
 
     @Override
@@ -157,6 +163,21 @@ public class MainActivity extends AppCompatActivity implements
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        // ----------------------------------------------------------------------------------------
+
+        //AÑADIDO: GEOLOCATION
+        // ----------------------------------------------------------------------------------------
+        buttonGeolocation = (Button) findViewById(R.id.button_geolocation);
+        buttonGeolocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Llamar al metodo de geolocalización
+
+
+
+            }
+        });
+
         // ----------------------------------------------------------------------------------------
     }
 

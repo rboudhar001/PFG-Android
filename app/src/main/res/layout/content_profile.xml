@@ -25,7 +25,7 @@
                 <RelativeLayout
                     android:id="@+id/relative_picture_profile"
                     android:layout_width="match_parent"
-                    android:layout_height="140dp"
+                    android:layout_height="match_parent"
                     android:orientation="vertical" >
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -36,9 +36,17 @@
                         android:clickable="true"
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="40dp" />
-
+                        android:layout_marginTop="20dp" />
                 </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"
+                    android:id="@+id/view_separator_1"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp" >
+                </View>
 
                 <LinearLayout
                     android:id="@+id/linear_info_profile"
@@ -53,7 +61,7 @@
                         android:id="@+id/text_about_me"
                         android:text="@string/text_about_me"
                         android:textSize="@dimen/text_about_me"
-                        android:textColor="@color/GRIS"
+                        android:textColor="@color/GRIS_1"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="5dp"
@@ -71,6 +79,55 @@
                         android:layout_marginTop="10dp">
 
                         <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:id="@+id/text_name"
+                                android:text="@string/text_name"
+                                android:textSize="@dimen/text_characteristics"
+                                android:textColor="@color/GRIS_1"
+                                android:editable="false" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:id="@+id/text_gener"
+                                android:text="@string/text_gender"
+                                android:textSize="@dimen/text_characteristics"
+                                android:textColor="@color/GRIS_1"
+                                android:editable="false"
+                                android:layout_marginTop="6dp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:id="@+id/text_birthday"
+                                android:text="@string/text_birthday"
+                                android:textSize="@dimen/text_characteristics"
+                                android:textColor="@color/GRIS_1"
+                                android:editable="false"
+                                android:layout_marginTop="6dp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:id="@+id/text_email"
+                                android:text="@string/text_email"
+                                android:textSize="@dimen/text_characteristics"
+                                android:textColor="@color/GRIS_1"
+                                android:editable="false"
+                                android:layout_marginTop="6dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="vertical" >
@@ -82,8 +139,9 @@
                                 android:id="@+id/text_edit_name"
                                 android:text="NOMBRE"
                                 android:textSize="@dimen/text_characteristics"
-                                android:textColor="@color/GRIS"
-                                android:editable="true" />
+                                android:textColor="@color/ROJO"
+                                android:editable="true"
+                                android:gravity="end" />
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -92,9 +150,10 @@
                                 android:id="@+id/text_edit_gender"
                                 android:text="GENERO"
                                 android:textSize="@dimen/text_characteristics"
-                                android:textColor="@color/GRIS"
+                                android:textColor="@color/ROJO"
                                 android:editable="true"
-                                android:layout_marginTop="2dp" />
+                                android:layout_marginTop="6dp"
+                                android:gravity="end" />
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -103,9 +162,10 @@
                                 android:id="@+id/text_edit_birthday"
                                 android:text="CUMPLEAÑOS"
                                 android:textSize="@dimen/text_characteristics"
-                                android:textColor="@color/GRIS"
+                                android:textColor="@color/ROJO"
                                 android:editable="true"
-                                android:layout_marginTop="2dp" />
+                                android:layout_marginTop="6dp"
+                                android:gravity="end" />
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -114,9 +174,10 @@
                                 android:id="@+id/text_edit_email"
                                 android:text="EMAIL"
                                 android:textSize="@dimen/text_characteristics"
-                                android:textColor="@color/GRIS"
+                                android:textColor="@color/ROJO"
                                 android:editable="true"
-                                android:layout_marginTop="2dp" />
+                                android:layout_marginTop="6dp"
+                                android:gravity="end" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -125,7 +186,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@android:color/darker_gray"
-                    android:id="@+id/view_separator_1"
+                    android:id="@+id/view_separator_2"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="30dp" >
@@ -146,7 +207,7 @@
                         android:textColor="@color/BLANCO"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:layout_marginTop="30dp" />
+                        android:layout_marginTop="20dp" />
                 </LinearLayout>
 
             </LinearLayout>

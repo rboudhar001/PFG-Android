@@ -14,9 +14,14 @@
     <dimen name="text_size_email_name">10dp</dimen>
     <dimen name="text_size_user_location">12dp</dimen>
 
+    <!-- AÑADIDO : Geolocation -->
+    <dimen name="geolocation_title">24sp</dimen>
+    <dimen name="know_the_events">20sp</dimen>
+    <dimen name="geolocation">18sp</dimen>
+
     <!-- AÑADIDO : Profile -->
-    <dimen name="circle_image_profile">100dp</dimen>
-    <dimen name="text_about_me">36sp</dimen>
-    <dimen name="text_characteristics">20sp</dimen>
+    <dimen name="circle_image_profile">120dp</dimen>
+    <dimen name="text_about_me">32sp</dimen>
+    <dimen name="text_characteristics">16sp</dimen>
 
 </resources>

@@ -242,7 +242,8 @@ public class LoginActivity extends AppCompatActivity implements
                             user.setBirthday(object.optString("birthday"));
                         }
                         // Save the Url Image Profile
-                        user.setUrlImageProfile("https://graph.facebook.com/" + user.getID() + "/picture?width=120&height=120");
+                        user.setUrlImageProfile("https://graph.facebook.com/" + user.getID() + "/picture?width=400&height=400");
+                        //user.setUrlImageProfile("https://graph.facebook.com/" + user.getID() + "/picture?width=120&height=120");
                         // Save the Location
                         user.setLocation(null);
 
@@ -496,10 +497,10 @@ public class LoginActivity extends AppCompatActivity implements
         if (!mayRequestContacts()) {
             return;
         }
-
         getLoaderManager().initLoader(0, null, this);
     }
 
+    //
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;

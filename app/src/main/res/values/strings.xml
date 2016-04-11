@@ -24,10 +24,10 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="link_forgotten_password">¿Has olvidado tu contraseña?</string>
 
-    <!-- SIGN UP -->
-    <string name="text_sign_up">Registrate</string>
-    <string name="sign_up_button">REGISTRARSE</string>
-    <string name="link_login_account">¿Tienes un cuenta? Inicia sesión</string>
+    <!-- GEOLOCATION -->
+    <string name="geolocation_title">¿Empezamos a buscar eventos?</string>
+    <string name="know_the_events">¿Quieres conocer los eventos mas cercanos a ti?</string>
+    <string name="geolocation">USAR GEOLOCALIZACIÓN</string>
 
     <!-- PROFILE -->
     <string name="text_name">Nombre</string>
