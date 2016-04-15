@@ -12,7 +12,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -38,8 +37,6 @@ public abstract class MyLocation {
     private static String TAG;
     private static Activity activity;
     private static int REQUEST_CHECK_SETTINGS;
-
-    private static State state = new State();
 
     private static GoogleApiClient mGoogleApiClient;
     private static LocationManager locationManager;
@@ -74,8 +71,6 @@ public abstract class MyLocation {
 
     /**
      * Prompt user to enable GPS and Location Services
-     * @param mGoogleApiClient
-     * @param activity
      */
     public static void locationChecker(GoogleApiClient mGoogleApiClient, final Activity activity) {
 
@@ -105,7 +100,6 @@ public abstract class MyLocation {
                 Log.i(TAG, "ENTRO A M:locationChecker:2");
 
                 final Status status = result.getStatus();
-                final LocationSettingsStates state = result.getLocationSettingsStates();
 
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
@@ -158,32 +152,35 @@ public abstract class MyLocation {
                         Geocoder geoCoder = new Geocoder(activity.getApplicationContext(), Locale.getDefault());
                         List<Address> list = geoCoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 
-                        if ((list != null) & (list.size() > 0)) {
-                            Address address = list.get(0);
-                            String city = address.getLocality();
+                        if ((list != null) ){
+                            if (list.size() > 0) {
+                                Address address = list.get(0);
+                                String city = address.getLocality();
 
-                            Log.i(TAG, "ENTRO A M:getLocation:3");
+                                Log.i(TAG, "ENTRO A M:getLocation:3");
 
-                            if ( (city != null) & (city != state.getUser().getLocation()) ) {
+                                if (city != null) {
+                                    if(!city.equals(MyState.getUser().getLocation())) {
+                                        Log.i(TAG, "ENTRO A M:getLocation:4");
+                                        MyDatabase.insertLocation(TAG, activity, city);
 
-                                Log.i(TAG, "ENTRO A M:getLocation:4");
-                                MyDatabase.insertLocation(TAG, activity, city);
+                                        MyState.getUser().setLocation(city);
+                                        MyState.setExistsLocation(true);
+                                    }
+                                }
 
-                                state.getUser().setLocation(city);
-                                state.setExistsLocation(true);
+                                if (mGoogleApiClient != null) {
+                                    mGoogleApiClient.disconnect();
+                                }
+
+                                PackageManager packageManager = activity.getApplicationContext().getPackageManager();
+                                if (packageManager.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
+                                        activity.getApplicationContext().getPackageName()) == PackageManager.PERMISSION_GRANTED) {
+                                    locationManager.removeUpdates(locationListener);
+                                }
+
+                                activity.startActivity(new Intent(activity, EventsActivity.class));
                             }
-
-                            if (mGoogleApiClient != null) {
-                                mGoogleApiClient.disconnect();
-                            }
-
-                            PackageManager packageManager = activity.getApplicationContext().getPackageManager();
-                            if (packageManager.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
-                                    activity.getApplicationContext().getPackageName()) == PackageManager.PERMISSION_GRANTED) {
-                                locationManager.removeUpdates(locationListener);
-                            }
-
-                            activity.startActivity(new Intent(activity, EventsActivity.class));
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -231,22 +228,24 @@ public abstract class MyLocation {
                     Geocoder geoCoder = new Geocoder(activity.getApplicationContext(), Locale.getDefault());
                     List<Address> list = geoCoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 
-                    if ((list != null) & (list.size() > 0)) {
-                        Address address = list.get(0);
-                        String city = address.getLocality();
+                    if (list != null) {
+                        if (list.size() > 0) {
+                            Address address = list.get(0);
+                            String city = address.getLocality();
 
-                        Log.i(TAG, "ENTRO A M:getLocation:11");
+                            Log.i(TAG, "ENTRO A M:getLocation:11");
 
-                        if ( city != null ) {
+                            if (city != null) {
 
-                            Log.i(TAG, "ENTRO A M:getLocation:12");
+                                Log.i(TAG, "ENTRO A M:getLocation:12");
 
-                            MyDatabase.insertLocation(TAG, activity, city);
+                                MyDatabase.insertLocation(TAG, activity, city);
 
-                            state.getUser().setLocation(city);
-                            state.setExistsLocation(true);
+                                MyState.getUser().setLocation(city);
+                                MyState.setExistsLocation(true);
 
-                            obtainedLocation = true;
+                                obtainedLocation = true;
+                            }
                         }
                     }
                 } catch (IOException e) {
@@ -267,8 +266,8 @@ public abstract class MyLocation {
 
         MyDatabase.deleteLocation(T, A);
 
-        state.getUser().setLocation(null);
-        state.setExistsLocation(false);
+        MyState.getUser().setLocation(null);
+        MyState.setExistsLocation(false);
     }
 
     public static boolean isObtainedLocation() {

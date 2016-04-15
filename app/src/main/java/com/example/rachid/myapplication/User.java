@@ -7,6 +7,9 @@ import java.util.Date;
  */
 public class User {
 
+    // **************
+    // Variables
+    // **************
     private String id;
     private String email;
     private String password;
@@ -16,6 +19,9 @@ public class User {
     private String url_image_profile;
     private String location;
 
+    // **************
+    // Constructores
+    // **************
     public User() {
     }
 
@@ -33,6 +39,10 @@ public class User {
         this.url_image_profile = url_image_profile;
         this.location = location;
     }
+
+    // **************
+    // Funciones
+    // **************
 
     // ID
     public void setID(String id) {

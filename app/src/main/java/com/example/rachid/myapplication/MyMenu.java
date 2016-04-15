@@ -20,11 +20,6 @@ public class MyMenu {
     private static Activity activity;
     private static int REQUEST_CHECK_SETTINGS;
 
-    //AÑADIDO: STATE
-    // -----------------------------------------------------------------------------------------
-    private static State state = new State();
-    // -----------------------------------------------------------------------------------------
-
     //AÑADIDO: PROFILE
     // -----------------------------------------------------------------------------------------
     private static CircleImageView circleImageProfile;
@@ -48,25 +43,25 @@ public class MyMenu {
 
         // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN or NAV_HEADER_LOGIN
         // ----------------------------------------------------------------------------------------
-        if (state.getLoged()) { // Si el usuario esta con sesion iniciada
+        if (MyState.getLoged()) { // Si el usuario esta con sesion iniciada
 
             navHeader = (NavigationView) activity.findViewById(com.example.rachid.myapplication.R.id.nav_view);
             navViewHeader = navHeader.inflateHeaderView(com.example.rachid.myapplication.R.layout.nav_header_login);
 
             circleImageProfile = (CircleImageView) navViewHeader.findViewById(com.example.rachid.myapplication.R.id.circle_image_profile);
-            Picasso.with(activity.getApplicationContext()).load(state.getUser().getUrlImageProfile()).into(circleImageProfile);
+            Picasso.with(activity.getApplicationContext()).load(MyState.getUser().getUrlImageProfile()).into(circleImageProfile);
 
             textUserName = (TextView) navViewHeader.findViewById(com.example.rachid.myapplication.R.id.text_user_name);
-            textUserName.setText(state.getUser().getName());
+            textUserName.setText(MyState.getUser().getName());
 
             textUserEmail = (TextView) navViewHeader.findViewById(com.example.rachid.myapplication.R.id.text_user_email);
-            textUserEmail.setText(state.getUser().getEmail());
+            textUserEmail.setText(MyState.getUser().getEmail());
 
             textUserLocation = (TextView) navViewHeader.findViewById(com.example.rachid.myapplication.R.id.text_user_location);
 
-            String location = state.getUser().getLocation();
+            String location = MyState.getUser().getLocation();
             if (location != null) {
-                textUserLocation.setText(state.getUser().getLocation());
+                textUserLocation.setText(MyState.getUser().getLocation());
             } else {
                 textUserLocation.setText("SIN LOCALIZACIÓN");
             }
@@ -80,14 +75,6 @@ public class MyMenu {
                 }
             });
             //-------------------------------------------------------------------------------------
-        }
-        else if (state.getExistsLocation()) {
-
-            navHeader = (NavigationView) activity.findViewById(com.example.rachid.myapplication.R.id.nav_view);
-            navViewHeader = navHeader.inflateHeaderView(com.example.rachid.myapplication.R.layout.nav_header_main);
-
-            textUserLocation = (TextView) navViewHeader.findViewById(com.example.rachid.myapplication.R.id.text_user_location);
-            textUserLocation.setText(state.getUser().getLocation());
 
             // AÑADIDO: CLICK EVENT - IMAGE BUTTON UPDATE LOCATION
             // ------------------------------------------------------------------------------------
@@ -96,6 +83,30 @@ public class MyMenu {
                 @Override
                 public void onClick(View v) {
                     MyLocation.delete(TAG, activity);
+
+                    EventsActivity.f.finish();
+                    activity.startActivity(new Intent(activity, MainActivity.class));
+                }
+            });
+            //-------------------------------------------------------------------------------------
+        }
+        else if (MyState.getExistsLocation()) {
+
+            navHeader = (NavigationView) activity.findViewById(com.example.rachid.myapplication.R.id.nav_view);
+            navViewHeader = navHeader.inflateHeaderView(com.example.rachid.myapplication.R.layout.nav_header_main);
+
+            textUserLocation = (TextView) navViewHeader.findViewById(com.example.rachid.myapplication.R.id.text_user_location);
+            textUserLocation.setText(MyState.getUser().getLocation());
+
+            // AÑADIDO: CLICK EVENT - IMAGE BUTTON UPDATE LOCATION
+            // ------------------------------------------------------------------------------------
+            imageButtonDeleteLocation = (ImageButton) navViewHeader.findViewById(com.example.rachid.myapplication.R.id.imageButton_delete_location);
+            imageButtonDeleteLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MyLocation.delete(TAG, activity);
+
+                    EventsActivity.f.finish();
                     activity.startActivity(new Intent(activity, MainActivity.class));
                 }
             });

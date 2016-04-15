@@ -1,12 +1,9 @@
 package com.example.rachid.myapplication;
 
 import android.app.Activity;
-import android.app.usage.UsageEvents;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,16 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationSettingsStates;
-import com.squareup.picasso.Picasso;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Rachid on 13/04/2016.
@@ -38,11 +25,6 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
 
     public static Activity f;
 
-    //AÑADIDO: STATE
-    // -----------------------------------------------------------------------------------------
-    State state = new State();
-    // -----------------------------------------------------------------------------------------
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,9 +34,9 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
 
         //AÑADIDO: LOGIN
         // ----------------------------------------------------------------------------------------
-        Log.i(TAG, "ENTRO A L:getLoged: " + state.getLoged());
+        Log.i(TAG, "ENTRO A L:getLoged: " + MyState.getLoged());
 
-        if (!state.getLoged()) {
+        if (!MyState.getLoged()) {
             //Abrimos la base de datos
             DBActivity mDB_Activity = new DBActivity(this, null);
             SQLiteDatabase db = mDB_Activity.getReadableDatabase();
@@ -62,13 +44,13 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
                 Cursor c = db.rawQuery("SELECT * FROM Users", null);
                 if (c.moveToFirst()) {
                     if (c.getString(1) != null) {
-                        state.setLoged(true); // Usuario logeado
+                        MyState.setLoged(true); // Usuario logeado
                         if (c.getString(7) != null) {
-                            state.setExistsLocation(true); // Usuario con localizacion
+                            MyState.setExistsLocation(true); // Usuario con localizacion
                         }
-                        state.setUser(new User(c.getString(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7)));
+                        MyState.setUser(new User(c.getString(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7)));
 
-                        Log.i(TAG, "ENTRO A L:getLoged:EMAIL: " + state.getUser().getEmail() + ", LOCATION: " + state.getUser().getLocation());
+                        Log.i(TAG, "ENTRO A L:getLoged:EMAIL: " + MyState.getUser().getEmail() + ", LOCATION: " + MyState.getUser().getLocation());
                     }
                 }
                 c.close();
@@ -117,7 +99,7 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
         int id = item.getItemId();
 
         if (id == R.id.account) {
-            if (state.getLoged()) {
+            if (MyState.getLoged()) {
                 startActivity(new Intent(EventsActivity.this, ProfileActivity.class));
             } else {
                 startActivity(new Intent(EventsActivity.this, LoginActivity.class));

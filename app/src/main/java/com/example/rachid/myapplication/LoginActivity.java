@@ -9,7 +9,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -37,7 +36,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import android.database.sqlite.SQLiteDatabase;
 // ----------------------------------------------------------------------------------------
 
 // AÑADIDOS JAVA
@@ -114,9 +112,8 @@ public class LoginActivity extends AppCompatActivity implements
     private static final String TAG = "LoginActivity";
     private final Activity activity = this;
 
-    //AÑADIDO: STATE
+    //AÑADIDO: USER
     // -----------------------------------------------------------------------------------------
-    State state = new State();
     User user = new User();
     // -----------------------------------------------------------------------------------------
 
@@ -221,13 +218,13 @@ public class LoginActivity extends AppCompatActivity implements
                         user.setUrlImageProfile("https://graph.facebook.com/" + user.getID() + "/picture?width=400&height=400");
                         //user.setUrlImageProfile("https://graph.facebook.com/" + user.getID() + "/picture?width=120&height=120");
                         // Save the Location
-                        user.setLocation(state.getUser().getLocation());
+                        user.setLocation(MyState.getUser().getLocation());
 
                         //Insert or Update DataBase
                         MyDatabase.insertUser(TAG, activity, user);
 
-                        state.setUser(user);
-                        state.setLoged(true);
+                        MyState.setUser(user);
+                        MyState.setLoged(true);
 
                         if (MainActivity.f != null) {
                             MainActivity.f.finish();
@@ -235,7 +232,7 @@ public class LoginActivity extends AppCompatActivity implements
                         if (EventsActivity.f != null) {
                             EventsActivity.f.finish();
                         }
-                        if (state.getExistsLocation()) {
+                        if (MyState.getExistsLocation()) {
                             startActivity(new Intent(LoginActivity.this, EventsActivity.class));
                         } else {
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
@@ -403,14 +400,14 @@ public class LoginActivity extends AppCompatActivity implements
             }
             user.setUrlImageProfile(url_image_profile);
             // Save the location
-            user.setLocation(state.getUser().getLocation());
+            user.setLocation(MyState.getUser().getLocation());
             // ----------------------------------------------------------------------------------------
 
             //Insert or Update DataBase
             MyDatabase.insertUser(TAG, activity, user);
 
-            state.setUser(user);
-            state.setLoged(true);
+            MyState.setUser(user);
+            MyState.setLoged(true);
 
             // LogOut Google
             // --------------------------------------------------------------------------------
@@ -430,7 +427,7 @@ public class LoginActivity extends AppCompatActivity implements
             if (EventsActivity.f != null) {
                 EventsActivity.f.finish();
             }
-            if (state.getExistsLocation()) {
+            if (MyState.getExistsLocation()) {
                 startActivity(new Intent(LoginActivity.this, EventsActivity.class));
             } else {
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));

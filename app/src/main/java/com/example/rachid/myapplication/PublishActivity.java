@@ -2,8 +2,6 @@ package com.example.rachid.myapplication;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -12,24 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PublishActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     protected static final int REQUEST_CHECK_SETTINGS = 1000;
     private static final String TAG = "PublishActivity";
     private final Activity activity = this;
-
-    //AÑADIDO: STATE
-    // -----------------------------------------------------------------------------------------
-    State state = new State();
-    // -----------------------------------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,13 +62,13 @@ public class PublishActivity extends AppCompatActivity implements NavigationView
         int id = item.getItemId();
 
         if (id == R.id.main_page) {
-            if (state.getExistsLocation()) {
+            if (MyState.getExistsLocation()) {
                 startActivity(new Intent(PublishActivity.this, EventsActivity.class));
             } else {
                 startActivity(new Intent(PublishActivity.this, MainActivity.class));
             }
         } else if (id == R.id.account) {
-            if (state.getLoged()) {
+            if (MyState.getLoged()) {
                 startActivity(new Intent(PublishActivity.this, ProfileActivity.class));
             } else {
                 startActivity(new Intent(PublishActivity.this, LoginActivity.class));

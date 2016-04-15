@@ -2,15 +2,10 @@ package com.example.rachid.myapplication;
 
 // AÑADIDOS: ANDROID
 // ----------------------------------------------------------------------------------------
-import android.Manifest;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,14 +21,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 // Location
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.location.Location;
-import android.content.pm.PackageManager;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 import com.google.android.gms.location.LocationSettingsStates;
 import com.squareup.picasso.Picasso;
@@ -43,18 +30,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 // AÑADIDOS: GOOGLE
 // ----------------------------------------------------------------------------------------
-import com.google.android.gms.common.api.GoogleApiClient;
 
-import com.google.android.gms.common.api.ResultCallback;
-
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Status;
 //import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
+
 // ----------------------------------------------------------------------------------------
 
 
@@ -66,11 +44,6 @@ public class MainActivity extends AppCompatActivity implements
     private final Activity activity = this;
 
     public static Activity f;
-
-    //AÑADIDO: STATE
-    // -----------------------------------------------------------------------------------------
-    private State state = new State();
-    // -----------------------------------------------------------------------------------------
 
     //AÑADIDO: PROFILE
     // -----------------------------------------------------------------------------------------
@@ -96,9 +69,9 @@ public class MainActivity extends AppCompatActivity implements
 
         //AÑADIDO: LOGIN
         // ----------------------------------------------------------------------------------------
-        Log.i(TAG, "ENTRO A M:getLoged: " + state.getLoged());
+        Log.i(TAG, "ENTRO A M:getLoged: " + MyState.getLoged());
 
-        if (!state.getLoged()) {
+        if (!MyState.getLoged()) {
             //Abrimos la base de datos
             DBActivity mDB_Activity = new DBActivity(this, null);
             SQLiteDatabase db = mDB_Activity.getReadableDatabase();
@@ -106,13 +79,13 @@ public class MainActivity extends AppCompatActivity implements
                 Cursor c = db.rawQuery("SELECT * FROM Users", null);
                 if (c.moveToFirst()) {
                     if (c.getString(1) != null) {
-                        state.setLoged(true); // Usuario logeado
+                        MyState.setLoged(true); // Usuario logeado
                         if (c.getString(7) != null) {
-                            state.setExistsLocation(true); // Usuario con localizacion
+                            MyState.setExistsLocation(true); // Usuario con localizacion
                         }
-                        state.setUser(new User(c.getString(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7)));
+                        MyState.setUser(new User(c.getString(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7)));
 
-                        Log.i(TAG, "ENTRO A M:getLoged:EMAIL: " + state.getUser().getEmail() + ", LOCATION: " + state.getUser().getLocation());
+                        Log.i(TAG, "ENTRO A M:getLoged:EMAIL: " + MyState.getUser().getEmail() + ", LOCATION: " + MyState.getUser().getLocation());
                     }
                 }
                 c.close();
@@ -123,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // OPEN MainActivity OR EventsActivity
         // ----------------------------------------------------------------------------------------
-        if (state.getExistsLocation()) { // Si existe la localizacion pasar a la ventana de eventos
+        if (MyState.getExistsLocation()) { // Si existe la localizacion pasar a la ventana de eventos
             startActivity(new Intent(MainActivity.this, EventsActivity.class));
             //overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Cambiar la animacion
             finish();
@@ -133,19 +106,19 @@ public class MainActivity extends AppCompatActivity implements
 
         // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN or NAV_HEADER_LOGIN
         // ----------------------------------------------------------------------------------------
-        if (state.getLoged()) { // Si el usuario esta con sesion iniciada
+        if (MyState.getLoged()) { // Si el usuario esta con sesion iniciada
 
             navHeader = (NavigationView) findViewById(R.id.nav_view);
             navViewHeader = navHeader.inflateHeaderView(R.layout.nav_header_login);
 
             circleImageProfile = (CircleImageView) navViewHeader.findViewById(R.id.circle_image_profile);
-            Picasso.with(getApplicationContext()).load(state.getUser().getUrlImageProfile()).into(circleImageProfile);
+            Picasso.with(getApplicationContext()).load(MyState.getUser().getUrlImageProfile()).into(circleImageProfile);
 
             textUserName = (TextView) navViewHeader.findViewById(R.id.text_user_name);
-            textUserName.setText(state.getUser().getName());
+            textUserName.setText(MyState.getUser().getName());
 
             textUserEmail = (TextView) navViewHeader.findViewById(R.id.text_user_email);
-            textUserEmail.setText(state.getUser().getEmail());
+            textUserEmail.setText(MyState.getUser().getEmail());
 
             textUserLocation = (TextView) navViewHeader.findViewById(R.id.text_user_location);
             textUserLocation.setText("SIN LOCALIZACIÓN");
@@ -216,8 +189,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         Log.i(TAG, "ENTRO A M:onActivityResult:0");
-
-        final LocationSettingsStates states = LocationSettingsStates.fromIntent(data);
 
         switch (requestCode) {
             case REQUEST_CHECK_SETTINGS:
@@ -297,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         if (id == R.id.account) {
-            if (state.getLoged()) {
+            if (MyState.getLoged()) {
                 startActivity(new Intent(MainActivity.this, ProfileActivity.class));
             } else {
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));

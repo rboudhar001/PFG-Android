@@ -3,10 +3,7 @@ package com.example.rachid.myapplication;
 // AÑADIDOS: ANDROID
 // ----------------------------------------------------------------------------------------
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -29,11 +26,6 @@ public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "ProfileActivity";
     private final Activity activity = this;
 
-    //AÑADIDO: STATE
-    // -----------------------------------------------------------------------------------------
-    State state = new State();
-    // -----------------------------------------------------------------------------------------
-
     //AÑADIDO: PROFILE
     // -----------------------------------------------------------------------------------------
     private CircleImageView circleImageProfile;
@@ -48,34 +40,20 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        //AÑADIDO: BASE DE DATOS
-        // ----------------------------------------------------------------------------------------
-        //Abrimos la base de datos
-        DBActivity mDB_Activity = new DBActivity(this, null);
+        circleImageProfile = (CircleImageView) findViewById(R.id.circle_image_profile);
+        Picasso.with(getApplicationContext()).load(MyState.getUser().getUrlImageProfile()).into(circleImageProfile);
 
-        SQLiteDatabase db = mDB_Activity.getReadableDatabase();
-        if (db != null) {
+        textEditName = (TextView) findViewById(R.id.text_edit_name);
+        textEditName.setText(MyState.getUser().getName());
 
-            Cursor c = db.rawQuery("SELECT * FROM Users", null);
-            if (c.moveToFirst()) {
-                circleImageProfile = (CircleImageView) findViewById(R.id.circle_image_profile);
-                Picasso.with(getApplicationContext()).load(c.getString(6)).into(circleImageProfile);
+        textEditGender = (TextView) findViewById(R.id.text_edit_gender);
+        textEditGender.setText(MyState.getUser().getGender());
 
-                textEditName = (TextView) findViewById(R.id.text_edit_name);
-                textEditName.setText(c.getString(3));
+        textEditBirthday = (TextView) findViewById(R.id.text_edit_birthday);
+        textEditBirthday.setText(MyState.getUser().getBirthday());
 
-                textEditGender = (TextView) findViewById(R.id.text_edit_gender);
-                textEditGender.setText(c.getString(4));
-
-                textEditBirthday = (TextView) findViewById(R.id.text_edit_birthday);
-                textEditBirthday.setText(c.getString(5));
-
-                textEditEmail = (TextView) findViewById(R.id.text_edit_email);
-                textEditEmail.setText(c.getString(1));
-            }
-            c.close();
-            db.close();
-        }
+        textEditEmail = (TextView) findViewById(R.id.text_edit_email);
+        textEditEmail.setText(MyState.getUser().getEmail());
         // ----------------------------------------------------------------------------------------
     }
 
@@ -102,10 +80,10 @@ public class ProfileActivity extends AppCompatActivity {
         }
         else if (id == R.id.action_log_out) {
 
-            MyDatabase.deleteUser(TAG, activity, state.getUser());
+            MyDatabase.deleteUser(TAG, activity, MyState.getUser());
 
-            state.setUser(new User(state.getUser().getLocation()));
-            state.setLoged(false);
+            MyState.setUser(new User(MyState.getUser().getLocation()));
+            MyState.setLoged(false);
 
 
             if (MainActivity.f != null) {

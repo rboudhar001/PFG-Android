@@ -2,8 +2,6 @@ package com.example.rachid.myapplication;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,13 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Rachid on 25/03/2016.
@@ -28,11 +19,6 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
     protected static final int REQUEST_CHECK_SETTINGS = 1000;
     private static final String TAG = "SearchActivity";
     private final Activity activity = this;
-
-    //AÑADIDO: STATE
-    // -----------------------------------------------------------------------------------------
-    State state = new State();
-    // -----------------------------------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,13 +65,13 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         int id = item.getItemId();
 
         if (id == R.id.main_page) {
-            if (state.getExistsLocation()) {
+            if (MyState.getExistsLocation()) {
                 startActivity(new Intent(SearchActivity.this, EventsActivity.class));
             } else {
                 startActivity(new Intent(SearchActivity.this, MainActivity.class));
             }
         } else if (id == R.id.account) {
-            if (state.getLoged()) {
+            if (MyState.getLoged()) {
                 startActivity(new Intent(SearchActivity.this, ProfileActivity.class));
             } else {
                 startActivity(new Intent(SearchActivity.this, LoginActivity.class));
