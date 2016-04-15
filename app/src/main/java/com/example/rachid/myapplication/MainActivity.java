@@ -2,10 +2,15 @@ package com.example.rachid.myapplication;
 
 // AÑADIDOS: ANDROID
 // ----------------------------------------------------------------------------------------
+import android.Manifest;
+import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,14 +22,20 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+// Location
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.Location;
+import android.content.pm.PackageManager;
 
-import com.facebook.Profile;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+import com.google.android.gms.location.LocationSettingsStates;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -32,25 +43,29 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 // AÑADIDOS: GOOGLE
 // ----------------------------------------------------------------------------------------
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.plus.model.people.Person;
-import com.google.android.gms.plus.Plus;
+
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
+//import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 // ----------------------------------------------------------------------------------------
 
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
+    protected static final int REQUEST_CHECK_SETTINGS = 1000;
     private static final String TAG = "MainActivity";
+    private final Activity activity = this;
+
+    public static Activity f;
 
     //AÑADIDO: STATE
     // -----------------------------------------------------------------------------------------
@@ -60,26 +75,30 @@ public class MainActivity extends AppCompatActivity implements
     //AÑADIDO: PROFILE
     // -----------------------------------------------------------------------------------------
     private CircleImageView circleImageProfile;
-    private NavigationView navHeaderMain;
-    private View navViewHeaderMain;
+    private NavigationView navHeader;
+    private View navViewHeader;
     private TextView textUserName;
     private TextView textUserEmail;
     private TextView textUserLocation;
     // -----------------------------------------------------------------------------------------
 
-    //AÑADIDO: GEOLOCATION
+    //AÑADIDO: LOCATION
     // -----------------------------------------------------------------------------------------
     private Button buttonGeolocation;
+    private ImageButton imageButtonUpdateLocation;
     // -----------------------------------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        f = this;
 
         //AÑADIDO: LOGIN
         // ----------------------------------------------------------------------------------------
-        if (!state.getState()) {
+        Log.i(TAG, "ENTRO A M:getLoged: " + state.getLoged());
+
+        if (!state.getLoged()) {
             //Abrimos la base de datos
             DBActivity mDB_Activity = new DBActivity(this, null);
             SQLiteDatabase db = mDB_Activity.getReadableDatabase();
@@ -87,8 +106,13 @@ public class MainActivity extends AppCompatActivity implements
                 Cursor c = db.rawQuery("SELECT * FROM Users", null);
                 if (c.moveToFirst()) {
                     if (c.getString(1) != null) {
-                        state.setState(true);
+                        state.setLoged(true); // Usuario logeado
+                        if (c.getString(7) != null) {
+                            state.setExistsLocation(true); // Usuario con localizacion
+                        }
                         state.setUser(new User(c.getString(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7)));
+
+                        Log.i(TAG, "ENTRO A M:getLoged:EMAIL: " + state.getUser().getEmail() + ", LOCATION: " + state.getUser().getLocation());
                     }
                 }
                 c.close();
@@ -97,50 +121,46 @@ public class MainActivity extends AppCompatActivity implements
         }
         // ----------------------------------------------------------------------------------------
 
-        // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN
-        // -----------------------------------------------------------------------------------------
-        if (state.getState()) { // Si el usuario esta con sesion iniciada
+        // OPEN MainActivity OR EventsActivity
+        // ----------------------------------------------------------------------------------------
+        if (state.getExistsLocation()) { // Si existe la localizacion pasar a la ventana de eventos
+            startActivity(new Intent(MainActivity.this, EventsActivity.class));
+            //overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Cambiar la animacion
+            finish();
+        }
+        setContentView(R.layout.activity_main);
+        // ----------------------------------------------------------------------------------------
 
-            navHeaderMain = (NavigationView) findViewById(R.id.nav_view);
-            navViewHeaderMain = navHeaderMain.inflateHeaderView(R.layout.nav_header_main);
+        // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN or NAV_HEADER_LOGIN
+        // ----------------------------------------------------------------------------------------
+        if (state.getLoged()) { // Si el usuario esta con sesion iniciada
 
-            //AÑADIDO: BASE DE DATOS
-            // ----------------------------------------------------------------------------------------
-            //Abrimos la base de datos
-            DBActivity mDB_Activity = new DBActivity(this, null);
+            navHeader = (NavigationView) findViewById(R.id.nav_view);
+            navViewHeader = navHeader.inflateHeaderView(R.layout.nav_header_login);
 
-            SQLiteDatabase db = mDB_Activity.getReadableDatabase();
-            if (db != null) {
-                Cursor c = db.rawQuery("SELECT * FROM Users", null);
-                if (c.moveToFirst()) {
-                    circleImageProfile = (CircleImageView) navViewHeaderMain.findViewById(R.id.circle_image_profile);
-                    Picasso.with(getApplicationContext()).load(c.getString(6)).into(circleImageProfile);
+            circleImageProfile = (CircleImageView) navViewHeader.findViewById(R.id.circle_image_profile);
+            Picasso.with(getApplicationContext()).load(state.getUser().getUrlImageProfile()).into(circleImageProfile);
 
-                    textUserName = (TextView) navViewHeaderMain.findViewById(R.id.text_user_name);
-                    textUserName.setText(c.getString(3));
+            textUserName = (TextView) navViewHeader.findViewById(R.id.text_user_name);
+            textUserName.setText(state.getUser().getName());
 
-                    textUserEmail = (TextView) navViewHeaderMain.findViewById(R.id.text_user_email);
-                    textUserEmail.setText(c.getString(1));
+            textUserEmail = (TextView) navViewHeader.findViewById(R.id.text_user_email);
+            textUserEmail.setText(state.getUser().getEmail());
 
-                    textUserLocation = (TextView) navViewHeaderMain.findViewById(R.id.text_user_location);
-                    textUserLocation.setText("PEDIR_LOCALIZACIÓN");
-                }
-                c.close();
-                db.close();
-            }
-            // ----------------------------------------------------------------------------------------
+            textUserLocation = (TextView) navViewHeader.findViewById(R.id.text_user_location);
+            textUserLocation.setText("SIN LOCALIZACIÓN");
 
             // AÑADIDO: CLICK EVENT - CIRCLE_IMAGE_PROFILE
-            // ----------------------------------------------------------------------------------------
+            // ------------------------------------------------------------------------------------
             circleImageProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(MainActivity.this, ProfileActivity.class));
                 }
             });
-            //-----------------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------------
         }
-        // -----------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------
 
         //AÑADIDO: MENU
         // ----------------------------------------------------------------------------------------
@@ -165,21 +185,98 @@ public class MainActivity extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
         // ----------------------------------------------------------------------------------------
 
-        //AÑADIDO: GEOLOCATION
+        //AÑADIDO: LOCATION
         // ----------------------------------------------------------------------------------------
         buttonGeolocation = (Button) findViewById(R.id.button_geolocation);
         buttonGeolocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Llamar al metodo de geolocalización
 
+                Log.i(TAG, "ENTRO A M:buttonGeolocation:0");
 
+                MyLocation.location_function(TAG, activity, REQUEST_CHECK_SETTINGS);
 
+                Log.i(TAG, "ENTRO A M:buttonGeolocation:1");
+
+                if (MyLocation.isObtainedLocation()) {
+
+                    Log.i(TAG, "ENTRO A M:buttonGeolocation:2");
+
+                    startActivity(new Intent(MainActivity.this, EventsActivity.class));
+                    finish();
+                }
             }
         });
-
         // ----------------------------------------------------------------------------------------
     }
+
+    //AÑADIDO: LOCATION
+    // ----------------------------------------------------------------------------------------
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Log.i(TAG, "ENTRO A M:onActivityResult:0");
+
+        final LocationSettingsStates states = LocationSettingsStates.fromIntent(data);
+
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+
+                Log.i(TAG, "ENTRO A M:onActivityResult:1");
+
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        // All required changes were successfully made
+
+                        Log.i(TAG, "ENTRO A M:onActivityResult:2");
+
+                        MyLocation.location_function(TAG, activity, REQUEST_CHECK_SETTINGS);
+
+                        Log.i(TAG, "ENTRO A M:onActivityResult:3");
+
+                        if (MyLocation.isObtainedLocation()) {
+
+                            Log.i(TAG, "ENTRO A M:onActivityResult:4");
+
+                            startActivity(new Intent(MainActivity.this, EventsActivity.class));
+                            finish();
+                        }
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        // The user was asked to change settings, but chose not to
+                        MyLocation.disconnectGoogleApiClient();
+                        break;
+                    default:
+                        MyLocation.disconnectGoogleApiClient();
+                        break;
+                }
+                break;
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //MyLocation.disconnectGoogleApiClient();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //MyLocation.disconnectGoogleApiClient();
+    }
+    // ----------------------------------------------------------------------------------------
 
     //AÑADIDO: MENU
     // ----------------------------------------------------------------------------------------
@@ -200,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         if (id == R.id.account) {
-            if (state.getState()) {
+            if (state.getLoged()) {
                 startActivity(new Intent(MainActivity.this, ProfileActivity.class));
             } else {
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));

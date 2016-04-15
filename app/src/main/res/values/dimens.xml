@@ -8,11 +8,14 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <!-- AÑADIDO : Menu-->
+    <!-- AÑADIDO : Menu Main -->
+    <dimen name="text_size_location">20dp</dimen>
+
+    <!-- AÑADIDO : Menu Login -->
     <dimen name="circle_image">80dp</dimen>
     <dimen name="text_size_user_name">14dp</dimen>
     <dimen name="text_size_email_name">10dp</dimen>
-    <dimen name="text_size_user_location">12dp</dimen>
+    <dimen name="text_size_user_location">16dp</dimen>
 
     <!-- AÑADIDO : Geolocation -->
     <dimen name="geolocation_title">24sp</dimen>

@@ -4,20 +4,16 @@ import static android.Manifest.permission.READ_CONTACTS;
 
 // AÑADIDOS: ANDROID
 // ----------------------------------------------------------------------------------------
-import android.content.ContentValues;
-import android.content.IntentSender.SendIntentException;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
@@ -28,12 +24,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -49,10 +42,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 // AÑADIDOS JAVA
 // ----------------------------------------------------------------------------------------
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 // ----------------------------------------------------------------------------------------
@@ -66,19 +55,8 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.Profile;
-import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.facebook.GraphRequest;
@@ -94,11 +72,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.Plus;
 // ----------------------------------------------------------------------------------------
@@ -136,12 +112,12 @@ public class LoginActivity extends AppCompatActivity implements
     private View mScrollLoginFormView;
 
     private static final String TAG = "LoginActivity";
+    private final Activity activity = this;
 
     //AÑADIDO: STATE
     // -----------------------------------------------------------------------------------------
     State state = new State();
     User user = new User();
-    boolean location = false;
     // -----------------------------------------------------------------------------------------
 
     //AÑADIDO: GOOGLE
@@ -245,15 +221,26 @@ public class LoginActivity extends AppCompatActivity implements
                         user.setUrlImageProfile("https://graph.facebook.com/" + user.getID() + "/picture?width=400&height=400");
                         //user.setUrlImageProfile("https://graph.facebook.com/" + user.getID() + "/picture?width=120&height=120");
                         // Save the Location
-                        user.setLocation(null);
+                        user.setLocation(state.getUser().getLocation());
 
                         //Insert or Update DataBase
-                        dataBase(user);
+                        MyDatabase.insertUser(TAG, activity, user);
 
                         state.setUser(user);
-                        state.setState(true);
+                        state.setLoged(true);
 
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        if (MainActivity.f != null) {
+                            MainActivity.f.finish();
+                        }
+                        if (EventsActivity.f != null) {
+                            EventsActivity.f.finish();
+                        }
+                        if (state.getExistsLocation()) {
+                            startActivity(new Intent(LoginActivity.this, EventsActivity.class));
+                        } else {
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        }
+                        finish();
                         // ----------------------------------------------------------------------------------------
                     }
                 });
@@ -308,46 +295,6 @@ public class LoginActivity extends AppCompatActivity implements
         // ----------------------------------------------------------------------------------------
     }
 
-    // AÑADIDO : DATA BASE
-    // ----------------------------------------------------------------------------------------
-    public void dataBase(User user) {
-        //Abrimos la base de datos
-        DBActivity mDB_Activity = new DBActivity(getApplicationContext(), null);
-
-        SQLiteDatabase db = mDB_Activity.getReadableDatabase();
-        if (db != null) {
-            Cursor c = db.rawQuery("SELECT * FROM Users", null);
-            if (c.moveToFirst()) { // Comprobar que existe la localizacion del usuario
-                location = true;
-                user.setLocation(c.getString(7));
-            }
-            c.close();
-            db.close();
-        }
-
-        db = mDB_Activity.getWritableDatabase();
-        if (location) { //Existe la localizacion
-            if (db != null) {
-                //Actualizamos la cuenta
-                db.execSQL("UPDATE Users SET id=\'" + user.getID() + "\', email=\'" + user.getEmail() + "\', password=\'"
-                        + user.getPassword() + "\', name=\'" + user.getName() + "\', gender=\'" + user.getGender() + "\', birthday=\'"
-                        + user.getBirthday() + "\', image=\'" + user.getUrlImageProfile() + "\' WHERE location=\'" + user.getLocation() + "\'");
-                db.close();
-            }
-        }
-        else { // No existe la localizacion
-            if (db != null) {
-                //Insertamos la nueva cuenta
-                db.execSQL("INSERT INTO Users (id, email, password, name, gender, birthday, image, location) VALUES (\'"
-                        + user.getID() + "\', \'" +  user.getEmail() + "\', \'" + user.getPassword()  + "\', \'" + user.getName()
-                        + "\', \'" + user.getGender() + "\', \'" + user.getBirthday() + "\', \'" + user.getUrlImageProfile()
-                        + "\', \'" + user.getLocation() + "\')");
-                db.close();
-            }
-        }
-    }
-    // ----------------------------------------------------------------------------------------
-
     //AÑADIDO : GOOGLE
     // ----------------------------------------------------------------------------------------
     @Override
@@ -397,8 +344,6 @@ public class LoginActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.i(TAG, "ENTRO A 0");
-
         // GOOGLE
         if (requestCode == RC_GOOGLE) {
             loginGoogle(requestCode, resultCode, data);
@@ -426,7 +371,7 @@ public class LoginActivity extends AppCompatActivity implements
             Person personProfile = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
 
             // Save the ID
-            user.setID(null);
+            user.setID(acct.getId());
             // Save the Email
             user.setEmail(acct.getEmail());
             // Save the Name
@@ -458,14 +403,14 @@ public class LoginActivity extends AppCompatActivity implements
             }
             user.setUrlImageProfile(url_image_profile);
             // Save the location
-            user.setLocation(null);
+            user.setLocation(state.getUser().getLocation());
             // ----------------------------------------------------------------------------------------
 
             //Insert or Update DataBase
-            dataBase(user);
+            MyDatabase.insertUser(TAG, activity, user);
 
             state.setUser(user);
-            state.setState(true);
+            state.setLoged(true);
 
             // LogOut Google
             // --------------------------------------------------------------------------------
@@ -479,7 +424,18 @@ public class LoginActivity extends AppCompatActivity implements
             // --------------------------------------------------------------------------------
 
             // Re-direct to Main_Page
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            if (MainActivity.f != null) {
+                MainActivity.f.finish();
+            }
+            if (EventsActivity.f != null) {
+                EventsActivity.f.finish();
+            }
+            if (state.getExistsLocation()) {
+                startActivity(new Intent(LoginActivity.this, EventsActivity.class));
+            } else {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            }
+            finish();
         }
     }
 

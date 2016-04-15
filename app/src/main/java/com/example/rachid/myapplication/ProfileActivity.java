@@ -2,36 +2,20 @@ package com.example.rachid.myapplication;
 
 // AÑADIDOS: ANDROID
 // ----------------------------------------------------------------------------------------
-import android.app.ProgressDialog;
+import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 // ----------------------------------------------------------------------------------------
 
 // AÑADIDOS: GOOGLE
 // ----------------------------------------------------------------------------------------
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.plus.Plus;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -43,6 +27,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
+    private final Activity activity = this;
 
     //AÑADIDO: STATE
     // -----------------------------------------------------------------------------------------
@@ -117,29 +102,18 @@ public class ProfileActivity extends AppCompatActivity {
         }
         else if (id == R.id.action_log_out) {
 
-            //AÑADIDO: BASE DE DATOS
-            // ----------------------------------------------------------------------------------------
-            //Abrimos la base de datos
-            DBActivity mDB_Activity = new DBActivity(this, null);
+            MyDatabase.deleteUser(TAG, activity, state.getUser());
 
-            SQLiteDatabase db = mDB_Activity.getWritableDatabase();
-            if (db != null) {
-                /*
-                db.execSQL("UPDATE Users SET id=\'" + null + "\', email=\'" + null + "\', password=\'"
-                        + null + "\', name=\'" + null + "\', gender=\'" + null + "\', birthday=\'"
-                        + null + "\', image=\'" + null + "\' WHERE location=\'" + state.getUser().getLocation() + "\'");
-                */
-                db.execSQL("UPDATE Users SET id=" + null + ", email=" + null + ", password="
-                        + null + ", name=" + null + ", gender=" + null + ", birthday="
-                        + null + ", image=" + null + " WHERE location=\'" + state.getUser().getLocation() + "\'");
+            state.setUser(new User(state.getUser().getLocation()));
+            state.setLoged(false);
 
-                db.close();
+
+            if (MainActivity.f != null) {
+                MainActivity.f.finish();
             }
-            // ----------------------------------------------------------------------------------------
-
-            state.setUser(null);
-            state.setState(false);
-
+            if (EventsActivity.f != null) {
+                EventsActivity.f.finish();
+            }
             startActivity(new Intent(ProfileActivity.this, MainActivity.class));
             return true;
         }

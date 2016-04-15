@@ -2,6 +2,7 @@
     <string name="app_name">My Application</string>
 
     <!-- WINDOWS -->
+    <string name="title_activity_events">Eventos</string>
     <string name="title_activity_login">Iniciar sesión</string>
     <string name="title_activity_sign_up">Registrarse</string>
     <string name="title_activity_publish">Publicar</string>
@@ -27,7 +28,7 @@
     <!-- GEOLOCATION -->
     <string name="geolocation_title">¿Empezamos a buscar eventos?</string>
     <string name="know_the_events">¿Quieres conocer los eventos mas cercanos a ti?</string>
-    <string name="geolocation">USAR GEOLOCALIZACIÓN</string>
+    <string name="geolocation">ACTIVAR LOCALIZACIÓN</string>
 
     <!-- PROFILE -->
     <string name="text_name">Nombre</string>
@@ -37,6 +38,17 @@
     <string name="text_phone">Telefono</string>
     <string name="text_email">Email</string>
     <string name="text_change_password">Cambiar Contraseña</string>
+
+    <!-- MENU_MAIN -->
+    <string name="button_update_location">Actualizar localización</string>
+
+    <!-- MENU_LOGIN -->
+
+    <!-- MENU_INFO -->
+    <string name="button_help">Ayuda</string>
+    <string name="button_terms_of_service">Terminos de servicio</string>
+    <string name="button_privacy_policy">Politica de privacidad</string>
+    <string name="button_version">Versión</string>
 
     <!--AÑADIDO: FACEBOOK y GOOGLE-->
     <!-- *************************************************************************************** -->

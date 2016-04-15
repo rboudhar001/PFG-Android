@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/AZUL_CLARO_APP</item>
         <item name="colorPrimaryDark">@color/AZUL_CLARO_BAR</item>
         <item name="colorAccent">@color/ROJO</item>
+
+        <item name="android:windowAnimationStyle">@style/MyAnimation.Activity</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -15,5 +17,14 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- AÑADIDO -->
+    <!-- *************************************************************************************** -->
+    <!-- Animation -->
+    <style name="MyAnimation.Activity" parent="@android:style/Animation.Activity">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
+    <!-- *************************************************************************************** -->
 
 </resources>

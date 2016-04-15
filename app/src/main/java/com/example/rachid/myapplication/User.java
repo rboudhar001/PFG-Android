@@ -17,14 +17,10 @@ public class User {
     private String location;
 
     public User() {
-        id = "";
-        email = "";
-        password = "";
-        name = "";
-        gender = "";
-        birthday = "";
-        url_image_profile = "";
-        location = "";
+    }
+
+    public User(String location) {
+        this.location = location;
     }
 
     public User(String id, String email, String password, String name, String gender, String birthday, String url_image_profile, String location) {

@@ -5,7 +5,8 @@ package com.example.rachid.myapplication;
  */
 public class State {
 
-    private static boolean state;
+    private static boolean loged;
+    private static boolean existsLocation;
     private static User user = new User();
 
     public State(){
@@ -16,13 +17,22 @@ public class State {
         */
     }
 
-    // STATE
-    public void setState(boolean state) {
-        this.state = state;
+    // LOGED
+    public void setLoged(boolean loged) {
+        this.loged = loged;
     }
 
-    public boolean getState(){
-        return this.state;
+    public boolean getLoged(){
+        return this.loged;
+    }
+
+    // LOCATION
+    public void setExistsLocation(boolean location) {
+        this.existsLocation = location;
+    }
+
+    public boolean getExistsLocation(){
+        return this.existsLocation;
     }
 
     // USER
