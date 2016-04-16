@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements
 
     //AÑADIDO: LOCATION
     // -----------------------------------------------------------------------------------------
-    private Button buttonGeolocation;
+    private Button buttonUseLocation;
     private ImageButton imageButtonUpdateLocation;
     // -----------------------------------------------------------------------------------------
 
@@ -69,30 +70,37 @@ public class MainActivity extends AppCompatActivity implements
 
         //AÑADIDO: LOGIN
         // ----------------------------------------------------------------------------------------
-        Log.i(TAG, "ENTRO A M:getLoged: " + MyState.getLoged());
+        Log.i(TAG, "ENTRO A M:getLoged_1: " + MyState.getLoged());
+        Log.i(TAG, "ENTRO A M:getExistsLocation_1: " + MyState.getExistsLocation());
 
-        if (!MyState.getLoged()) {
+        if ( (!MyState.getLoged()) || (!MyState.getExistsLocation()) ){
             //Abrimos la base de datos
             DBActivity mDB_Activity = new DBActivity(this, null);
             SQLiteDatabase db = mDB_Activity.getReadableDatabase();
             if (db != null) {
                 Cursor c = db.rawQuery("SELECT * FROM Users", null);
                 if (c.moveToFirst()) {
-                    if (c.getString(1) != null) {
-                        MyState.setLoged(true); // Usuario logeado
-                        if (c.getString(7) != null) {
-                            MyState.setExistsLocation(true); // Usuario con localizacion
-                        }
-                        MyState.setUser(new User(c.getString(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7)));
 
-                        Log.i(TAG, "ENTRO A M:getLoged:EMAIL: " + MyState.getUser().getEmail() + ", LOCATION: " + MyState.getUser().getLocation());
+                    Log.i(TAG, "ENTRO A M:getLoged:EMAIL: " + c.getString(1) + ", LOCATION: " + c.getString(7));
+
+                    if (c.getString(1) != null) {
+                        Log.i(TAG, "ENTRO A M:getLoged: OBTENER_EMAIL");
+                        MyState.setLoged(true); // Usuario logeado
                     }
+                    if (c.getString(7) != null) {
+                        Log.i(TAG, "ENTRO A M:getExistsLocation: OBTENER_LOCALIZACION");
+                        MyState.setExistsLocation(true); // Usuario con localizacion
+                    }
+                    MyState.setUser(new User(c.getString(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7)));
                 }
                 c.close();
                 db.close();
             }
         }
         // ----------------------------------------------------------------------------------------
+
+        Log.i(TAG, "ENTRO A M:getLoged_2: " + MyState.getLoged());
+        Log.i(TAG, "ENTRO A M:getExistsLocation_2: " + MyState.getExistsLocation());
 
         // OPEN MainActivity OR EventsActivity
         // ----------------------------------------------------------------------------------------
@@ -121,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements
             textUserEmail.setText(MyState.getUser().getEmail());
 
             textUserLocation = (TextView) navViewHeader.findViewById(R.id.text_user_location);
-            textUserLocation.setText("SIN LOCALIZACIÓN");
+            textUserLocation.setText("___________________");
 
             // AÑADIDO: CLICK EVENT - CIRCLE_IMAGE_PROFILE
             // ------------------------------------------------------------------------------------
@@ -132,6 +140,17 @@ public class MainActivity extends AppCompatActivity implements
                 }
             });
             //-------------------------------------------------------------------------------------
+
+            //AÑADIDO: BUTTON_UPDATE_LOCATION
+            // ----------------------------------------------------------------------------------------
+            imageButtonUpdateLocation = (ImageButton) findViewById(R.id.nav_imageButton_update_location);
+            imageButtonUpdateLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(MainActivity.this, LocationActivity.class));
+                }
+            });
+            // ----------------------------------------------------------------------------------------
         }
         // ----------------------------------------------------------------------------------------
 
@@ -158,101 +177,23 @@ public class MainActivity extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
         // ----------------------------------------------------------------------------------------
 
-        //AÑADIDO: LOCATION
+        //AÑADIDO: BUTTON_USE_LOCATION
         // ----------------------------------------------------------------------------------------
-        buttonGeolocation = (Button) findViewById(R.id.button_geolocation);
-        buttonGeolocation.setOnClickListener(new View.OnClickListener() {
+        buttonUseLocation = (Button) findViewById(R.id.main_button_use_location);
+        buttonUseLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Log.i(TAG, "ENTRO A M:buttonGeolocation:0");
-
-                MyLocation.location_function(TAG, activity, REQUEST_CHECK_SETTINGS);
-
-                Log.i(TAG, "ENTRO A M:buttonGeolocation:1");
-
-                if (MyLocation.isObtainedLocation()) {
-
-                    Log.i(TAG, "ENTRO A M:buttonGeolocation:2");
-
-                    startActivity(new Intent(MainActivity.this, EventsActivity.class));
-                    finish();
-                }
+                startActivity(new Intent(MainActivity.this, LocationActivity.class));
             }
         });
         // ----------------------------------------------------------------------------------------
     }
 
-    //AÑADIDO: LOCATION
-    // ----------------------------------------------------------------------------------------
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        Log.i(TAG, "ENTRO A M:onActivityResult:0");
-
-        switch (requestCode) {
-            case REQUEST_CHECK_SETTINGS:
-
-                Log.i(TAG, "ENTRO A M:onActivityResult:1");
-
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        // All required changes were successfully made
-
-                        Log.i(TAG, "ENTRO A M:onActivityResult:2");
-
-                        MyLocation.location_function(TAG, activity, REQUEST_CHECK_SETTINGS);
-
-                        Log.i(TAG, "ENTRO A M:onActivityResult:3");
-
-                        if (MyLocation.isObtainedLocation()) {
-
-                            Log.i(TAG, "ENTRO A M:onActivityResult:4");
-
-                            startActivity(new Intent(MainActivity.this, EventsActivity.class));
-                            finish();
-                        }
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        // The user was asked to change settings, but chose not to
-                        MyLocation.disconnectGoogleApiClient();
-                        break;
-                    default:
-                        MyLocation.disconnectGoogleApiClient();
-                        break;
-                }
-                break;
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //mGoogleApiClient.connect();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        //MyLocation.disconnectGoogleApiClient();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //MyLocation.disconnectGoogleApiClient();
-    }
-    // ----------------------------------------------------------------------------------------
-
     //AÑADIDO: MENU
     // ----------------------------------------------------------------------------------------
     @Override
     public void onBackPressed() {
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);

@@ -32,33 +32,6 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
 
         f = this;
 
-        //AÑADIDO: LOGIN
-        // ----------------------------------------------------------------------------------------
-        Log.i(TAG, "ENTRO A L:getLoged: " + MyState.getLoged());
-
-        if (!MyState.getLoged()) {
-            //Abrimos la base de datos
-            DBActivity mDB_Activity = new DBActivity(this, null);
-            SQLiteDatabase db = mDB_Activity.getReadableDatabase();
-            if (db != null) {
-                Cursor c = db.rawQuery("SELECT * FROM Users", null);
-                if (c.moveToFirst()) {
-                    if (c.getString(1) != null) {
-                        MyState.setLoged(true); // Usuario logeado
-                        if (c.getString(7) != null) {
-                            MyState.setExistsLocation(true); // Usuario con localizacion
-                        }
-                        MyState.setUser(new User(c.getString(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7)));
-
-                        Log.i(TAG, "ENTRO A L:getLoged:EMAIL: " + MyState.getUser().getEmail() + ", LOCATION: " + MyState.getUser().getLocation());
-                    }
-                }
-                c.close();
-                db.close();
-            }
-        }
-        // ----------------------------------------------------------------------------------------
-
         //AÑADIDO MENU - LOGIN - LOCATION
         // ----------------------------------------------------------------------------------------
         MyMenu.onCreate(TAG, activity, REQUEST_CHECK_SETTINGS);

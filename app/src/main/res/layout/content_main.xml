@@ -75,9 +75,9 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/geolocation"
-                    android:id="@+id/button_geolocation"
-                    android:textSize="@dimen/geolocation"
+                    android:text="@string/button_use_location"
+                    android:id="@+id/main_button_use_location"
+                    android:textSize="@dimen/button_use_location"
                     android:textColor="@color/AZUL_CLARO_APP"
                     android:background="?android:attr/selectableItemBackground"
                     android:layout_gravity="center_horizontal"

@@ -3,6 +3,8 @@ package com.example.rachid.myapplication;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -32,7 +34,7 @@ public class MyMenu {
 
     //AÑADIDO: LOCATION
     // -----------------------------------------------------------------------------------------
-    private static ImageButton imageButtonDeleteLocation;
+    private static ImageButton imageButtonUpdateLocation;
     // -----------------------------------------------------------------------------------------
 
     public static void onCreate(String T, Activity A, int R){
@@ -71,21 +73,22 @@ public class MyMenu {
             circleImageProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    activity.getApplicationContext().startActivity(new Intent(activity, ProfileActivity.class));
+                    activity.startActivity(new Intent(activity, ProfileActivity.class));
+                    DrawerLayout drawer = (DrawerLayout) activity.findViewById(com.example.rachid.myapplication.R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
                 }
             });
             //-------------------------------------------------------------------------------------
 
             // AÑADIDO: CLICK EVENT - IMAGE BUTTON UPDATE LOCATION
             // ------------------------------------------------------------------------------------
-            imageButtonDeleteLocation = (ImageButton) navViewHeader.findViewById(com.example.rachid.myapplication.R.id.imageButton_delete_location);
-            imageButtonDeleteLocation.setOnClickListener(new View.OnClickListener() {
+            imageButtonUpdateLocation = (ImageButton) navViewHeader.findViewById(com.example.rachid.myapplication.R.id.nav_imageButton_update_location);
+            imageButtonUpdateLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MyLocation.delete(TAG, activity);
-
-                    EventsActivity.f.finish();
-                    activity.startActivity(new Intent(activity, MainActivity.class));
+                    activity.startActivity(new Intent(activity, LocationActivity.class));
+                    DrawerLayout drawer = (DrawerLayout) activity.findViewById(com.example.rachid.myapplication.R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
                 }
             });
             //-------------------------------------------------------------------------------------
@@ -93,21 +96,18 @@ public class MyMenu {
         else if (MyState.getExistsLocation()) {
 
             navHeader = (NavigationView) activity.findViewById(com.example.rachid.myapplication.R.id.nav_view);
-            navViewHeader = navHeader.inflateHeaderView(com.example.rachid.myapplication.R.layout.nav_header_main);
+            navViewHeader = navHeader.inflateHeaderView(com.example.rachid.myapplication.R.layout.nav_header_location);
 
             textUserLocation = (TextView) navViewHeader.findViewById(com.example.rachid.myapplication.R.id.text_user_location);
             textUserLocation.setText(MyState.getUser().getLocation());
 
             // AÑADIDO: CLICK EVENT - IMAGE BUTTON UPDATE LOCATION
             // ------------------------------------------------------------------------------------
-            imageButtonDeleteLocation = (ImageButton) navViewHeader.findViewById(com.example.rachid.myapplication.R.id.imageButton_delete_location);
-            imageButtonDeleteLocation.setOnClickListener(new View.OnClickListener() {
+            imageButtonUpdateLocation = (ImageButton) navViewHeader.findViewById(com.example.rachid.myapplication.R.id.nav_imageButton_update_location);
+            imageButtonUpdateLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MyLocation.delete(TAG, activity);
-
-                    EventsActivity.f.finish();
-                    activity.startActivity(new Intent(activity, MainActivity.class));
+                    activity.startActivity(new Intent(activity, LocationActivity.class));
                 }
             });
             //-------------------------------------------------------------------------------------

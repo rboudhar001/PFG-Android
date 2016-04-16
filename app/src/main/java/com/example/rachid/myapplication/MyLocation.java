@@ -2,9 +2,12 @@ package com.example.rachid.myapplication;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -12,6 +15,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -45,6 +52,9 @@ public abstract class MyLocation {
 
     private static boolean obtainedLocation = false;
 
+    private static ProgressDialog mProgressDialog;
+    private static ProgressBar progressBar;
+
     // Funciones
     public static void location_function(String T, Activity A, int R) {
 
@@ -54,19 +64,13 @@ public abstract class MyLocation {
 
         Log.i(TAG, "ENTRO A M:location_function:0");
 
-        locationManager = (LocationManager) activity.getSystemService(activity.getApplicationContext().LOCATION_SERVICE);
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(activity)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
 
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) { // Si el GPS esta activo
-            getLocation();
-        } else { // Si no, solicitar activar GPS
-            mGoogleApiClient = new GoogleApiClient
-                    .Builder(activity)
-                    .addApi(LocationServices.API)
-                    .build();
-            mGoogleApiClient.connect();
-
-            locationChecker(mGoogleApiClient, activity);
-        }
+        locationChecker(mGoogleApiClient, activity);
     }
 
     /**
@@ -108,6 +112,9 @@ public abstract class MyLocation {
 
                         Log.i(TAG, "ENTRO A M:locationChecker:3");
 
+                        showProgressDialog();
+                        getLocation();
+
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         // Location settings are not satisfied. But could be fixed by showing the user a dialog.
@@ -135,6 +142,8 @@ public abstract class MyLocation {
     public static void getLocation() {
 
         Log.i(TAG, "ENTRO A M:getLocation:0");
+
+        locationManager = (LocationManager) activity.getSystemService(activity.getApplicationContext().LOCATION_SERVICE);
 
         if ( locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) { // Si esta activo el GPS
 
@@ -166,6 +175,8 @@ public abstract class MyLocation {
 
                                         MyState.getUser().setLocation(city);
                                         MyState.setExistsLocation(true);
+
+                                        obtainedLocation = true;
                                     }
                                 }
 
@@ -179,7 +190,14 @@ public abstract class MyLocation {
                                     locationManager.removeUpdates(locationListener);
                                 }
 
-                                activity.startActivity(new Intent(activity, EventsActivity.class));
+                                hideProgressDialog();
+                                if (obtainedLocation) {
+                                    activity.startActivity(new Intent(activity, EventsActivity.class));
+                                    activity.finish();
+                                }
+                                else {
+                                    Toast.makeText(activity.getBaseContext(), "Impossible to detect the location", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
                     } catch (IOException e) {
@@ -220,45 +238,6 @@ public abstract class MyLocation {
                 // Register the listener with the Location Manager to receive location updates
                 locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
             }
-
-            location = locationManager.getLastKnownLocation(locationProvider);
-            if (location != null) {
-
-                try {
-                    Geocoder geoCoder = new Geocoder(activity.getApplicationContext(), Locale.getDefault());
-                    List<Address> list = geoCoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-
-                    if (list != null) {
-                        if (list.size() > 0) {
-                            Address address = list.get(0);
-                            String city = address.getLocality();
-
-                            Log.i(TAG, "ENTRO A M:getLocation:11");
-
-                            if (city != null) {
-
-                                Log.i(TAG, "ENTRO A M:getLocation:12");
-
-                                MyDatabase.insertLocation(TAG, activity, city);
-
-                                MyState.getUser().setLocation(city);
-                                MyState.setExistsLocation(true);
-
-                                obtainedLocation = true;
-                            }
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                if (mGoogleApiClient != null) {
-                    mGoogleApiClient.disconnect();
-                }
-
-                locationManager.removeUpdates(locationListener);
-                activity.startActivity(new Intent(activity, EventsActivity.class));
-            }
         }
     }
 
@@ -276,5 +255,25 @@ public abstract class MyLocation {
 
     public static void disconnectGoogleApiClient(){
         mGoogleApiClient.disconnect();
+    }
+
+    private static void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(activity);
+            mProgressDialog.setMessage(activity.getString(R.string.loading));
+            //mProgressDialog.setIndeterminate(true);
+        }
+        mProgressDialog.show();
+
+        mProgressDialog.setCancelable(false);
+        //mProgressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        //mProgressDialog.setContentView(R.layout.activity_location);
+    }
+
+    private static void hideProgressDialog() {
+
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.hide();
+        }
     }
 }

@@ -9,6 +9,7 @@
     <string name="title_activity_search">Buscar</string>
     <string name="title_activity_info">Información</string>
     <string name="title_activity_profile">Perfil</string>
+    <string name="title_activity_location">Localización</string>
     <string name="title_activity_settings">Opciones</string>
 
     <!-- LOGIN -->
@@ -25,10 +26,10 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="link_forgotten_password">¿Has olvidado tu contraseña?</string>
 
-    <!-- GEOLOCATION -->
+    <!-- MAIN ACTIVITY -->
     <string name="geolocation_title">¿Empezamos a buscar eventos?</string>
     <string name="know_the_events">¿Quieres conocer los eventos mas cercanos a ti?</string>
-    <string name="geolocation">ACTIVAR LOCALIZACIÓN</string>
+    <string name="button_use_location">ACTIVAR LOCALIZACIÓN</string>
 
     <!-- PROFILE -->
     <string name="text_name">Nombre</string>
@@ -50,9 +51,12 @@
     <string name="button_privacy_policy">Politica de privacidad</string>
     <string name="button_version">Versión</string>
 
+    <!-- LOCATION -->
+    <string name="button_use_my_current_location">Usar mi propia localización</string>
+    <string name="text_popular_location">Localizaciónes mas populares</string>
+
     <!--AÑADIDO: FACEBOOK y GOOGLE-->
     <!-- *************************************************************************************** -->
-
     <integer name="google_play_services_version">8298000</integer>
     <string name="loading">Cargando...</string>
     <string name="facebook_app_id">1592965991028641</string>
