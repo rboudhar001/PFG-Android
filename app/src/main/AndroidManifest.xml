@@ -56,11 +56,39 @@
         </activity>
 
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login"
+            android:name=".AccountActivity"
+            android:label="@string/title_activity_account"
+            android:noHistory="true"
             android:parentActivityName=".MainActivity">
 
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:noHistory="true"
+            android:parentActivityName=".AccountActivity">
+
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.AccountActivity" />
+        </activity>
+
+        <activity
+            android:name=".SignupActivity"
+            android:label="@string/title_activity_signup"
+            android:noHistory="true"
+            android:parentActivityName=".AccountActivity">
+
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.AccountActivity" />
+        </activity>
+
+        <activity
+            android:name=".ForgottenPasswordActivity"
+            android:label="@string/title_activity_forgotten_password"
+            android:noHistory="true"
+            android:parentActivityName=".LoginActivity">
+
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.LoginActivity" />
         </activity>
 
         <activity

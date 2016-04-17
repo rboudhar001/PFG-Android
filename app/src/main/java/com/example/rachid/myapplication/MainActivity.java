@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 
 // Location
 
-import com.google.android.gms.location.LocationSettingsStates;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -212,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements
             if (MyState.getLoged()) {
                 startActivity(new Intent(MainActivity.this, ProfileActivity.class));
             } else {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                startActivity(new Intent(MainActivity.this, AccountActivity.class));
             }
         } else if (id == R.id.publish) {
             startActivity(new Intent(MainActivity.this, PublishActivity.class));

@@ -175,9 +175,8 @@ public abstract class MyLocation {
 
                                         MyState.getUser().setLocation(city);
                                         MyState.setExistsLocation(true);
-
-                                        obtainedLocation = true;
                                     }
+                                    obtainedLocation = true;
                                 }
 
                                 if (mGoogleApiClient != null) {

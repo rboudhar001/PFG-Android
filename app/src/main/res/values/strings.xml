@@ -3,8 +3,10 @@
 
     <!-- WINDOWS -->
     <string name="title_activity_events">Eventos</string>
+    <string name="title_activity_account">Cuenta</string>
     <string name="title_activity_login">Iniciar sesión</string>
-    <string name="title_activity_sign_up">Registrarse</string>
+    <string name="title_activity_signup">Registrarse</string>
+    <string name="title_activity_forgotten_password">Contraseña olvidada</string>
     <string name="title_activity_publish">Publicar</string>
     <string name="title_activity_search">Buscar</string>
     <string name="title_activity_info">Información</string>
@@ -12,19 +14,30 @@
     <string name="title_activity_location">Localización</string>
     <string name="title_activity_settings">Opciones</string>
 
-    <!-- LOGIN -->
-    <string name="text_login">Inicia sesión</string>
+    <!-- ACCOUNT -->
+    <string name="account_text_account">Inicia sesión</string>
     <string name="or">O</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="login_button">INICIAR SESIÓN</string>
+    <string name="account_button_login_email">INICIA SESIÓN</string>
+    <string name="account_button_signup_email">REGISTRATE</string>
+
+    <!-- LOGIN -->
+    <string name="login_text_login">Inicia sesión</string>
+    <string name="login_button_login">Iniciar sesión</string>
+    <string name="login_button_forgotten_password">¿Has olvidado tu contraseña?</string>
+    <string name="login_button_no_account">¿No tienes un cuenta? Registrate</string>
+
+    <!-- SIGNUP -->
+    <string name="signup_text_signup">Registrate</string>
+
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
-    <string name="link_forgotten_password">¿Has olvidado tu contraseña?</string>
+
 
     <!-- MAIN ACTIVITY -->
     <string name="geolocation_title">¿Empezamos a buscar eventos?</string>

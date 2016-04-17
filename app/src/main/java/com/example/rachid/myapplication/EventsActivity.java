@@ -2,8 +2,6 @@ package com.example.rachid.myapplication;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -11,7 +9,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 /**
@@ -75,7 +72,7 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
             if (MyState.getLoged()) {
                 startActivity(new Intent(EventsActivity.this, ProfileActivity.class));
             } else {
-                startActivity(new Intent(EventsActivity.this, LoginActivity.class));
+                startActivity(new Intent(EventsActivity.this, AccountActivity.class));
             }
         } else if (id == R.id.publish) {
             startActivity(new Intent(EventsActivity.this, PublishActivity.class));

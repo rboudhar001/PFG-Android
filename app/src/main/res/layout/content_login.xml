@@ -42,7 +42,7 @@
                         android:layout_height="match_parent"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:id="@+id/text_info"
-                        android:text="@string/text_login"
+                        android:text="@string/login_text_login"
                         android:textSize="38sp"
                         android:textColor="@color/AZUL_CLARO_APP"
                         android:layout_alignParentTop="true"
@@ -51,85 +51,16 @@
                         android:editable="false" />
                 </RelativeLayout>
 
-                <RelativeLayout
-                    android:id="@+id/login_buttons_form"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="15dp" >
-
-                    <!-- AÑADIDO: LOGIN GOOGLE AND FACEBOOK -->
-                    <!-- ******************************************************** -->
-                    <com.google.android.gms.common.SignInButton
-                        android:id="@+id/login_google_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_margin="10dp" />
-
-                    <com.facebook.login.widget.LoginButton
-                        android:id="@+id/login_facebook_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_margin="10dp" />
-                    <!-- ******************************************************** -->
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/relative_separator"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp">
-
-                    <View
-                        android:layout_width="120dp"
-                        android:layout_height="1dp"
-                        android:background="@android:color/darker_gray"
-                        android:id="@+id/view_separator1"
-                        android:layout_marginLeft="20dp"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/text_or"
-                        android:layout_toEndOf="@+id/text_or">
-                    </View>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:id="@+id/text_or"
-                        android:text="@string/or"
-                        android:textColor="@color/AZUL_CLARO_APP"
-                        android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true" />
-
-                    <View
-                        android:layout_width="120dp"
-                        android:layout_height="1dp"
-                        android:background="@android:color/darker_gray"
-                        android:id="@+id/view_separator2"
-                        android:layout_marginRight="20dp"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@+id/text_or"
-                        android:layout_toStartOf="@+id/text_or">
-                    </View>
-                </RelativeLayout>
-
                 <LinearLayout
                     android:id="@+id/login_email_form"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_marginTop="10dp" >
+                    android:orientation="vertical" >
 
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginLeft="10dp">
 
@@ -168,34 +99,36 @@
                         style="?android:textAppearanceSmall"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="@string/login_button"
+                        android:text="@string/login_button_login"
                         android:textColor="@color/BLANCO"
                         android:textStyle="bold"
                         android:background="@color/AZUL_CLARO_APP"
                         android:layout_marginRight="10dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="15dp" />
-                </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/relative_text_no_account"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
-
-                    <TextView
+                    <Button
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="@string/link_forgotten_password"
-                        android:id="@+id/text_forget_password"
-                        android:textSize="18sp"
+                        android:id="@+id/login_button_forgotten_password"
+                        style="?android:textAppearanceSmall"
+                        android:text="@string/login_button_forgotten_password"
                         android:textColor="@color/AZUL_CLARO_APP"
-                        android:layout_marginTop="20dp"
-                        android:editable="false"
-                        android:gravity="center"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:layout_marginRight="10dp"
                         android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp" />
+                        android:layout_marginTop="15dp" />
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/login_button_no_account"
+                        style="?android:textAppearanceSmall"
+                        android:text="@string/login_button_no_account"
+                        android:textColor="@color/AZUL_CLARO_APP"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp" />
                 </LinearLayout>
 
             </LinearLayout>

@@ -71,7 +71,7 @@ public class PublishActivity extends AppCompatActivity implements NavigationView
             if (MyState.getLoged()) {
                 startActivity(new Intent(PublishActivity.this, ProfileActivity.class));
             } else {
-                startActivity(new Intent(PublishActivity.this, LoginActivity.class));
+                startActivity(new Intent(PublishActivity.this, AccountActivity.class));
             }
         } else if (id == R.id.search) {
             startActivity(new Intent(PublishActivity.this, SearchActivity.class));

@@ -79,7 +79,7 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
             if (MyState.getLoged()) {
                 startActivity(new Intent(InfoActivity.this, ProfileActivity.class));
             } else {
-                startActivity(new Intent(InfoActivity.this, LoginActivity.class));
+                startActivity(new Intent(InfoActivity.this, AccountActivity.class));
             }
         } else if (id == R.id.publish) {
             startActivity(new Intent(InfoActivity.this, PublishActivity.class));
