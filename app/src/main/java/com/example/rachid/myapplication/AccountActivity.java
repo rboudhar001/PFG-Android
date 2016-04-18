@@ -1,48 +1,15 @@
 package com.example.rachid.myapplication;
 
-import static android.Manifest.permission.READ_CONTACTS;
-
 // AÑADIDOS: ANDROID
 // ----------------------------------------------------------------------------------------
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
-
-// ----------------------------------------------------------------------------------------
-
-// AÑADIDOS JAVA
-// ----------------------------------------------------------------------------------------
-import java.util.ArrayList;
-import java.util.List;
 // ----------------------------------------------------------------------------------------
 
 // AÑADIDOS FACEBOOK
@@ -51,7 +18,6 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.LoginManager;
@@ -82,11 +48,12 @@ import com.google.android.gms.plus.Plus;
  * A login screen that offers login via email/password.
  */
 public class AccountActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener {
+        GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "LoginActivity";
     private final Activity activity = this;
+
+    public static Activity f;
 
     //AÑADIDO: USER
     // -----------------------------------------------------------------------------------------
@@ -95,9 +62,9 @@ public class AccountActivity extends AppCompatActivity implements
 
     //AÑADIDO: GOOGLE
     // ----------------------------------------------------------------------------------------
+    private SignInButton signInButtonLoginGoogle;
     private static final int RC_GOOGLE = 9001;
     private GoogleApiClient mGoogleApiClient;
-    private ProgressDialog mProgressDialog;
     // ----------------------------------------------------------------------------------------
 
     //AÑADIDO: FACEBOOK
@@ -117,18 +84,17 @@ public class AccountActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        f = this;
+
         //AÑADIDO FACEBOOK
         // ----------------------------------------------------------------------------------------
-        FacebookSdk.sdkInitialize(getApplicationContext(),9002);
+        FacebookSdk.sdkInitialize(getApplicationContext(), 9002);
         // ----------------------------------------------------------------------------------------
 
         setContentView(R.layout.activity_account);
 
         //AÑADIDO GOOGLE
         // ----------------------------------------------------------------------------------------
-        // Button listeners
-        findViewById(R.id.login_google_button).setOnClickListener(this);
-
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -155,9 +121,10 @@ public class AccountActivity extends AppCompatActivity implements
         // may be displayed when only basic profile is requested. Try adding the
         // Scopes.PLUS_LOGIN scope to the GoogleSignInOptions to see the
         // difference.
-        SignInButton signInButton = (SignInButton) findViewById(R.id.login_google_button);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setScopes(gso.getScopeArray());
+
+        signInButtonLoginGoogle = (SignInButton) findViewById(R.id.account_signInButton_login_google);
+        signInButtonLoginGoogle.setSize(SignInButton.SIZE_STANDARD);
+        signInButtonLoginGoogle.setScopes(gso.getScopeArray());
         // [END customize_button]
         //-----------------------------------------------------------------------------------------
 
@@ -243,7 +210,19 @@ public class AccountActivity extends AppCompatActivity implements
         });
         // ----------------------------------------------------------------------------------------
 
-        // BOTONOES - LOGIN/SIGNUP EMAIL
+        //AÑADIDO: onClick - BUTTON GOOGLE
+        // ----------------------------------------------------------------------------------------
+        signInButtonLoginGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "ENTRO A Account:onClick:0");
+                signIn();
+                Log.i(TAG, "ENTRO A Account:onClick:1");
+            }
+        });
+        // ----------------------------------------------------------------------------------------
+
+        // BUTTON - LOGIN/SIGNUP EMAIL
         // ----------------------------------------------------------------------------------------
         buttonLoginEmail = (Button) findViewById(R.id.account_button_login_email);
         buttonLoginEmail.setOnClickListener(new View.OnClickListener() {
@@ -265,19 +244,16 @@ public class AccountActivity extends AppCompatActivity implements
 
     //AÑADIDO : GOOGLE
     // ----------------------------------------------------------------------------------------
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.login_google_button:
-                signIn();
-                break;
-        }
-    }
-
     // [START signIn]
     private void signIn() {
+
+        Log.i(TAG, "ENTRO A Account:signIn:0");
+
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_GOOGLE);
+
+        Log.i(TAG, "ENTRO A Account:signIn:1");
+
     }
     // [END signIn]
 
@@ -286,39 +262,32 @@ public class AccountActivity extends AppCompatActivity implements
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Toast.makeText(getBaseContext(), "Error, connection failed", Toast.LENGTH_SHORT).show();
     }
     // ----------------------------------------------------------------------------------------
 
     //AÑADIDO : FACEBOOK
     // ----------------------------------------------------------------------------------------
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        // Facebook
-        // Logs 'install' and 'app activate' App Events.
-        AppEventsLogger.activateApp(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // Logs 'app deactivate' App Event.
-        AppEventsLogger.deactivateApp(this);
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Log.i(TAG, "ENTRO A Account:onActivityResult:0");
+
         super.onActivityResult(requestCode, resultCode, data);
 
         // GOOGLE
         if (requestCode == RC_GOOGLE) {
+
+            Log.i(TAG, "ENTRO A Account:onActivityResult:1");
+
             loginGoogle(requestCode, resultCode, data);
         }
 
         // FACEBOOK
         if (requestCode == RC_FACEBOOK) {
+
+            Log.i(TAG, "ENTRO A Account:onActivityResult:2");
+
             loginFacebook(requestCode, resultCode, data);
         }
     }
@@ -327,10 +296,12 @@ public class AccountActivity extends AppCompatActivity implements
     // LOGIN GOOGLE
     public void loginGoogle(int requestCode, int resultCode, Intent data) {
 
-        Log.i(TAG, "ENTRO A G.1");
+        Log.i(TAG, "ENTRO A Account:loginGoogle:0");
 
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
         if (result.isSuccess()) {
+
+            Log.i(TAG, "ENTRO A Account:loginGoogle:1");
 
             GoogleSignInAccount acct = result.getSignInAccount();
 
@@ -391,6 +362,8 @@ public class AccountActivity extends AppCompatActivity implements
                     });
             // --------------------------------------------------------------------------------
 
+            Log.i(TAG, "ENTRO A Account:loginGoogle:2");
+
             // Re-direct to Main_Page
             if (MainActivity.f != null) {
                 MainActivity.f.finish();
@@ -409,6 +382,9 @@ public class AccountActivity extends AppCompatActivity implements
 
     // LOGIN FACEBOOK
     public void loginFacebook(int requestCode, int resultCode, Intent data) {
+
+        Log.i(TAG, "ENTRO A Account:loginFacebook:0");
+
         callbackManager.onActivityResult(requestCode, resultCode, data);
 
         //LogOut Facebook

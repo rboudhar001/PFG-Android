@@ -13,6 +13,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -53,7 +54,6 @@ public abstract class MyLocation {
     private static boolean obtainedLocation = false;
 
     private static ProgressDialog mProgressDialog;
-    private static ProgressBar progressBar;
 
     // Funciones
     public static void location_function(String T, Activity A, int R) {
@@ -218,26 +218,28 @@ public abstract class MyLocation {
             };
 
             String locationProvider;
-            if ( locationManager.isProviderEnabled( LocationManager.NETWORK_PROVIDER ) ) { // Si la red esta activa
+            if ( isNetworkConnected() ) { // Si la red esta activa
                 // Use NETWORK location data:
                 locationProvider = LocationManager.NETWORK_PROVIDER;
+                Log.i(TAG, "ENTRO A M:BUSCANDO_POR_RED");
+
+                PackageManager packageManager = activity.getApplicationContext().getPackageManager();
+                if (packageManager.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
+                        activity.getApplicationContext().getPackageName()) == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.i(TAG, "ENTRO A M:getLocation:10");
+                    locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+                }
             } else{
-                // Use GPS location data:
-                locationProvider = LocationManager.GPS_PROVIDER;
-            }
-
-            Log.i(TAG, "ENTRO A M:getLocation:9");
-
-            PackageManager packageManager = activity.getApplicationContext().getPackageManager();
-            if (packageManager.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
-                    activity.getApplicationContext().getPackageName()) == PackageManager.PERMISSION_GRANTED) {
-
-                Log.i(TAG, "ENTRO A M:getLocation:10");
-
-                // Register the listener with the Location Manager to receive location updates
-                locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+                hideProgressDialog();
+                Toast.makeText(activity.getBaseContext(), "Not network connected, impossible to detect the location", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private static boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 
     public static void delete(String T, Activity A){

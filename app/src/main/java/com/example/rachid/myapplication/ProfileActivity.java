@@ -3,6 +3,8 @@ package com.example.rachid.myapplication;
 // AÑADIDOS: ANDROID
 // ----------------------------------------------------------------------------------------
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -80,23 +82,45 @@ public class ProfileActivity extends AppCompatActivity {
         }
         else if (id == R.id.action_log_out) {
 
-            MyDatabase.deleteUser(TAG, activity, MyState.getUser());
-
-            MyState.setUser(new User(MyState.getUser().getLocation()));
-            MyState.setLoged(false);
-
-
-            if (MainActivity.f != null) {
-                MainActivity.f.finish();
-            }
-            if (EventsActivity.f != null) {
-                EventsActivity.f.finish();
-            }
-            startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+            showAlertDialogForLogOut();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showAlertDialogForLogOut() {
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Logout");
+        dialog.setMessage("Are you sure you want to logout?");
+        dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setPositiveButton("Log Out", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                MyDatabase.deleteUser(TAG, activity, MyState.getUser());
+
+                MyState.setUser(new User(MyState.getUser().getLocation()));
+                MyState.setLoged(false);
+
+                if (MainActivity.f != null) {
+                    MainActivity.f.finish();
+                }
+                if (EventsActivity.f != null) {
+                    EventsActivity.f.finish();
+                }
+
+                dialog.dismiss();
+                startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+            }
+        });
+        dialog.show();
     }
     //-----------------------------------------------------------------------------------------
 }

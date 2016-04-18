@@ -60,7 +60,7 @@
                     <!-- AÑADIDO: LOGIN GOOGLE AND FACEBOOK -->
                     <!-- ******************************************************** -->
                     <com.google.android.gms.common.SignInButton
-                        android:id="@+id/login_google_button"
+                        android:id="@+id/account_signInButton_login_google"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
