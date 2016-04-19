@@ -18,57 +18,26 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
-
-// Location
-
-import com.squareup.picasso.Picasso;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 // ----------------------------------------------------------------------------------------
-
-// AÑADIDOS: GOOGLE
-// ----------------------------------------------------------------------------------------
-
-//import com.google.android.gms.location.LocationListener;
-
-// ----------------------------------------------------------------------------------------
-
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
-    protected static final int REQUEST_CHECK_SETTINGS = 1000;
     private static final String TAG = "MainActivity";
-    private final Activity activity = this;
+    public static Activity activity;
 
-    public static Activity f;
-
-    private boolean doubleBackToExitPressedOnce = false;
-
-    //AÑADIDO: PROFILE
+    //AÑADIDO: MENU
     // -----------------------------------------------------------------------------------------
-    private CircleImageView circleImageProfile;
-    private NavigationView navHeader;
-    private View navViewHeader;
-    private TextView textUserName;
-    private TextView textUserEmail;
-    private TextView textUserLocation;
+    public static MyMenu myMenu;
     // -----------------------------------------------------------------------------------------
 
-    //AÑADIDO: LOCATION
-    // -----------------------------------------------------------------------------------------
     private Button buttonUseLocation;
-    private ImageButton imageButtonUpdateLocation;
-    // -----------------------------------------------------------------------------------------
+    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        f = this;
 
         //AÑADIDO: LOGIN
         // ----------------------------------------------------------------------------------------
@@ -107,52 +76,32 @@ public class MainActivity extends AppCompatActivity implements
         // OPEN MainActivity OR EventsActivity
         // ----------------------------------------------------------------------------------------
         if (MyState.getExistsLocation()) { // Si existe la localizacion pasar a la ventana de eventos
+
+            Log.i(TAG, "ENTRO A Main:FINISH:0");
+
             startActivity(new Intent(MainActivity.this, EventsActivity.class));
             //overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Cambiar la animacion
-            finish();
+
+            Log.i(TAG, "ENTRO A Main:FINISH:1");
+
+            activity = null;
+
+            this.finish();
+            return;
+            //Log.i(TAG, "ENTRO A Main:FINISH:2");
         }
+        Log.i(TAG, "ENTRO A Main:FINISH:3");
+        activity = this;
+        myMenu = new MyMenu(activity);
+
+        Log.i(TAG, "ENTRO A Main:FINISH:4");
         setContentView(R.layout.activity_main);
         // ----------------------------------------------------------------------------------------
 
         // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN or NAV_HEADER_LOGIN
         // ----------------------------------------------------------------------------------------
-        if (MyState.getLoged()) { // Si el usuario esta con sesion iniciada
-
-            navHeader = (NavigationView) findViewById(R.id.nav_view);
-            navViewHeader = navHeader.inflateHeaderView(R.layout.nav_header_login);
-
-            circleImageProfile = (CircleImageView) navViewHeader.findViewById(R.id.circle_image_profile);
-            Picasso.with(getApplicationContext()).load(MyState.getUser().getUrlImageProfile()).into(circleImageProfile);
-
-            textUserName = (TextView) navViewHeader.findViewById(R.id.text_user_name);
-            textUserName.setText(MyState.getUser().getName());
-
-            textUserEmail = (TextView) navViewHeader.findViewById(R.id.text_user_email);
-            textUserEmail.setText(MyState.getUser().getEmail());
-
-            textUserLocation = (TextView) navViewHeader.findViewById(R.id.text_user_location);
-            textUserLocation.setText("___________________");
-
-            // AÑADIDO: CLICK EVENT - CIRCLE_IMAGE_PROFILE
-            // ------------------------------------------------------------------------------------
-            circleImageProfile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-                }
-            });
-            //-------------------------------------------------------------------------------------
-
-            //AÑADIDO: BUTTON_UPDATE_LOCATION
-            // ----------------------------------------------------------------------------------------
-            imageButtonUpdateLocation = (ImageButton) findViewById(R.id.nav_imageButton_update_location);
-            imageButtonUpdateLocation.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivity(new Intent(MainActivity.this, LocationActivity.class));
-                }
-            });
-            // ----------------------------------------------------------------------------------------
+        if (MyState.getLoged()) { // Si el usuario esta con sesion iniciada, cargamos el nav_header_login
+            myMenu.loadHeaderLogin();
         }
         // ----------------------------------------------------------------------------------------
 

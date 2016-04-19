@@ -1,7 +1,5 @@
 package com.example.rachid.myapplication;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager;
@@ -29,9 +27,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -354,31 +349,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
             Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground:0");
 
-            /*
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-            */
-
-            /*
-            for (String credential : DUMMY_CREDENTIALS) {
-
-                Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground:1");
-
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-
-                    Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground:2");
-
-                    // Account exists, return true if the password matches.
-                    return (pieces[1].equals(mPassword));
-                }
-            }
-            */
-
             User user = MyNetwork.loginUser(mEmail, mPassword); // Obtiene de la DB del servidor el usuario con el email y password dados
             if ( user != null) {
 
@@ -407,18 +377,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
                 Log.i(TAG, "ENTRO A Login:UserLoginTask:onPostExecute:1");
 
-                AccountActivity.f.finish();
+                AccountActivity.activity.finish();
 
-                if (MainActivity.f != null) {
-                    MainActivity.f.finish();
+                if (MainActivity.activity != null) {
+                    MainActivity.myMenu.loadHeaderLogin();
                 }
-                if (EventsActivity.f != null) {
-                    EventsActivity.f.finish();
-                }
-                if (MyState.getExistsLocation()) {
-                    startActivity(new Intent(LoginActivity.this, EventsActivity.class));
-                } else {
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                if (EventsActivity.activity != null) {
+                    EventsActivity.myMenu.loadHeaderLogin();
                 }
 
                 finish();

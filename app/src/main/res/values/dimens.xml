@@ -24,7 +24,7 @@
 
     <!-- AÑADIDO : Profile -->
     <dimen name="circle_image_profile">120dp</dimen>
-    <dimen name="text_about_me">32sp</dimen>
-    <dimen name="text_characteristics">16sp</dimen>
+    <dimen name="text_about_me">20sp</dimen>
+    <dimen name="profile_text_profile">16sp</dimen>
 
 </resources>

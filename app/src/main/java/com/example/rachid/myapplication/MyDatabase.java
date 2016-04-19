@@ -9,7 +9,7 @@ import android.util.Log;
 /**
  * Created by Rachid on 14/04/2016.
  */
-public class MyDatabase {
+public abstract class MyDatabase {
 
     // Variables
     private static String TAG;
@@ -201,11 +201,45 @@ public class MyDatabase {
                 valores.put("gender", user.getGender());
                 valores.put("birthday", user.getBirthday());
                 valores.put("image", user.getUrlImageProfile());
-                valores.put("location", (String)null);
+                valores.put("location", (String) null);
 
                 db.insert("Users", null, valores);
                 db.close();
             }
+        }
+    }
+
+    //
+    public static void updateUser(String T, Activity A, User user) {
+
+        TAG = T;
+        activity = A;
+
+        Log.i(TAG, "ENTRO A M:updateUser:0");
+
+        //Abrimos la base de datos
+        DBActivity mDB_Activity = new DBActivity(activity.getApplicationContext(), null);
+
+        SQLiteDatabase db = mDB_Activity.getWritableDatabase();
+        if (db != null) {
+
+            Log.i(TAG, "ENTRO A M:updateUser:1");
+
+            //Actualizamos la cuenta
+            ContentValues valores = new ContentValues();
+            valores.put("id", user.getID());
+            valores.put("email", user.getEmail());
+            valores.put("password", user.getPassword());
+            valores.put("name", user.getName());
+            valores.put("gender", user.getGender());
+            valores.put("birthday", user.getBirthday());
+            valores.put("image", user.getUrlImageProfile());
+            valores.put("location", user.getLocation());
+
+            String[] args = new String[]{user.getID()};
+            db.update("Users", valores, "id=?", args);
+
+            db.close();
         }
     }
 

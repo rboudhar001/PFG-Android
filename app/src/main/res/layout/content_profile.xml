@@ -36,17 +36,8 @@
                         android:clickable="true"
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="20dp" />
+                        android:layout_marginTop="30dp" />
                 </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"
-                    android:id="@+id/view_separator_1"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp" >
-                </View>
 
                 <LinearLayout
                     android:id="@+id/linear_info_profile"
@@ -62,9 +53,10 @@
                         android:text="@string/text_about_me"
                         android:textSize="@dimen/text_about_me"
                         android:textColor="@color/GRIS_1"
+                        android:gravity="center"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="20dp"
                         android:editable="false"
                         android:layout_gravity="center_horizontal|top"
                         android:layout_marginLeft="10dp"
@@ -73,124 +65,147 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
+                        android:orientation="vertical"
+                        android:background="@color/BLANCO"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:layout_marginTop="10dp">
+                        android:layout_marginTop="10dp" >
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceLarge"
-                                android:id="@+id/text_name"
-                                android:text="@string/text_name"
-                                android:textSize="@dimen/text_characteristics"
-                                android:textColor="@color/GRIS_1"
-                                android:editable="false" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceLarge"
-                                android:id="@+id/text_gener"
-                                android:text="@string/text_gender"
-                                android:textSize="@dimen/text_characteristics"
-                                android:textColor="@color/GRIS_1"
-                                android:editable="false"
-                                android:layout_marginTop="6dp" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceLarge"
-                                android:id="@+id/text_birthday"
-                                android:text="@string/text_birthday"
-                                android:textSize="@dimen/text_characteristics"
-                                android:textColor="@color/GRIS_1"
-                                android:editable="false"
-                                android:layout_marginTop="6dp" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceLarge"
-                                android:id="@+id/text_email"
-                                android:text="@string/text_email"
-                                android:textSize="@dimen/text_characteristics"
-                                android:textColor="@color/GRIS_1"
-                                android:editable="false"
-                                android:layout_marginTop="6dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:orientation="vertical" >
+                            android:padding="12dp"
+                            android:id="@+id/profile_relative_name"
+                            android:background="@drawable/profile_button_animation_personalice"
+                            android:clickable="true" >
 
                             <TextView
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceLarge"
-                                android:id="@+id/text_edit_name"
-                                android:text="NOMBRE"
-                                android:textSize="@dimen/text_characteristics"
-                                android:textColor="@color/ROJO"
-                                android:editable="true"
-                                android:gravity="end" />
+                                android:text="@string/text_name"
+                                android:layout_alignParentLeft="true"
+                                android:textSize="@dimen/profile_text_profile" />
 
                             <TextView
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceLarge"
-                                android:id="@+id/text_edit_gender"
-                                android:text="GENERO"
-                                android:textSize="@dimen/text_characteristics"
+                                android:layout_alignParentRight="true"
+                                android:id="@+id/profile_text_name"
+                                android:text="@string/text_cl_name"
                                 android:textColor="@color/ROJO"
-                                android:editable="true"
-                                android:layout_marginTop="6dp"
-                                android:gravity="end" />
+                                android:textSize="@dimen/profile_text_profile" />
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/GRIS_5"
+                            android:id="@+id/view_separator_1"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginRight="12dp">
+                        </View>
+
+                        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="12dp"
+                            android:id="@+id/profile_relative_gender"
+                            android:background="@drawable/profile_button_animation_personalice"
+                            android:clickable="true" >
 
                             <TextView
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceLarge"
-                                android:id="@+id/text_edit_birthday"
-                                android:text="CUMPLEAÑOS"
-                                android:textSize="@dimen/text_characteristics"
-                                android:textColor="@color/ROJO"
-                                android:editable="true"
-                                android:layout_marginTop="6dp"
-                                android:gravity="end" />
+                                android:text="@string/text_gender"
+                                android:layout_alignParentLeft="true"
+                                android:textSize="@dimen/profile_text_profile" />
 
                             <TextView
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceLarge"
-                                android:id="@+id/text_edit_email"
-                                android:text="EMAIL"
-                                android:textSize="@dimen/text_characteristics"
+                                android:layout_alignParentRight="true"
+                                android:id="@+id/profile_text_gender"
+                                android:text="@string/text_cl_gender"
                                 android:textColor="@color/ROJO"
-                                android:editable="true"
-                                android:layout_marginTop="6dp"
-                                android:gravity="end" />
-                        </LinearLayout>
+                                android:textSize="@dimen/profile_text_profile" />
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/GRIS_5"
+                            android:id="@+id/view_separator_2"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginRight="12dp">
+                        </View>
+
+                        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="12dp"
+                            android:id="@+id/profile_relative_birthday"
+                            android:background="@drawable/profile_button_animation_personalice"
+                            android:clickable="true" >
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/text_birthday"
+                                android:layout_alignParentLeft="true"
+                                android:textSize="@dimen/profile_text_profile" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:id="@+id/profile_text_birthday"
+                                android:text="@string/text_cl_birthday"
+                                android:textColor="@color/ROJO"
+                                android:textSize="@dimen/profile_text_profile" />
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/GRIS_5"
+                            android:id="@+id/view_separator_3"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginRight="12dp">
+                        </View>
+
+                        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="12dp"
+                            android:id="@+id/profile_relative_email"
+                            android:background="@drawable/profile_button_animation_personalice"
+                            android:clickable="true" >
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/text_email"
+                                android:layout_alignParentLeft="true"
+                                android:textSize="@dimen/profile_text_profile" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:id="@+id/profile_text_email"
+                                android:text="@string/text_cl_email"
+                                android:textColor="@color/ROJO"
+                                android:textSize="@dimen/profile_text_profile" />
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/GRIS_5"
+                            android:id="@+id/view_separator_4" >
+                        </View>
                     </LinearLayout>
                 </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"
-                    android:id="@+id/view_separator_2"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="30dp" >
-                </View>
 
                 <LinearLayout
                     android:id="@+id/linear_change_password_profile"
@@ -207,7 +222,7 @@
                         android:textColor="@color/BLANCO"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:layout_marginTop="20dp" />
+                        android:layout_marginTop="30dp" />
                 </LinearLayout>
 
             </LinearLayout>

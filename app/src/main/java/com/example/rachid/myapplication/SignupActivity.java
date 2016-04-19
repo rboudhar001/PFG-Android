@@ -27,6 +27,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -360,43 +361,26 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
 
             Log.i(TAG, "ENTRO A Signup:UserLoginTask:doInBackground:0");
 
-            /*
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-            */
-
-            /*
-            for (String credential : DUMMY_CREDENTIALS) {
-
-                Log.i(TAG, "ENTRO A Signup:UserLoginTask:doInBackground:1");
-
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-
-                    Log.i(TAG, "ENTRO A Signup:UserLoginTask:doInBackground:2");
-
-                    // Account exists, return true if the password matches.
-                    return (pieces[1].equals(mPassword));
-                }
-            }
-            */
-
             User user = new User();
+
+            //user.setID(MyDatabase.getNextID());
             user.setEmail(mEmail);
             user.setPassword(mPassword);
             user.setName(mFirstName + " " + mLastName);
-            if (MyNetwork.signupUser(user)) { // Guarda en la DB del servidor al usuario mandado como parametro y devuelve true o false, si se ha hecho o no
 
+            String id = MyNetwork.signupUser(user); //Insert MyNetwork
+            if (id != null) { // Guarda en la DB del servidor al usuario mandado como parametro y devuelve el id del usuario o null si no se ha registrado
+
+                MyState.getUser().setID(id);
                 MyDatabase.insertUser(TAG, activity, user);
 
                 MyState.setUser(user);
                 MyState.setLoged(true);
 
                 return true; // Account signup, return true
+            }
+            else {
+                Toast.makeText(getBaseContext(), "Error, no se ha podido registrar al usuario", Toast.LENGTH_SHORT).show();
             }
 
             return false;
@@ -414,27 +398,16 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
 
                 Log.i(TAG, "ENTRO A Signup:UserLoginTask:onPostExecute:1");
 
-                AccountActivity.f.finish();
+                AccountActivity.activity.finish();
 
-                if (MainActivity.f != null) {
-                    MainActivity.f.finish();
+                if (MainActivity.activity != null) {
+                    MainActivity.myMenu.loadHeaderLogin();
                 }
-                if (EventsActivity.f != null) {
-                    EventsActivity.f.finish();
-                }
-                if (MyState.getExistsLocation()) {
-                    startActivity(new Intent(SignupActivity.this, EventsActivity.class));
-                } else {
-                    startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                if (EventsActivity.activity != null) {
+                    EventsActivity.myMenu.loadHeaderLogin();
                 }
 
                 finish();
-            } else {
-
-                Log.i(TAG, "ENTRO A Signup:UserLoginTask:onPostExecute:2");
-
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
             }
         }
 

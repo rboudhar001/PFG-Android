@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -16,9 +15,6 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -49,7 +45,6 @@ public abstract class MyLocation {
     private static GoogleApiClient mGoogleApiClient;
     private static LocationManager locationManager;
     private static LocationListener locationListener;
-    private static Location location;
 
     private static boolean obtainedLocation = false;
 
@@ -175,6 +170,17 @@ public abstract class MyLocation {
 
                                         MyState.getUser().setLocation(city);
                                         MyState.setExistsLocation(true);
+
+                                        // --------------------------------------------------------------------------------
+                                        if (MainActivity.activity != null) {
+                                            Log.i(TAG, "ENTRO A Profile:EditLocation:0");
+                                            MainActivity.myMenu.updateLocation();
+                                        }
+                                        if (EventsActivity.activity != null){
+                                            Log.i(TAG, "ENTRO A Profile:EditLocation:1");
+                                            EventsActivity.myMenu.updateLocation();
+                                        }
+                                        // --------------------------------------------------------------------------------
                                     }
                                     obtainedLocation = true;
                                 }

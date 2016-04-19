@@ -51,9 +51,7 @@ public class AccountActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "LoginActivity";
-    private final Activity activity = this;
-
-    public static Activity f;
+    public static Activity activity;
 
     //AÑADIDO: USER
     // -----------------------------------------------------------------------------------------
@@ -84,7 +82,7 @@ public class AccountActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        f = this;
+        activity = this;
 
         //AÑADIDO FACEBOOK
         // ----------------------------------------------------------------------------------------
@@ -144,7 +142,7 @@ public class AccountActivity extends AppCompatActivity implements
                         // Get profile of facebook
                         //-------------------------------------------------------------------------
                         // Save the ID
-                        user.setID(object.optString("id"));
+                        user.setID(null);
                         // Save the Email
                         if (object.has("email")) {
                             user.setEmail(object.optString("email"));
@@ -164,29 +162,37 @@ public class AccountActivity extends AppCompatActivity implements
                             user.setBirthday(object.optString("birthday"));
                         }
                         // Save the Url Image Profile
-                        user.setUrlImageProfile("https://graph.facebook.com/" + user.getID() + "/picture?width=400&height=400");
+                        user.setUrlImageProfile("https://graph.facebook.com/" + object.optString("id") + "/picture?width=400&height=400");
                         //user.setUrlImageProfile("https://graph.facebook.com/" + user.getID() + "/picture?width=120&height=120");
                         // Save the Location
                         user.setLocation(MyState.getUser().getLocation());
 
-                        //Insert or Update DataBase
-                        MyDatabase.insertUser(TAG, activity, user);
+                        String id = MyNetwork.signupUser(user); //Insert MyNetwork
+                        if (id != null) {
 
-                        MyState.setUser(user);
-                        MyState.setLoged(true);
+                            Log.i(TAG, "ENTRO A Account:loginGoogle:2");
+                            user.setID(id);
 
-                        if (MainActivity.f != null) {
-                            MainActivity.f.finish();
-                        }
-                        if (EventsActivity.f != null) {
-                            EventsActivity.f.finish();
-                        }
-                        if (MyState.getExistsLocation()) {
-                            startActivity(new Intent(AccountActivity.this, EventsActivity.class));
+                            //Insert or Update DataBase
+                            MyDatabase.insertUser(TAG, activity, user);
+
+                            //Update local data
+                            MyState.setUser(user);
+                            MyState.setLoged(true);
+
+                            AccountActivity.activity.finish();
+
+                            if (MainActivity.activity != null) {
+                                MainActivity.myMenu.loadHeaderLogin();
+                            }
+                            if (EventsActivity.activity != null) {
+                                EventsActivity.myMenu.loadHeaderLogin();
+                            }
+
+                            finish();
                         } else {
-                            startActivity(new Intent(AccountActivity.this, MainActivity.class));
+                            Toast.makeText(getBaseContext(), "Error, no se ha podido registrar al usuario", Toast.LENGTH_SHORT).show();
                         }
-                        finish();
                         // ----------------------------------------------------------------------------------------
                     }
                 });
@@ -310,7 +316,7 @@ public class AccountActivity extends AppCompatActivity implements
             Person personProfile = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
 
             // Save the ID
-            user.setID(acct.getId());
+            user.setID(null);
             // Save the Email
             user.setEmail(acct.getEmail());
             // Save the Name
@@ -323,8 +329,7 @@ public class AccountActivity extends AppCompatActivity implements
                 int g = personProfile.getGender();
                 if (g == 0) {
                     gender = "Hombre";
-                }
-                else if (g == 1) {
+                } else if (g == 1) {
                     gender = "Mujer";
                 }
             }
@@ -345,12 +350,6 @@ public class AccountActivity extends AppCompatActivity implements
             user.setLocation(MyState.getUser().getLocation());
             // ----------------------------------------------------------------------------------------
 
-            //Insert or Update DataBase
-            MyDatabase.insertUser(TAG, activity, user);
-
-            MyState.setUser(user);
-            MyState.setLoged(true);
-
             // LogOut Google
             // --------------------------------------------------------------------------------
             Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
@@ -362,21 +361,31 @@ public class AccountActivity extends AppCompatActivity implements
                     });
             // --------------------------------------------------------------------------------
 
-            Log.i(TAG, "ENTRO A Account:loginGoogle:2");
+            //Insert MyNetwork
+            String id = MyNetwork.signupUser(user);
+            if (id != null) {
 
-            // Re-direct to Main_Page
-            if (MainActivity.f != null) {
-                MainActivity.f.finish();
-            }
-            if (EventsActivity.f != null) {
-                EventsActivity.f.finish();
-            }
-            if (MyState.getExistsLocation()) {
-                startActivity(new Intent(AccountActivity.this, EventsActivity.class));
+                Log.i(TAG, "ENTRO A Account:loginGoogle:2");
+                user.setID(id);
+
+                //Insert or Update DataBase
+                MyDatabase.insertUser(TAG, activity, user);
+
+                //Update local data
+                MyState.setUser(user);
+                MyState.setLoged(true);
+
+                if (MainActivity.activity != null) {
+                    MainActivity.myMenu.loadHeaderLogin();
+                }
+                if (EventsActivity.activity != null) {
+                    EventsActivity.myMenu.loadHeaderLogin();
+                }
+
+                finish();
             } else {
-                startActivity(new Intent(AccountActivity.this, MainActivity.class));
+                Toast.makeText(getBaseContext(), "Error, no se ha podido registrar al usuario", Toast.LENGTH_SHORT).show();
             }
-            finish();
         }
     }
 

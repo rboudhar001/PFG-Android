@@ -7,6 +7,22 @@ public abstract class MyNetwork {
 
     private static User user;
 
+    //
+    public static String signupUser(User mUser) {
+
+        if (mUser != null) {
+
+            // TODO: Accede al servidor y guarda en la DB este nuevo usuario
+            // ---------------------------------------------------------------------------------------
+            // ---------------------------------------------------------------------------------------
+
+            return "";
+        }
+
+        return null;
+    }
+
+    //
     public static User loginUser(String mEmail, String mPassword) {
 
         user = null;
@@ -18,11 +34,12 @@ public abstract class MyNetwork {
         return user;
     }
 
-    public static boolean signupUser(User mUser) {
+    //
+    public static boolean updateUser(User mUser) {
 
         if (mUser != null) {
 
-            // TODO: Accede al servidor y guarda en la DB este nuevo usuario
+            // TODO: Accede al servidor y actualiza en la DB el usuario pasado como parametro
             // ---------------------------------------------------------------------------------------
             // ---------------------------------------------------------------------------------------
 

@@ -18,11 +18,14 @@ import android.widget.Toast;
  */
 public class EventsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    protected static final int REQUEST_CHECK_SETTINGS = 1000;
+    private static final int REQUEST_CHECK_SETTINGS = 1000;
     private static final String TAG = "EventsActivity";
-    private final Activity activity = this;
+    public static Activity activity;
 
-    public static Activity f;
+    //AÑADIDO: MENU
+    // -----------------------------------------------------------------------------------------
+    public static MyMenu myMenu;
+    // -----------------------------------------------------------------------------------------
 
     private boolean doubleBackToExitPressedOnce = false;
 
@@ -31,11 +34,17 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        f = this;
+        activity = this;
+        myMenu = new MyMenu(activity);
 
-        //AÑADIDO MENU - LOGIN - LOCATION
+        // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN or NAV_HEADER_LOGIN
         // ----------------------------------------------------------------------------------------
-        MyMenu.onCreate(TAG, activity, REQUEST_CHECK_SETTINGS);
+        if (MyState.getLoged()) { // Si el usuario esta con sesion iniciada, cargamos el nav_header_login
+            myMenu.loadHeaderLogin();
+        }
+        else if (MyState.getExistsLocation()) {
+            myMenu.loadHeaderLocation();
+        }
         // ----------------------------------------------------------------------------------------
 
         //AÑADIDO MENU

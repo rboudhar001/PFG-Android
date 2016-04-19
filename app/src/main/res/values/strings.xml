@@ -38,6 +38,8 @@
 
     <string name="action_login_short">Login</string>
     <string name="action_sign_up_short">Sign up</string>
+    <string name="action_done_short">Done</string>
+
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
@@ -52,17 +54,40 @@
 
     <!-- PROFILE -->
     <string name="text_name">Nombre</string>
+    <string name="text_cl_name">NOMBRE</string>
     <string name="text_about_me">Información</string>
+    <string name="text_cl_about_me">INFORMACIÓN</string>
     <string name="text_gender">Genero</string>
+    <string name="text_cl_gender">GENERO</string>
     <string name="text_birthday">Cumpleaños</string>
+    <string name="text_cl_birthday">CUMPLEAÑOS</string>
     <string name="text_phone">Telefono</string>
+    <string name="text_cl_phone">TELEFONO</string>
     <string name="text_email">Email</string>
+    <string name="text_cl_email">EMAIL</string>
     <string name="text_change_password">Cambiar Contraseña</string>
 
-    <!-- MENU_MAIN -->
-    <string name="button_update_location">Actualizar localización</string>
+    <string name="text_male">Hombre</string>
+    <string name="text_female">Mujer</string>
+    <string name="text_other">Otro</string>
+
+    <string name="text_cancel">Cancelar</string>
+    <string name="text_done">Ok</string>
+    <string name="text_logout">Logout</string>
+    <string name="text_log_out">Log Out</string>
+    <string name="text_are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
+
+    <string name="error_could_not_update_name">Error, no se ha podido actualizar el nombre</string>
+    <string name="error_could_not_update_gender">Error, no se ha podido actualizar el genero</string>
+    <string name="error_could_not_update_birthday">Error, no se ha podido actualizar el cumpleaños</string>
+    <string name="error_could_not_update_email">Error, no se ha podido actualizar el email</string>
 
     <!-- MENU_LOGIN -->
+    <string name="text_not_exists_location">___________________</string>
+
+    <!-- MENU_LOCATION -->
+    <string name="button_update_location">Actualizar localización</string>
+
 
     <!-- MENU_INFO -->
     <string name="button_help">Ayuda</string>

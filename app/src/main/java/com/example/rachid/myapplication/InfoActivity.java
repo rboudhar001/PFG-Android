@@ -16,18 +16,30 @@ import android.view.MenuItem;
  */
 public class InfoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    protected static final int REQUEST_CHECK_SETTINGS = 1000;
     private static final String TAG = "InfoActivity";
-    private final Activity activity = this;
+    public static Activity activity;
+
+    //AÑADIDO: MENU
+    // -----------------------------------------------------------------------------------------
+    public static MyMenu myMenu;
+    // -----------------------------------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
-        //AÑADIDO MENU - LOGIN - LOCATION
+        activity = this;
+        myMenu = new MyMenu(activity);
+
+        // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN or NAV_HEADER_LOGIN
         // ----------------------------------------------------------------------------------------
-        MyMenu.onCreate(TAG, activity, REQUEST_CHECK_SETTINGS);
+        if (MyState.getLoged()) { // Si el usuario esta con sesion iniciada, cargamos el nav_header_login
+            myMenu.loadHeaderLogin();
+        }
+        else if (MyState.getExistsLocation()) {
+            myMenu.loadHeaderLocation();
+        }
         // ----------------------------------------------------------------------------------------
 
         //AÑADIDO MENU
@@ -46,12 +58,12 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
         //-----------------------------------------------------------------------------------------
     }
 
-    // AÑADIDO LISTA
+    // AÑADIDO: LISTA
     // ----------------------------------------------------------------------------------------
 
     // ----------------------------------------------------------------------------------------
 
-    //AÑADIDO MENU
+    //AÑADIDO: MENU
     // ----------------------------------------------------------------------------------------
     @Override
     public void onBackPressed() {
