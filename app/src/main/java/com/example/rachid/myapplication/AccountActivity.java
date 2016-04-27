@@ -42,6 +42,7 @@ import com.google.android.gms.common.api.Status;
 
 import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.vision.barcode.Barcode;
 // ----------------------------------------------------------------------------------------
 
 /**
@@ -147,20 +148,45 @@ public class AccountActivity extends AppCompatActivity implements
                         if (object.has("email")) {
                             user.setEmail(object.optString("email"));
                         }
+                        // Save the User_Name
+                        if (object.has("name")) {
+                            user.setUserName(object.optString("name"));
+                        }
                         // Save the Password
                         user.setPassword(null);
                         // Save the Name
-                        if (object.has("first_name") && object.has("last_name")) {
-                            user.setName(object.optString("first_name") + " " + object.optString("last_name"));
+                        if (object.has("first_name")) {
+                            user.setName(object.optString("first_name"));
+                        }
+                        // Save the Surname
+                        if (object.has("last_name")) {
+                            user.setSurname(object.optString("last_name"));
                         }
                         // Save the Gender
                         if (object.has("gender")) {
                             user.setGender(object.optString("gender"));
                         }
+                        // Save the Gender
+                        if (object.has("gender")) {
+                            String g = object.optString("gender");
+                            if (g.equals("male")) {
+                                user.setGender(getString(R.string.text_male));
+                            } else if (g.equals("female")) {
+                                user.setGender(getString(R.string.text_female));
+                            } else {
+                                user.setGender(getString(R.string.text_other));
+                            }
+                        }
                         // Save the Birthday
                         if (object.has("birthday")) {
                             user.setBirthday(object.optString("birthday"));
                         }
+                        // Save the Place
+                        if (object.has("locale")) {
+                            user.setPlace(object.optString("locale"));
+                        }
+                        // Save the Music Style
+                        user.setMusicStyle(null);
                         // Save the Url Image Profile
                         user.setUrlImageProfile("https://graph.facebook.com/" + object.optString("id") + "/picture?width=400&height=400");
                         //user.setUrlImageProfile("https://graph.facebook.com/" + user.getID() + "/picture?width=120&height=120");
@@ -180,8 +206,6 @@ public class AccountActivity extends AppCompatActivity implements
                             MyState.setUser(user);
                             MyState.setLoged(true);
 
-                            AccountActivity.activity.finish();
-
                             if (MainActivity.activity != null) {
                                 MainActivity.myMenu.loadHeaderLogin();
                             }
@@ -197,7 +221,7 @@ public class AccountActivity extends AppCompatActivity implements
                     }
                 });
                 Bundle parameters = new Bundle();
-                parameters.putString("fields", "id, first_name, last_name, email, gender, birthday"); // Parámetros que pedimos a facebook
+                parameters.putString("fields", "id, email, name, first_name, last_name, gender, birthday, location"); // Parámetros que pedimos a facebook
                 request.setParameters(parameters);
                 request.executeAsync();
             }
@@ -314,39 +338,60 @@ public class AccountActivity extends AppCompatActivity implements
             // Get Profile of Google
             //-------------------------------------------------------------------------
             Person personProfile = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+            Person.Name name = personProfile.getName();;
 
             // Save the ID
             user.setID(null);
             // Save the Email
             user.setEmail(acct.getEmail());
-            // Save the Name
+            // Save the User Name
+            user.setUserName(acct.getDisplayName());
+            /*
+            if (personProfile.hasNickname()) {
+                user.setUserName(personProfile.getNickname());
+            }
+            */
+            // Save the Password
             user.setPassword(null);
             // Save the Name
-            user.setName(acct.getDisplayName());
+            if (name.hasGivenName() && name.hasMiddleName()) { // it's not guaranteed
+                user.setName(name.getGivenName() + " " + name.getMiddleName());
+            } else if (name.hasGivenName()) {
+                user.setName(name.getGivenName());
+            } else if (name.hasMiddleName()) {
+                user.setName(name.getMiddleName());
+            }
+            // Save the Surname
+            if (name.hasFamilyName()) { // it's not guaranteed
+                user.setSurname(name.getFamilyName());
+            }
             // Save the Gender
-            String gender = "Otro";
-            if (personProfile.hasGender()) { // it's not guaranteed
+            if (personProfile.hasGender()) {
                 int g = personProfile.getGender();
                 if (g == 0) {
-                    gender = "Hombre";
+                    user.setGender(getString(R.string.text_male));
                 } else if (g == 1) {
-                    gender = "Mujer";
+                    user.setGender(getString(R.string.text_female));
+                } else {
+                    user.setGender(getString(R.string.text_other));
                 }
             }
-            user.setGender(gender);
-            // Save the birthday
-            String birthday = "";
+            // Save the Birthday
             if (personProfile.hasBirthday()) { // it's not guaranteed
-                birthday = personProfile.getBirthday();
+                user.setBirthday(personProfile.getBirthday());
             }
-            user.setBirthday(birthday);
+            // Save the Place
+            if (personProfile.hasCurrentLocation()) { // it's not guaranteed
+                user.setPlace(personProfile.getCurrentLocation());
+            }
+            // Save the Music Style
+            user.setMusicStyle(null);
             // Save the Url Image Profile
-            String url_image_profile = "";
             if (personProfile.hasImage()) {
-                url_image_profile = personProfile.getImage().getUrl();
+                user.setUrlImageProfile(personProfile.getImage().getUrl());
+                //user.setUrlImageProfile(acct.getPhotoUrl().toString());
             }
-            user.setUrlImageProfile(url_image_profile);
-            // Save the location
+            // Save the Location
             user.setLocation(MyState.getUser().getLocation());
             // ----------------------------------------------------------------------------------------
 

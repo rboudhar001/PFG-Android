@@ -44,34 +44,11 @@ public class MainActivity extends AppCompatActivity implements
         Log.i(TAG, "ENTRO A M:getLoged_1: " + MyState.getLoged());
         Log.i(TAG, "ENTRO A M:getExistsLocation_1: " + MyState.getExistsLocation());
 
-        if ( (!MyState.getLoged()) || (!MyState.getExistsLocation()) ){
-            //Abrimos la base de datos
-            DBActivity mDB_Activity = new DBActivity(this, null);
-            SQLiteDatabase db = mDB_Activity.getReadableDatabase();
-            if (db != null) {
-                Cursor c = db.rawQuery("SELECT * FROM Users", null);
-                if (c.moveToFirst()) {
-
-                    Log.i(TAG, "ENTRO A M:getLoged:EMAIL: " + c.getString(1) + ", LOCATION: " + c.getString(7));
-
-                    if (c.getString(1) != null) {
-                        Log.i(TAG, "ENTRO A M:getLoged: OBTENER_EMAIL");
-                        MyState.setLoged(true); // Usuario logeado
-                    }
-                    if (c.getString(7) != null) {
-                        Log.i(TAG, "ENTRO A M:getExistsLocation: OBTENER_LOCALIZACION");
-                        MyState.setExistsLocation(true); // Usuario con localizacion
-                    }
-                    MyState.setUser(new User(c.getString(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7)));
-                }
-                c.close();
-                db.close();
-            }
+        if ( (!MyState.getLoged()) || (!MyState.getExistsLocation()) ){ // Si no estoy logeado o no tengo la localizacion
+            // Intentar inicializar de la DB
+            MyDatabase.inicializate(TAG, this);
         }
         // ----------------------------------------------------------------------------------------
-
-        Log.i(TAG, "ENTRO A M:getLoged_2: " + MyState.getLoged());
-        Log.i(TAG, "ENTRO A M:getExistsLocation_2: " + MyState.getExistsLocation());
 
         // OPEN MainActivity OR EventsActivity
         // ----------------------------------------------------------------------------------------
@@ -90,11 +67,9 @@ public class MainActivity extends AppCompatActivity implements
             return;
             //Log.i(TAG, "ENTRO A Main:FINISH:2");
         }
-        Log.i(TAG, "ENTRO A Main:FINISH:3");
         activity = this;
         myMenu = new MyMenu(activity);
 
-        Log.i(TAG, "ENTRO A Main:FINISH:4");
         setContentView(R.layout.activity_main);
         // ----------------------------------------------------------------------------------------
 

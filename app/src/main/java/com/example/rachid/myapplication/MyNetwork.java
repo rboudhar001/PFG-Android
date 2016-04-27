@@ -5,14 +5,12 @@ package com.example.rachid.myapplication;
  */
 public abstract class MyNetwork {
 
-    private static User user;
-
     //
     public static String signupUser(User mUser) {
 
         if (mUser != null) {
 
-            // TODO: Accede al servidor y guarda en la DB este nuevo usuario
+            // TODO: Accede al servidor y guarda en la DB este nuevo usuario, devuelve el ID que se le ha dado en la DB del servidor
             // ---------------------------------------------------------------------------------------
             // ---------------------------------------------------------------------------------------
 
@@ -25,9 +23,9 @@ public abstract class MyNetwork {
     //
     public static User loginUser(String mEmail, String mPassword) {
 
-        user = null;
+        User user = null;
 
-        // TODO: Accede al servidor y solicita que se le de el usuario con el email y password dados como parametros.
+        // TODO: Accede al servidor y solicita que se le de el usuario con el email y password pasados como parametros.
         // ---------------------------------------------------------------------------------------
         // ---------------------------------------------------------------------------------------
 

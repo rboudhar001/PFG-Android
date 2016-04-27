@@ -3,6 +3,8 @@
 
     <!-- WINDOWS -->
     <string name="title_activity_events">Eventos</string>
+    <string name="title_activity_registered">Registrados</string>
+    <string name="title_activity_published">Publicados</string>
     <string name="title_activity_account">Cuenta</string>
     <string name="title_activity_login">Iniciar sesión</string>
     <string name="title_activity_signup">Registrarse</string>
@@ -18,6 +20,7 @@
     <!-- ACCOUNT -->
     <string name="account_text_account">Inicia sesión</string>
     <string name="or">O</string>
+    <string name="prompt_user_name">Apodo</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_first_name">Nombre</string>
@@ -86,6 +89,13 @@
     <string name="text_events">Eventos</string>
     <string name="text_registered">Registrados</string>
     <string name="text_published">Publicados</string>
+
+    <!-- MENU -->
+    <string name="text_main_page">Pagina Principal</string>
+    <string name="text_my_account">Mi Cuenta</string>
+    <string name="text_publish">Publicar</string>
+    <string name="text_search">Buscar</string>
+    <string name="text_info">Información</string>
 
     <!-- MENU_LOGIN -->
     <string name="text_not_exists_location">___________________</string>

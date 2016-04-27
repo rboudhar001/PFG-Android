@@ -50,10 +50,9 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
     private UserLoginTask mAuthTask = null;
 
     // UI references.
+    private AutoCompleteTextView mUserNameView;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-    private AutoCompleteTextView mFirstNameView;
-    private AutoCompleteTextView mLastNameView;
 
     private static final String TAG = "SignupActivity";
     private final Activity activity = this;
@@ -73,14 +72,13 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
         // AÑADIDO : LOGIN EMAIL
         // ----------------------------------------------------------------------------------------
         // Set up the login form.
+        mUserNameView = (AutoCompleteTextView) findViewById(R.id.signup_user_name);
+
         mEmailView = (AutoCompleteTextView) findViewById(R.id.signup_email);
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.signup_password);
-        mFirstNameView = (AutoCompleteTextView) findViewById(R.id.signup_first_name);
-        mLastNameView = (AutoCompleteTextView) findViewById(R.id.signup_last_name);
-
-        mLastNameView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.signup_button_keyboard_signup || id == EditorInfo.IME_NULL) {
@@ -192,23 +190,24 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
         }
 
         // Reset errors.
+        mUserNameView.setError(null);
         mEmailView.setError(null);
         mPasswordView.setError(null);
-        mFirstNameView.setError(null);
-        mLastNameView.setError(null);
 
         // Store values at the time of the login attempt.
+        String userName = mUserNameView.getText().toString();
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
-        String firstName = mFirstNameView.getText().toString();
-        String lastName = mLastNameView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-
         // CHECK FORM
-        if (TextUtils.isEmpty(email)) { // Check for a valid email address.
+        if (TextUtils.isEmpty(userName)) { // Check for user name
+            mUserNameView.setError(getString(R.string.error_field_required));
+            focusView = mUserNameView;
+            cancel = true;
+        } else if (TextUtils.isEmpty(email)) { // Check for a valid email address.
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
@@ -221,16 +220,8 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
             focusView = mPasswordView;
             cancel = true;
         } else if (!isPasswordValid(password)) {
-            mEmailView.setError(getString(R.string.error_invalid_password));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (TextUtils.isEmpty(firstName)) { // Check for first name
-            mFirstNameView.setError(getString(R.string.error_field_required));
-            focusView = mFirstNameView;
-            cancel = true;
-        } else if (TextUtils.isEmpty(lastName)) { // Check for last name
-            mLastNameView.setError(getString(R.string.error_field_required));
-            focusView = mLastNameView;
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
             cancel = true;
         }
 
@@ -248,7 +239,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgressDialog();
-            mAuthTask = new UserLoginTask(email, password, firstName, lastName);
+            mAuthTask = new UserLoginTask(userName, email, password);
             mAuthTask.execute((Void) null);
         }
     }
@@ -340,19 +331,17 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
+        private final String mUserName;
         private final String mEmail;
         private final String mPassword;
-        private final String mFirstName;
-        private final String mLastName;
 
-        UserLoginTask(String email, String password, String firstName, String lastName) {
+        UserLoginTask(String userName, String email, String password) {
 
             Log.i(TAG, "ENTRO A Signup:UserLoginTask:0");
 
+            mUserName = userName;
             mEmail = email;
             mPassword = password;
-            mFirstName = firstName;
-            mLastName = lastName;
         }
 
         @Override
@@ -361,17 +350,21 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
 
             Log.i(TAG, "ENTRO A Signup:UserLoginTask:doInBackground:0");
 
-            User user = new User();
+            User user = MyState.getUser();
 
-            //user.setID(MyDatabase.getNextID());
+            //user.setID(MyState.getUser().getID());
+            user.setUserName(mUserName);
             user.setEmail(mEmail);
             user.setPassword(mPassword);
-            user.setName(mFirstName + " " + mLastName);
 
             String id = MyNetwork.signupUser(user); //Insert MyNetwork
             if (id != null) { // Guarda en la DB del servidor al usuario mandado como parametro y devuelve el id del usuario o null si no se ha registrado
 
-                MyState.getUser().setID(id);
+                Log.i(TAG, "ENTRO A Signup:UserLoginTask:doInBackground:mUserName: " + mUserName);
+                Log.i(TAG, "ENTRO A Signup:UserLoginTask:doInBackground:mEmail: " + mEmail);
+                Log.i(TAG, "ENTRO A Signup:UserLoginTask:doInBackground:mPassword: " + mPassword);
+
+                user.setID(id);
                 MyDatabase.insertUser(TAG, activity, user);
 
                 MyState.setUser(user);
@@ -422,12 +415,11 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     private void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage(getString(R.string.loading));
-        }
-        mProgressDialog.show();
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage(getString(R.string.loading));
         mProgressDialog.setCancelable(false);
+
+        mProgressDialog.show();
     }
 
     private void hideProgressDialog() {

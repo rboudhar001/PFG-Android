@@ -1,5 +1,6 @@
 package com.example.rachid.myapplication;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -47,6 +48,9 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
         activity = this;
         myMenu = new MyMenu(activity);
 
+        Log.i(TAG, "ENTRO A Events:getLoged: " + MyState.getLoged());
+        Log.i(TAG, "ENTRO A Events:getExistsLocation: " + MyState.getExistsLocation());
+
         // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN or NAV_HEADER_LOGIN
         // ----------------------------------------------------------------------------------------
         if (MyState.getLoged()) { // Si el usuario esta con sesion iniciada, cargamos el nav_header_login
@@ -72,7 +76,7 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
         navigationView.setNavigationItemSelectedListener(this);
         //-----------------------------------------------------------------------------------------
 
-        // AÑADIDO: TAB
+        // AÑADIDO: SLIDING TAB
         //-----------------------------------------------------------------------------------------
         CharSequence Titles[] = {getString(R.string.text_published), getString(R.string.text_events), getString(R.string.text_registered)};
         int NumOfTabs = 3;
@@ -105,6 +109,32 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
 
         // Setting the ViewPager For the SlidingTabsLayout
         mSlidingTabLayout.setViewPager(mViewPager);
+
+        // When change tab (SlidingTabLayout), update Activity title.
+        mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                // TODO Auto-generated method stub
+                switch (position) {
+                    case 0: setTitle(getString(R.string.title_activity_published));
+                            break;
+                    case 1: setTitle(getString(R.string.title_activity_events));
+                            break;
+                    case 2: setTitle(getString(R.string.title_activity_registered));
+                            break;
+                }
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int pos) {
+                // TODO Auto-generated method stub
+            }
+        });
         //-----------------------------------------------------------------------------------------
     }
 

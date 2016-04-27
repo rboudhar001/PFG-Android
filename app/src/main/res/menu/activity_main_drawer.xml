@@ -5,32 +5,32 @@
         <item
             android:id="@+id/main_page"
             android:icon="@drawable/ic_assignment_24dp"
-            android:title="Pagina Principal" />
+            android:title="@string/text_main_page" />
     </group>
 
     <group android:id="@+id/group_account">
         <item
             android:id="@+id/account"
             android:icon="@drawable/ic_account_box_24dp"
-            android:title="Cuenta" />
+            android:title="@string/text_my_account" />
     </group>
 
     <group android:id="@+id/group_function">
         <item
             android:id="@+id/publish"
             android:icon="@drawable/ic_cloud_upload_24dp"
-            android:title="Publicar" />
+            android:title="@string/text_publish" />
         <item
             android:id="@+id/search"
             android:icon="@drawable/ic_search_24dp"
-            android:title="Buscar" />
+            android:title="@string/text_search" />
     </group>
 
     <group android:id="@+id/group_info">
         <item
             android:id="@+id/info"
             android:icon="@drawable/ic_info_24dp"
-            android:title="Información" />
+            android:title="@string/text_info" />
     </group>
 
 </menu>

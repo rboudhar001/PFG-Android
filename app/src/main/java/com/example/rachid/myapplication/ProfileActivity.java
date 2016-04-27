@@ -71,7 +71,9 @@ public class ProfileActivity extends AppCompatActivity {
         // VALUES OF FORM USER
         // ----------------------------------------------------------------------------------------
         circleImageProfile = (CircleImageView) findViewById(R.id.circle_image_profile);
-        Picasso.with(getApplicationContext()).load(MyState.getUser().getUrlImageProfile()).into(circleImageProfile);
+        if (MyState.getUser().getUrlImageProfile() != null) {
+            Picasso.with(getApplicationContext()).load(MyState.getUser().getUrlImageProfile()).into(circleImageProfile);
+        }
 
         textEditName = (TextView) findViewById(R.id.profile_text_name);
         textEditName.setText(MyState.getUser().getName());
@@ -190,7 +192,7 @@ public class ProfileActivity extends AppCompatActivity {
                             Log.i(TAG, "ENTRO A Profile:EditName:0");
                             MainActivity.myMenu.updateName();
                         }
-                        if (EventsActivity.activity != null){
+                        if (EventsActivity.activity != null) {
                             Log.i(TAG, "ENTRO A Profile:EditName:1");
                             EventsActivity.myMenu.updateName();
                         }
@@ -218,14 +220,16 @@ public class ProfileActivity extends AppCompatActivity {
         final int itemDefaultSelect;
 
         String gender = MyState.getUser().getGender();
-        if (gender.equals(male)) {
-            itemDefaultSelect = 0;
-        }
-        else if (gender.equals(female)) {
-            itemDefaultSelect = 1;
-        }
-        else if (gender.equals(other)) {
-            itemDefaultSelect = 2;
+        if (gender != null) {
+            if (gender.equals(male)) {
+                itemDefaultSelect = 0;
+            } else if (gender.equals(female)) {
+                itemDefaultSelect = 1;
+            } else if (gender.equals(other)) {
+                itemDefaultSelect = 2;
+            } else {
+                itemDefaultSelect = -1; // no tiene ninguna opcion seleccionada
+            }
         }
         else {
             itemDefaultSelect = -1; // no tiene ninguna opcion seleccionada

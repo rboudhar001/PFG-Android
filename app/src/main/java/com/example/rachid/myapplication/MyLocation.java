@@ -163,24 +163,41 @@ public abstract class MyLocation {
 
                                 Log.i(TAG, "ENTRO A M:getLocation:3");
 
+                                if (city == null) {
+                                    Log.i(TAG, "ENTRO A M:getLocation:city es NULL");
+                                }
+                                else {
+                                    Log.i(TAG, "ENTRO A M:getLocation:city NULL STRING?: " + city);
+                                }
+
                                 if (city != null) {
+                                    Log.i(TAG, "ENTRO A M:getLocation:4");
+
+                                    if (MyState.getUser().getLocation() == null) {
+                                        Log.i(TAG, "ENTRO A M:getLocation:getLocation es NULL");
+                                    }
+                                    else {
+                                        Log.i(TAG, "ENTRO A M:getLocation:getLocation es NULL STRING?: " + MyState.getUser().getLocation());
+                                    }
+
                                     if(!city.equals(MyState.getUser().getLocation())) {
-                                        Log.i(TAG, "ENTRO A M:getLocation:4");
+                                        Log.i(TAG, "ENTRO A M:getLocation:5");
                                         MyDatabase.insertLocation(TAG, activity, city);
 
                                         MyState.getUser().setLocation(city);
+                                        // --------------------------------------------------------------------------------
+                                        if (MyState.getExistsLocation()) { // Si ya existia la localizacion actualizamos el Drawer navigation
+                                            if (MainActivity.activity != null) {
+                                                Log.i(TAG, "ENTRO A MyLocation:EditLocation:0");
+                                                MainActivity.myMenu.updateLocation();
+                                            }
+                                            if (EventsActivity.activity != null){
+                                                Log.i(TAG, "ENTRO A MyLocation:EditLocation:1");
+                                                EventsActivity.myMenu.updateLocation();
+                                            }
+                                        }
+                                        // --------------------------------------------------------------------------------
                                         MyState.setExistsLocation(true);
-
-                                        // --------------------------------------------------------------------------------
-                                        if (MainActivity.activity != null) {
-                                            Log.i(TAG, "ENTRO A Profile:EditLocation:0");
-                                            MainActivity.myMenu.updateLocation();
-                                        }
-                                        if (EventsActivity.activity != null){
-                                            Log.i(TAG, "ENTRO A Profile:EditLocation:1");
-                                            EventsActivity.myMenu.updateLocation();
-                                        }
-                                        // --------------------------------------------------------------------------------
                                     }
                                     obtainedLocation = true;
                                 }
@@ -197,10 +214,15 @@ public abstract class MyLocation {
 
                                 hideProgressDialog();
                                 if (obtainedLocation) {
-                                    activity.startActivity(new Intent(activity, EventsActivity.class));
-                                    activity.finish();
-                                }
-                                else {
+                                    if (EventsActivity.activity != null) {
+                                        activity.finish();
+                                    }
+                                    else {
+                                        MainActivity.activity.finish();
+                                        activity.startActivity(new Intent(activity, EventsActivity.class));
+                                        activity.finish();
+                                    }
+                                } else {
                                     Toast.makeText(activity.getBaseContext(), "Impossible to detect the location", Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -265,16 +287,14 @@ public abstract class MyLocation {
     }
 
     private static void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(activity);
-            mProgressDialog.setMessage(activity.getString(R.string.loading));
-            //mProgressDialog.setIndeterminate(true);
-        }
-        mProgressDialog.show();
-
+        mProgressDialog = new ProgressDialog(activity);
+        mProgressDialog.setMessage(activity.getString(R.string.loading));
+        //mProgressDialog.setIndeterminate(true);
         mProgressDialog.setCancelable(false);
         //mProgressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         //mProgressDialog.setContentView(R.layout.activity_location);
+
+        mProgressDialog.show();
     }
 
     private static void hideProgressDialog() {

@@ -11,17 +11,40 @@ import android.util.Log;
  */
 public abstract class MyDatabase {
 
-    // Variables
-    private static String TAG;
-    private static Activity activity;
+    public static void inicializate(String TAG, Activity activity) {
+
+        //Abrimos la base de datos
+        DBActivity mDB_Activity = new DBActivity(activity, null);
+        SQLiteDatabase db = mDB_Activity.getReadableDatabase();
+        if (db != null) {
+            Cursor c = db.rawQuery("SELECT * FROM Users", null);
+            if (c.moveToFirst()) {
+
+                Log.i(TAG, "ENTRO A MyDatabase:inicializate:EMAIL: " + c.getString(1) + ", LOCATION: " + c.getString(11));
+
+                if (c.getString(1) != null) {
+                    Log.i(TAG, "ENTRO A MyDatabase:inicializate: OBTENER_EMAIL");
+                    MyState.setLoged(true); // Usuario logeado
+                }
+                if (c.getString(11) != null) {
+                    Log.i(TAG, "ENTRO A MyDatabase:inicializate: OBTENER_LOCALIZACION");
+                    MyState.setExistsLocation(true); // Usuario con localizacion
+                }
+                if ((c.getString(1) != null) || (c.getString(11) != null)) {
+                    MyState.setUser(new User(c.getString(0), c.getString(1), c.getString(2), c.getString(3),
+                            c.getString(4), c.getString(5), c.getString(6), c.getString(7), c.getString(8),
+                            c.getString(9), c.getString(10), c.getString(11)));
+                }
+            }
+            c.close();
+            db.close();
+        }
+    }
 
     //
-    public static void insertLocation(String T, Activity A, String city) {
+    public static void insertLocation(String TAG, Activity activity, String city) {
 
-        TAG = T;
-        activity = A;
-
-        Log.i(TAG, "ENTRO A M:insertLocation:0");
+        Log.i(TAG, "ENTRO A MyDatabase:insertLocation:0");
 
         String email = "";
         Boolean existsAccount = false;
@@ -34,7 +57,7 @@ public abstract class MyDatabase {
             Cursor c = db.rawQuery("SELECT * FROM Users", null);
             if (c.moveToFirst()) { // Comprobar que existe la cuenta
                 if (c.getString(1) != null) {
-                    Log.i(TAG, "ENTRO A M:insertLocation:1");
+                    Log.i(TAG, "ENTRO A MyDatabase:insertLocation:1");
 
                     existsAccount = true;
                     email = c.getString(1);
@@ -48,7 +71,7 @@ public abstract class MyDatabase {
         if (existsAccount) { //Existe la cuenta
             if (db != null) {
 
-                Log.i(TAG, "ENTRO A M:insertLocation:2");
+                Log.i(TAG, "ENTRO A MyDatabase:insertLocation:2");
 
                 //Actualizamos la localizacion
                 ContentValues valores = new ContentValues();
@@ -62,16 +85,20 @@ public abstract class MyDatabase {
         } else { // No existe la cuenta
             if (db != null) {
 
-                Log.i(TAG, "ENTRO A M:insertLocation:3");
+                Log.i(TAG, "ENTRO A MyDatabase:insertLocation:3");
 
                 //Insertamos la nueva cuenta con la localización
                 ContentValues valores = new ContentValues();
                 valores.put("id", (String)null);
                 valores.put("email", (String)null);
+                valores.put("user_name", (String)null);
                 valores.put("password", (String)null);
                 valores.put("name", (String)null);
+                valores.put("surname", (String)null);
                 valores.put("gender", (String)null);
                 valores.put("birthday", (String)null);
+                valores.put("place", (String)null);
+                valores.put("music_style", (String)null);
                 valores.put("image", (String)null);
                 valores.put("location", city);
 
@@ -82,12 +109,9 @@ public abstract class MyDatabase {
     }
 
     //
-    public static void deleteLocation(String T, Activity A) {
+    public static void deleteLocation(String TAG, Activity activity) {
 
-        TAG = T;
-        activity = A;
-
-        Log.i(TAG, "ENTRO A M:deleteUser:0");
+        Log.i(TAG, "ENTRO A MyDatabase:deleteUser:0");
 
         Boolean existsAccount = false;
         String email = "";
@@ -100,7 +124,7 @@ public abstract class MyDatabase {
             Cursor c = db.rawQuery("SELECT * FROM Users", null);
             if (c.moveToFirst()) { // Comprobar que existe la cuenta
                 if (c.getString(1) != null) {
-                    Log.i(TAG, "ENTRO A M:insertLocation:1");
+                    Log.i(TAG, "ENTRO A MyDatabase:insertLocation:1");
 
                     existsAccount = true;
                     email = c.getString(1);
@@ -114,7 +138,7 @@ public abstract class MyDatabase {
         if (existsAccount) { //Existe la localizacion
             if (db != null) {
 
-                Log.i(TAG, "ENTRO A M:deleteUser:2");
+                Log.i(TAG, "ENTRO A MyDatabase:deleteUser:2");
 
                 //Eliminamos la localizacion
                 ContentValues valores = new ContentValues();
@@ -128,7 +152,7 @@ public abstract class MyDatabase {
         } else { // No existe la cuenta
             if (db != null) {
 
-                Log.i(TAG, "ENTRO A M:deleteUser:3");
+                Log.i(TAG, "ENTRO A MyDatabase:deleteUser:3");
 
                 db.delete("Users", null, null);
                 db.close();
@@ -137,14 +161,12 @@ public abstract class MyDatabase {
     }
 
     //
-    public static void insertUser(String T, Activity A, User user) {
+    public static void insertUser(String TAG, Activity activity, User user) {
 
-        TAG = T;
-        activity = A;
-
-        Log.i(TAG, "ENTRO A M:insertUser:0");
+        Log.i(TAG, "ENTRO A MyDatabase:insertUser:0");
 
         Boolean existsLocation = false;
+        String location = "";
 
         //Abrimos la base de datos
         DBActivity mDB_Activity = new DBActivity(activity.getApplicationContext(), null);
@@ -154,11 +176,11 @@ public abstract class MyDatabase {
             Cursor c = db.rawQuery("SELECT * FROM Users", null);
             if (c.moveToFirst()) { // Comprobar que existe la localizacion del usuario
 
-                if (c.getString(7) != null) {
+                if (c.getString(11) != null) {
 
-                    Log.i(TAG, "ENTRO A M:insertUser:1");
-
+                    Log.i(TAG, "ENTRO A MyDatabase:insertUser:1");
                     existsLocation = true;
+                    location = c.getString(11);
                 }
             }
             c.close();
@@ -169,20 +191,26 @@ public abstract class MyDatabase {
         if (existsLocation) { //Existe la localizacion
             if (db != null) {
 
-                Log.i(TAG, "ENTRO A M:insertUser:2");
+                Log.i(TAG, "ENTRO A MyDatabase:insertUser:2");
 
                 //Actualizamos la cuenta
                 ContentValues valores = new ContentValues();
                 valores.put("id", user.getID());
                 valores.put("email", user.getEmail());
+                valores.put("user_name", user.getUserName());
                 valores.put("password", user.getPassword());
                 valores.put("name", user.getName());
+                valores.put("surname", user.getSurname());
                 valores.put("gender", user.getGender());
                 valores.put("birthday", user.getBirthday());
+                valores.put("place", user.getPlace());
+                valores.put("music_style", user.getMusicStyle());
                 valores.put("image", user.getUrlImageProfile());
 
-                String[] args = new String[]{user.getLocation()};
+                String[] args = new String[]{location};
                 db.update("Users", valores, "location=?", args);
+
+                Log.i(TAG, "ENTRO A MyDatabase:insertUser:location: " + location);
 
                 db.close();
             }
@@ -190,16 +218,20 @@ public abstract class MyDatabase {
         else { // No existe la localizacion
             if (db != null) {
 
-                Log.i(TAG, "ENTRO A M:insertUser:3");
+                Log.i(TAG, "ENTRO A MyDatabase:insertUser:3");
 
                 //Insertamos la nueva cuenta
                 ContentValues valores = new ContentValues();
                 valores.put("id", user.getID());
                 valores.put("email", user.getEmail());
+                valores.put("user_name", user.getUserName());
                 valores.put("password", user.getPassword());
                 valores.put("name", user.getName());
+                valores.put("surname", user.getSurname());
                 valores.put("gender", user.getGender());
                 valores.put("birthday", user.getBirthday());
+                valores.put("place", user.getPlace());
+                valores.put("music_style", user.getMusicStyle());
                 valores.put("image", user.getUrlImageProfile());
                 valores.put("location", (String) null);
 
@@ -210,12 +242,9 @@ public abstract class MyDatabase {
     }
 
     //
-    public static void updateUser(String T, Activity A, User user) {
+    public static void updateUser(String TAG, Activity activity, User user) {
 
-        TAG = T;
-        activity = A;
-
-        Log.i(TAG, "ENTRO A M:updateUser:0");
+        Log.i(TAG, "ENTRO A MyDatabase:updateUser:0");
 
         //Abrimos la base de datos
         DBActivity mDB_Activity = new DBActivity(activity.getApplicationContext(), null);
@@ -223,16 +252,20 @@ public abstract class MyDatabase {
         SQLiteDatabase db = mDB_Activity.getWritableDatabase();
         if (db != null) {
 
-            Log.i(TAG, "ENTRO A M:updateUser:1");
+            Log.i(TAG, "ENTRO A MyDatabase:updateUser:1");
 
             //Actualizamos la cuenta
             ContentValues valores = new ContentValues();
             valores.put("id", user.getID());
             valores.put("email", user.getEmail());
+            valores.put("user_name", user.getUserName());
             valores.put("password", user.getPassword());
             valores.put("name", user.getName());
+            valores.put("surname", user.getSurname());
             valores.put("gender", user.getGender());
             valores.put("birthday", user.getBirthday());
+            valores.put("place", user.getPlace());
+            valores.put("music_style", user.getMusicStyle());
             valores.put("image", user.getUrlImageProfile());
             valores.put("location", user.getLocation());
 
@@ -244,14 +277,12 @@ public abstract class MyDatabase {
     }
 
     //
-    public static void deleteUser(String T, Activity A, User user) {
+    public static void deleteUser(String TAG, Activity activity, User user) {
 
-        TAG = T;
-        activity = A;
-
-        Log.i(TAG, "ENTRO A M:deleteUser:0");
+        Log.i(TAG, "ENTRO A MyDatabase:deleteUser:0");
 
         Boolean existsLocation = false;
+        String location = "";
 
         //Abrimos la base de datos
         DBActivity mDB_Activity = new DBActivity(activity.getApplicationContext(), null);
@@ -261,11 +292,11 @@ public abstract class MyDatabase {
             Cursor c = db.rawQuery("SELECT * FROM Users", null);
             if (c.moveToFirst()) { // Comprobar que existe la localizacion del usuario
 
-                if (c.getString(7) != null) {
+                if (c.getString(11) != null) {
 
-                    Log.i(TAG, "ENTRO A M:deleteUser:1");
-
+                    Log.i(TAG, "ENTRO A MyDatabase:deleteUser:1");
                     existsLocation = true;
+                    location = c.getString(11);
                 }
             }
             c.close();
@@ -276,32 +307,41 @@ public abstract class MyDatabase {
         if (existsLocation) { //Existe la localizacion
             if (db != null) {
 
-                Log.i(TAG, "ENTRO A M:deleteUser:2");
+                Log.i(TAG, "ENTRO A MyDatabase:deleteUser:2");
 
                 //Actualizamos la cuenta
                 ContentValues valores = new ContentValues();
                 valores.put("id", (String)null);
                 valores.put("email", (String)null);
+                valores.put("user_name", (String)null);
                 valores.put("password", (String)null);
                 valores.put("name", (String)null);
+                valores.put("surname", (String)null);
                 valores.put("gender", (String)null);
                 valores.put("birthday", (String)null);
+                valores.put("place", (String)null);
+                valores.put("music_style", (String)null);
                 valores.put("image", (String)null);
-                valores.put("location", user.getLocation());
 
-                String[] args = new String[]{user.getEmail()};
+                String[] args = new String[]{location};
 
-                db.update("Users", valores, "email=?", args);
+                db.update("Users", valores, "location=?", args);
                 db.close();
             }
         } else { // No existe la localizacion
             if (db != null) {
 
-                Log.i(TAG, "ENTRO A M:deleteUser:3");
+                Log.i(TAG, "ENTRO A MyDatabase:deleteUser:3");
 
                 db.delete("Users", null, null);
                 db.close();
             }
         }
+    }
+
+    //
+    public static void getID() {
+
+        //* TODO: Obtener el ID de la DB y guardarlo en MyState.getUser()
     }
 }

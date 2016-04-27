@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -67,6 +68,7 @@ public class MyMenu {
 
     // UPDATE
     public void updateLocation() {
+
         if (MyState.getUser().getLocation() != null) {
             textUserLocation.setText(MyState.getUser().getLocation());
         }
@@ -79,18 +81,24 @@ public class MyMenu {
     public void loadHeaderLogin() {
 
         navHeader = (NavigationView) activity.findViewById(R.id.nav_view);
+        navHeader.removeHeaderView(navViewHeader);
         navViewHeader = navHeader.inflateHeaderView(R.layout.nav_header_login);
 
         circleImageProfile = (CircleImageView) navViewHeader.findViewById(R.id.circle_image_profile);
-        Picasso.with(activity.getApplicationContext()).load(MyState.getUser().getUrlImageProfile()).into(circleImageProfile);
+        if (MyState.getUser().getUrlImageProfile() != null) {
+            Picasso.with(activity.getApplicationContext()).load(MyState.getUser().getUrlImageProfile()).into(circleImageProfile);
+        }
 
         textUserName = (TextView) navViewHeader.findViewById(R.id.text_user_name);
-        textUserName.setText(MyState.getUser().getName());
+        textUserName.setText(MyState.getUser().getUserName());
 
         textUserEmail = (TextView) navViewHeader.findViewById(R.id.text_user_email);
         textUserEmail.setText(MyState.getUser().getEmail());
 
         textUserLocation = (TextView) navViewHeader.findViewById(R.id.text_user_location);
+
+        Log.i("EventsActivity", "ENTRO A MyMenu:getLocation(): " + MyState.getUser().getLocation());
+
         if (MyState.getUser().getLocation() != null) {
             textUserLocation.setText(MyState.getUser().getLocation());
         }
@@ -124,6 +132,7 @@ public class MyMenu {
     public void loadHeaderLocation() {
 
         navHeader = (NavigationView) activity.findViewById(R.id.nav_view);
+        navHeader.removeHeaderView(navViewHeader);
         navViewHeader = navHeader.inflateHeaderView(R.layout.nav_header_location);
 
         textUserLocation = (TextView) navViewHeader.findViewById(R.id.text_user_location);
