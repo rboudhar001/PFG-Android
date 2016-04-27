@@ -82,12 +82,16 @@
     <string name="error_could_not_update_birthday">Error, no se ha podido actualizar el cumpleaños</string>
     <string name="error_could_not_update_email">Error, no se ha podido actualizar el email</string>
 
+    <!-- TOOLBAR TabLayout -->
+    <string name="text_events">Eventos</string>
+    <string name="text_registered">Registrados</string>
+    <string name="text_published">Publicados</string>
+
     <!-- MENU_LOGIN -->
     <string name="text_not_exists_location">___________________</string>
 
     <!-- MENU_LOCATION -->
     <string name="button_update_location">Actualizar localización</string>
-
 
     <!-- MENU_INFO -->
     <string name="button_help">Ayuda</string>

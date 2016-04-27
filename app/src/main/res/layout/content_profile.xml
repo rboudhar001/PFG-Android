@@ -7,7 +7,7 @@
     android:clickable="true" >
 
     <!-- Resto de la interfaz de usuario -->
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
@@ -56,7 +56,7 @@
                         android:gravity="center"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="15dp"
                         android:editable="false"
                         android:layout_gravity="center_horizontal|top"
                         android:layout_marginLeft="10dp"
@@ -207,25 +207,30 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/linear_change_password_profile"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
-
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/button_change_password"
-                        android:text="@string/text_change_password"
-                        android:background="@color/AZUL_CLARO_APP"
-                        android:textColor="@color/BLANCO"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="30dp" />
-                </LinearLayout>
-
             </LinearLayout>
         </ScrollView>
-    </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/GRIS_4"
+            android:id="@+id/view_separator_5"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_above="@+id/button_change_password"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+        </View>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_change_password"
+            android:text="@string/text_change_password"
+            android:background="?android:attr/selectableItemBackground"
+            android:textColor="@color/AZUL_CLARO_APP"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+    </RelativeLayout>
 </LinearLayout>

@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <!-- AÑADIDO -->
+    <!-- AÑADIDO: COLORES -->
     <!-- ************************************************************************************** -->
     <color name="BLANCO">#FFFFFF</color>
     <color name="NARANJA">#F28220</color>
@@ -26,8 +26,18 @@
     <color name="CELESTE">#ADDBD9</color>
     <color name="COBALTO">#0C23B1</color>
 
-    <color name="AZUL_CLARO_1">#0084ff</color> <!-- Aplicación -->
-    <color name="AZUL_CLARO_APP">#0077e6</color> <!-- Barra -->
-    <color name="AZUL_CLARO_BAR">#006acd</color>
+    <color name="AZUL_CLARO_BAR">#006acd</color>  <!-- Barra -->
+    <color name="AZUL_CLARO_APP">#0077e6</color> <!-- Aplicación -->
+
+    <color name="AZUL_CLARO_1">#0084ff</color>
+    <color name="AZUL_CLARO_2">#1a90ff</color>
+    <color name="AZUL_CLARO_3">#339dff</color>
+    <color name="AZUL_CLARO_4">#4da9ff</color>
+    <color name="AZUL_CLARO_5">#67b5ff</color>
+    <color name="AZUL_CLARO_6">#80c2ff</color>
+    <color name="AZUL_CLARO_7">#9aceff</color>
+    <color name="AZUL_CLARO_8">#b4daff</color>
+    <color name="AZUL_CLARO_9">#cde7ff</color>
+    <color name="AZUL_CLARO_10">#e7f3ff</color>
     <!-- ************************************************************************************** -->
 </resources>

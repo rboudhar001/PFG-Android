@@ -172,7 +172,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 if ((((firstName == null) & (newFirstName != null))
                         | ((firstName != null) & (newFirstName != null) & (!firstName.equals(newFirstName))))
-                        &
+                        |
                         (((lastName == null) & (newLastName != null))
                                 | ((lastName != null) & (newLastName != null) & (!lastName.equals(newFirstName))))) {
 
@@ -183,7 +183,7 @@ public class ProfileActivity extends AppCompatActivity {
                         MyDatabase.updateUser(TAG, activity, user);
                         MyState.setUser(user);
 
-                        textEditName.setText(newFirstName + " " + newLastName);
+                        textEditName.setText(user.getName());
 
                         // --------------------------------------------------------------------------------
                         if (MainActivity.activity != null) {
@@ -245,7 +245,7 @@ public class ProfileActivity extends AppCompatActivity {
                         MyDatabase.updateUser(TAG, activity, user);
                         MyState.setUser(user);
 
-                        textEditGender.setText(items[item].toString());
+                        textEditGender.setText(user.getGender());
                     } else {
                         Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_gender), Toast.LENGTH_SHORT).show();
                     }
@@ -281,6 +281,7 @@ public class ProfileActivity extends AppCompatActivity {
                 String[] pieces = birthday.split("/");
                 day = Integer.parseInt(pieces[0]);
                 month = Integer.parseInt(pieces[1]);
+                month = month - 1; // Currioso esto, el mes los da del 0 al 11 en lugar del 1 al 12 ... informaticos >.<
                 year = Integer.parseInt(pieces[2]);
             }
             else {
@@ -288,6 +289,7 @@ public class ProfileActivity extends AppCompatActivity {
                 final Calendar c = Calendar.getInstance();
                 year = c.get(Calendar.YEAR);
                 month = c.get(Calendar.MONTH);
+                month = month + 1;  // Currioso esto, el mes los da del 0 al 11 en lugar del 1 al 12 ... informaticos >.<
                 day = c.get(Calendar.DAY_OF_MONTH);
             }
 
@@ -298,6 +300,7 @@ public class ProfileActivity extends AppCompatActivity {
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
 
+            month = month + 1; // Currioso esto, el mes los da del 0 al 11 en lugar del 1 al 12 ... informaticos >.<
             if ( (this.day != day) || (this.month != month) || (this.year != year) ) { // Si no se ha cambiado la fecha, no actualizamos nada
 
                 User user = MyState.getUser();
@@ -307,8 +310,7 @@ public class ProfileActivity extends AppCompatActivity {
                     MyDatabase.updateUser(TAG, activity, user);
                     MyState.setUser(user);
 
-                    month = month + 1; // Currioso esto, el mes los da del 0 al 11 en lugar del 1 al 12 ... informaticos >.<
-                    textEditBirthday.setText("" + day + "/" + month + "/" + year);
+                    textEditBirthday.setText(user.getBirthday());
                 } else {
                     Toast.makeText(activity.getBaseContext(), getString(R.string.error_could_not_update_birthday), Toast.LENGTH_SHORT).show();
                 }
@@ -357,7 +359,7 @@ public class ProfileActivity extends AppCompatActivity {
                         MyDatabase.updateUser(TAG, activity, user);
                         MyState.setUser(user);
 
-                        textEditEmail.setText(newEmail);
+                        textEditEmail.setText(user.getEmail());
 
                         // --------------------------------------------------------------------------------
                         if (MainActivity.activity != null) {

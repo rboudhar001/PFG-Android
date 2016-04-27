@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -23,16 +25,24 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
     public static Activity activity;
 
     //AÑADIDO: MENU
-    // -----------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------
     public static MyMenu myMenu;
-    // -----------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------
+
+    //AÑADIDO: MENU
+    // --------------------------------------------------------------------------------------------
+    private Toolbar mToolbar;
+    private ViewPager mViewPager;
+    private ViewPagerAdapter mViewPageAdapter;
+    private SlidingTabLayout mSlidingTabLayout;
+    // --------------------------------------------------------------------------------------------
 
     private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_events);
 
         activity = this;
         myMenu = new MyMenu(activity);
@@ -49,17 +59,52 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
 
         //AÑADIDO MENU
         // ----------------------------------------------------------------------------------------
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.events_toolbar);
+        setSupportActionBar(mToolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         //drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        //-----------------------------------------------------------------------------------------
+
+        // AÑADIDO: TAB
+        //-----------------------------------------------------------------------------------------
+        CharSequence Titles[] = {getString(R.string.text_published), getString(R.string.text_events), getString(R.string.text_registered)};
+        int NumOfTabs = 3;
+
+        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+        mViewPageAdapter =  new ViewPagerAdapter(getSupportFragmentManager(), Titles, NumOfTabs);
+
+        // Assigning ViewPager View and setting the adapter
+        mViewPager = (ViewPager) findViewById(R.id.events_viewpager);
+        mViewPager.setAdapter(mViewPageAdapter);
+        mViewPager.setCurrentItem(1); // 0 = Publish, 1 = Events, 3 = Registered, windows for default
+
+        // Assiging the Sliding Tab Layout View
+        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.events_slidingtabs);
+        mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.BLANCO));
+        //mSlidingTabLayout.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+
+        mSlidingTabLayout.setBackgroundColor(getResources().getColor(R.color.AZUL_CLARO_APP));
+        mSlidingTabLayout.setDividerColors(getResources().getColor(R.color.AZUL_CLARO_APP));
+
+        // Setting Custom Color for the Scroll bar indicator of the Tab View
+        /*
+        mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.tabsScrollColor);
+            }
+        });
+        */
+
+        // Setting the ViewPager For the SlidingTabsLayout
+        mSlidingTabLayout.setViewPager(mViewPager);
         //-----------------------------------------------------------------------------------------
     }
 
