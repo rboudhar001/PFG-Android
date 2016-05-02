@@ -2,6 +2,7 @@
     <string name="app_name">My Application</string>
 
     <!-- WINDOWS -->
+    <string name="title_activity_main">SocialMusFest</string>
     <string name="title_activity_events">Eventos</string>
     <string name="title_activity_registered">Registrados</string>
     <string name="title_activity_published">Publicados</string>
@@ -12,6 +13,7 @@
     <string name="title_activity_publish">Publicar</string>
     <string name="title_activity_search">Buscar</string>
     <string name="title_activity_info">Información</string>
+    <string name="title_activity_version">Versión</string>
     <string name="title_activity_profile">Perfil</string>
     <string name="title_activity_location">Localización</string>
     <string name="title_activity_settings">Opciones</string>
@@ -20,11 +22,16 @@
     <!-- ACCOUNT -->
     <string name="account_text_account">Inicia sesión</string>
     <string name="or">O</string>
-    <string name="prompt_user_name">Apodo</string>
+    <string name="prompt_username">Usuario</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="prompt_first_name">Nombre</string>
-    <string name="prompt_last_name">Apellido</string>
+    <string name="prompt_name">Nombre</string>
+    <string name="prompt_surname">Apellido</string>
+    <string name="prompt_gender">Genero</string>
+    <string name="prompt_birthday">Cumpleaños</string>
+    <string name="prompt_place">Lugar</string>
+    <string name="prompt_musicstyle">Estilos de musica</string>
+
     <string name="account_button_login_email">INICIA SESIÓN</string>
     <string name="account_button_signup_email">REGISTRATE</string>
 
@@ -55,24 +62,38 @@
     <string name="know_the_events">¿Quieres conocer los eventos mas cercanos a ti?</string>
     <string name="button_use_location">ACTIVAR LOCALIZACIÓN</string>
 
+    <!-- *************************************************************************************** -->
     <!-- PROFILE -->
-    <string name="text_name">Nombre</string>
-    <string name="text_cl_name">NOMBRE</string>
-    <string name="text_about_me">Información</string>
-    <string name="text_cl_about_me">INFORMACIÓN</string>
-    <string name="text_gender">Genero</string>
-    <string name="text_cl_gender">GENERO</string>
-    <string name="text_birthday">Cumpleaños</string>
-    <string name="text_cl_birthday">CUMPLEAÑOS</string>
-    <string name="text_phone">Telefono</string>
-    <string name="text_cl_phone">TELEFONO</string>
-    <string name="text_email">Email</string>
-    <string name="text_cl_email">EMAIL</string>
-    <string name="text_change_password">Cambiar Contraseña</string>
+    <string name="profile_text_change_password">Cambiar Contraseña</string>
+
+    <!-- PROFILE: Account Info -->
+    <string name="profile_text_info_account">Información de Cuenta</string>
+    <string name="profile_text_username">Usuario</string>
+    <string name="profile_text_cl_username">USUARIO</string>
+    <string name="profile_text_email">Email</string>
+    <string name="profile_text_cl_email">EMAIL</string>
+
+    <!-- PROFILE: Personal Info -->
+    <string name="profile_text_info_personal">Información Personal</string>
+    <string name="profile_text_name">Nombre</string>
+    <string name="profile_text_cl_name">NOMBRE</string>
+    <string name="profile_text_surname">Apellido</string>
+    <string name="profile_text_cl_surname">APELLIDO</string>
+    <string name="profile_text_gender">Genero</string>
+    <string name="profile_text_cl_gender">GENERO</string>
+    <string name="profile_text_birthday">Cumpleaños</string>
+    <string name="profile_text_cl_birthday">CUMPLEAÑOS</string>
+    <string name="profile_text_place">Lugar</string>
+    <string name="profile_text_cl_place">LUGAR</string>
+    <string name="profile_text_musicstyle">Estilo de musica</string>
+    <string name="profile_text_cl_musicstyle">ESTILO DE MUSICA</string>
 
     <string name="text_male">Hombre</string>
     <string name="text_female">Mujer</string>
     <string name="text_other">Otro</string>
+
+    <string name="simbol_next">></string>
+    <string name="profile_text_complete_name">Nombre completo</string>
 
     <string name="text_cancel">Cancelar</string>
     <string name="text_done">Ok</string>
@@ -80,10 +101,14 @@
     <string name="text_log_out">Log Out</string>
     <string name="text_are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
 
+    <string name="error_could_not_update_username">Error, no se ha podido actualizar el nombre de usuario</string>
+    <string name="error_could_not_update_email">Error, no se ha podido actualizar el email</string>
     <string name="error_could_not_update_name">Error, no se ha podido actualizar el nombre</string>
     <string name="error_could_not_update_gender">Error, no se ha podido actualizar el genero</string>
     <string name="error_could_not_update_birthday">Error, no se ha podido actualizar el cumpleaños</string>
-    <string name="error_could_not_update_email">Error, no se ha podido actualizar el email</string>
+    <string name="error_could_not_update_place">Error, no se ha podido actualizar el lugar</string>
+    <string name="error_could_not_update_musicstyle">Error, no se ha podido actualizar el estilo de musica</string>
+    <!-- *************************************************************************************** -->
 
     <!-- TOOLBAR TabLayout -->
     <string name="text_events">Eventos</string>
@@ -104,10 +129,10 @@
     <string name="button_update_location">Actualizar localización</string>
 
     <!-- MENU_INFO -->
-    <string name="button_help">Ayuda</string>
-    <string name="button_terms_of_service">Terminos de servicio</string>
-    <string name="button_privacy_policy">Politica de privacidad</string>
-    <string name="button_version">Versión</string>
+    <string name="info_button_help">Ayuda</string>
+    <string name="info_button_terms_of_service">Términos de Servicio</string>
+    <string name="info_button_privacy_policy">Políticas de Privacidad</string>
+    <string name="info_button_version">Versión</string>
 
     <!-- LOCATION -->
     <string name="button_use_my_current_location">Usar mi propia localización</string>

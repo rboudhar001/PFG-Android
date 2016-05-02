@@ -57,8 +57,8 @@ public class MyMenu {
     }
 
     // NAME
-    public void updateName() {
-        textUserName.setText(MyState.getUser().getName());
+    public void updateUserName() {
+        textUserName.setText(MyState.getUser().getUserName());
     }
 
     // EMAIL

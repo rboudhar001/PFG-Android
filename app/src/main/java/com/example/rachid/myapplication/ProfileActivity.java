@@ -50,15 +50,21 @@ public class ProfileActivity extends AppCompatActivity {
     //AÑADIDO: FORM EDIT PROFILE
     // -----------------------------------------------------------------------------------------
     private CircleImageView circleImageProfile;
+    private TextView textEditUserName;
+    private TextView textEditEmail;
     private TextView textEditName;
     private TextView textEditGender;
     private static TextView textEditBirthday;
-    private TextView textEditEmail;
+    private TextView textEditPlace;
+    private TextView textEditMusicStyle;
 
+    private RelativeLayout relativeUserName;
+    private RelativeLayout relativeEmail;
     private RelativeLayout relativeName;
     private RelativeLayout relativeGender;
     private RelativeLayout relativeBirthday;
-    private RelativeLayout relativeEmail;
+    private RelativeLayout relativePlace;
+    private RelativeLayout relativeMusicStyle;
     // -----------------------------------------------------------------------------------------
 
     @Override
@@ -75,21 +81,74 @@ public class ProfileActivity extends AppCompatActivity {
             Picasso.with(getApplicationContext()).load(MyState.getUser().getUrlImageProfile()).into(circleImageProfile);
         }
 
-        textEditName = (TextView) findViewById(R.id.profile_text_name);
-        textEditName.setText(MyState.getUser().getName());
-
-        textEditGender = (TextView) findViewById(R.id.profile_text_gender);
-        textEditGender.setText(MyState.getUser().getGender());
-
-        textEditBirthday = (TextView) findViewById(R.id.profile_text_birthday);
-        textEditBirthday.setText(MyState.getUser().getBirthday());
+        textEditUserName = (TextView) findViewById(R.id.profile_text_username);
+        textEditUserName.setText(MyState.getUser().getUserName());
 
         textEditEmail = (TextView) findViewById(R.id.profile_text_email);
         textEditEmail.setText(MyState.getUser().getEmail());
+
+        textEditName = (TextView) findViewById(R.id.profile_text_name);
+        String name = MyState.getUser().getName();
+        String surname = MyState.getUser().getSurname();
+        if ( (name != null) || (surname != null) ) {
+            textEditName.setText(name + " " + surname);
+        } else {
+            textEditName.setText(getString(R.string.simbol_next));
+        }
+
+        textEditGender = (TextView) findViewById(R.id.profile_text_gender);
+        String gender = MyState.getUser().getGender();
+        if (gender != null) {
+            textEditGender.setText(gender);
+        } else {
+            textEditGender.setText(getString(R.string.simbol_next));
+        }
+
+        textEditBirthday = (TextView) findViewById(R.id.profile_text_birthday);
+        String birthday = MyState.getUser().getBirthday();
+        if (birthday != null) {
+            textEditBirthday.setText(birthday);
+        } else {
+            textEditBirthday.setText(getString(R.string.simbol_next));
+        }
+
+        textEditPlace = (TextView) findViewById(R.id.profile_text_place);
+        String place = MyState.getUser().getPlace();
+        if (place != null) {
+            textEditPlace.setText(place);
+        } else {
+            textEditPlace.setText(getString(R.string.simbol_next));
+        }
+
+        textEditMusicStyle = (TextView) findViewById(R.id.profile_text_musicStyle);
+        String musicStyle = MyState.getUser().getMusicStyle();
+        if (musicStyle != null) {
+            textEditMusicStyle.setText(musicStyle);
+        } else {
+            textEditMusicStyle.setText(getString(R.string.simbol_next));
+        }
         // ----------------------------------------------------------------------------------------
 
         // EVENTS CLICK
         // ----------------------------------------------------------------------------------------
+        relativeUserName = (RelativeLayout) findViewById(R.id.profile_relative_username);
+        relativeUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Implement your edit user name
+                showAlertDialogEditUserName();
+            }
+        });
+
+        relativeEmail = (RelativeLayout) findViewById(R.id.profile_relative_email);
+        relativeEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Implement your edit email
+                showAlertDialogEditEmail();
+            }
+        });
+
         relativeName = (RelativeLayout) findViewById(R.id.profile_relative_name);
         relativeName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,12 +176,21 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        relativeEmail = (RelativeLayout) findViewById(R.id.profile_relative_email);
-        relativeEmail.setOnClickListener(new View.OnClickListener() {
+        relativePlace = (RelativeLayout) findViewById(R.id.profile_relative_place);
+        relativePlace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Implement your edit email
-                showAlertDialogEditEmail();
+                // Implement your edit name
+                showAlertDialogEditPlace();
+            }
+        });
+
+        relativeMusicStyle = (RelativeLayout) findViewById(R.id.profile_relative_musicStyle);
+        relativeMusicStyle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Implement your edit name
+                showAlertDialogEditMusicStyle();
             }
         });
         // ----------------------------------------------------------------------------------------
@@ -130,33 +198,20 @@ public class ProfileActivity extends AppCompatActivity {
 
     // ----------------------------------------------------------------------------------------
     //
-    private void showAlertDialogEditName() {
-
-        final String firstName;
-        final String lastName;
+    private void showAlertDialogEditUserName() {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(getString(R.string.text_name));
+        dialog.setTitle(getString(R.string.profile_text_username));
 
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_profile_name, null);
+        View dialogView = inflater.inflate(R.layout.dialog_profile_username, null);
         dialog.setView(dialogView);
 
-        final AutoCompleteTextView mFirstNameView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_first_name);
-        final AutoCompleteTextView mLastNameView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_last_name);
+        final AutoCompleteTextView mUserNameView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_username);
 
-        String name = MyState.getUser().getName();
-        if (name != null) {
-            String[] pieces = name.split(" ");
-            firstName = pieces[0];
-            lastName = pieces[1];
-
-            mFirstNameView.setText(firstName);
-            mLastNameView.setText(lastName);
-        }
-        else {
-            firstName = null;
-            lastName = null;
+        final String userName = MyState.getUser().getUserName();
+        if (userName != null) {
+            mUserNameView.setText(userName);
         }
 
         dialog.setNegativeButton(getString(R.string.text_cancel), new DialogInterface.OnClickListener() {
@@ -169,35 +224,156 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                String newFirstName = mFirstNameView.getText().toString();
-                String newLastName = mLastNameView.getText().toString();
+                String newUserName = mUserNameView.getText().toString();
 
-                if ((((firstName == null) & (newFirstName != null))
-                        | ((firstName != null) & (newFirstName != null) & (!firstName.equals(newFirstName))))
-                        |
-                        (((lastName == null) & (newLastName != null))
-                                | ((lastName != null) & (newLastName != null) & (!lastName.equals(newFirstName))))) {
+                if ( ((userName == null) && (newUserName != null)) || ((userName != null) & (!userName.equals(newUserName))) ) {
 
                     User user = MyState.getUser();
-                    user.setName(newFirstName + " " + newLastName);
+                    user.setUserName(newUserName);
 
                     if (MyNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
                         MyDatabase.updateUser(TAG, activity, user);
                         MyState.setUser(user);
 
-                        textEditName.setText(user.getName());
+                        textEditUserName.setText(user.getUserName());
 
                         // --------------------------------------------------------------------------------
                         if (MainActivity.activity != null) {
                             Log.i(TAG, "ENTRO A Profile:EditName:0");
-                            MainActivity.myMenu.updateName();
+                            MainActivity.myMenu.updateUserName();
                         }
                         if (EventsActivity.activity != null) {
                             Log.i(TAG, "ENTRO A Profile:EditName:1");
-                            EventsActivity.myMenu.updateName();
+                            EventsActivity.myMenu.updateUserName();
                         }
                         // --------------------------------------------------------------------------------
 
+                    } else {
+                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_username), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    //
+    private void showAlertDialogEditEmail() {
+
+        final String email;
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(getString(R.string.profile_text_email));
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_profile_email, null);
+        dialog.setView(dialogView);
+
+        final AutoCompleteTextView mEmailView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_email);
+
+        email = MyState.getUser().getEmail();
+        if (email != null) {
+            mEmailView.setText(email);
+        }
+
+        dialog.setNegativeButton(getString(R.string.text_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setPositiveButton(getString(R.string.text_done), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String newEmail = mEmailView.getText().toString();
+
+                if (((email == null) & (newEmail != null))
+                        | (email != null) & (newEmail != null) & (!email.equals(newEmail))) { // Si se editado el email actualizamos, sino nada.
+
+                    User user = MyState.getUser();
+                    user.setEmail(newEmail);
+
+                    if (MyNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
+                        MyDatabase.updateUser(TAG, activity, user);
+                        MyState.setUser(user);
+
+                        textEditEmail.setText(user.getEmail());
+
+                        // --------------------------------------------------------------------------------
+                        if (MainActivity.activity != null) {
+                            Log.i(TAG, "ENTRO A Profile:EditEmail:0");
+                            MainActivity.myMenu.updateEmail();
+                        }
+                        if (EventsActivity.activity != null) {
+                            Log.i(TAG, "ENTRO A Profile:EditEmail:1");
+                            EventsActivity.myMenu.updateEmail();
+                        }
+                        // --------------------------------------------------------------------------------
+
+                    } else {
+                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_email), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    //
+    private void showAlertDialogEditName() {
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(getString(R.string.profile_text_complete_name));
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_profile_name, null);
+        dialog.setView(dialogView);
+
+        final AutoCompleteTextView mFirstNameView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_first_name);
+        final AutoCompleteTextView mLastNameView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_last_name);
+
+        final String name = MyState.getUser().getName();
+        final String surname = MyState.getUser().getSurname();
+        if (name != null) {
+            mFirstNameView.setText(name);
+        }
+        if (surname != null) {
+            mLastNameView.setText(surname);
+        }
+
+        dialog.setNegativeButton(getString(R.string.text_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setPositiveButton(getString(R.string.text_done), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String newName = mFirstNameView.getText().toString();
+                String newSurname = mLastNameView.getText().toString();
+
+                if ((((name == null) & (newName != null))
+                        | ((name != null) & (newName != null) & (!name.equals(newName))))
+                        |
+                        (((surname == null) & (newSurname != null))
+                                | ((surname != null) & (newSurname != null) & (!surname.equals(newName))))) {
+
+                    User user = MyState.getUser();
+                    user.setName(newName);
+                    user.setSurname(newSurname);
+
+                    if (MyNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
+                        MyDatabase.updateUser(TAG, activity, user);
+                        MyState.setUser(user);
+
+                        textEditName.setText(user.getName() + " " + user.getSurname());
                     } else {
                         Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_name), Toast.LENGTH_SHORT).show();
                     }
@@ -236,7 +412,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(getString(R.string.text_gender));
+        dialog.setTitle(getString(R.string.profile_text_gender));
         dialog.setSingleChoiceItems(items, itemDefaultSelect, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
 
@@ -323,22 +499,20 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     //
-    private void showAlertDialogEditEmail() {
-
-        final String email;
+    private void showAlertDialogEditPlace() {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(getString(R.string.text_email));
+        dialog.setTitle(getString(R.string.profile_text_place));
 
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_profile_email, null);
+        View dialogView = inflater.inflate(R.layout.dialog_profile_place, null);
         dialog.setView(dialogView);
 
-        final AutoCompleteTextView mEmailView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_email);
+        final AutoCompleteTextView mPlaceView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_place);
 
-        email = MyState.getUser().getEmail();
-        if (email != null) {
-            mEmailView.setText(email);
+        final String place = MyState.getUser().getPlace();
+        if (place != null) {
+            mPlaceView.setText(place);
         }
 
         dialog.setNegativeButton(getString(R.string.text_cancel), new DialogInterface.OnClickListener() {
@@ -351,33 +525,70 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                String newEmail = mEmailView.getText().toString();
+                String newPlace = mPlaceView.getText().toString();
 
-                if ( ((email == null) & (newEmail != null))
-                        | (email != null) & (newEmail != null) & (!email.equals(newEmail)) ){ // Si se editado el email actualizamos, sino nada.
+                if ( ((place == null) && (newPlace != null)) || ((place != null) & (!place.equals(newPlace))) ) {
 
                     User user = MyState.getUser();
-                    user.setEmail(newEmail);
+                    user.setPlace(newPlace);
 
                     if (MyNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
                         MyDatabase.updateUser(TAG, activity, user);
                         MyState.setUser(user);
 
-                        textEditEmail.setText(user.getEmail());
-
-                        // --------------------------------------------------------------------------------
-                        if (MainActivity.activity != null) {
-                            Log.i(TAG, "ENTRO A Profile:EditEmail:0");
-                            MainActivity.myMenu.updateEmail();
-                        }
-                        if (EventsActivity.activity != null){
-                            Log.i(TAG, "ENTRO A Profile:EditEmail:1");
-                            EventsActivity.myMenu.updateEmail();
-                        }
-                        // --------------------------------------------------------------------------------
-
+                        textEditPlace.setText(user.getPlace());
                     } else {
-                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_email), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_place), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    //
+    private void showAlertDialogEditMusicStyle() {
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(getString(R.string.profile_text_musicstyle));
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_profile_musicstyle, null);
+        dialog.setView(dialogView);
+
+        final AutoCompleteTextView mMusicStyleView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_musicstyle);
+
+        final String musicStyle = MyState.getUser().getMusicStyle();
+        if (musicStyle != null) {
+            mMusicStyleView.setText(musicStyle);
+        }
+
+        dialog.setNegativeButton(getString(R.string.text_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setPositiveButton(getString(R.string.text_done), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String newMusicStyle = mMusicStyleView.getText().toString();
+
+                if ( ((musicStyle == null) && (newMusicStyle != null)) || ((musicStyle != null) & (!musicStyle.equals(newMusicStyle))) ) {
+
+                    User user = MyState.getUser();
+                    user.setMusicStyle(newMusicStyle);
+
+                    if (MyNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
+                        MyDatabase.updateUser(TAG, activity, user);
+                        MyState.setUser(user);
+
+                        textEditMusicStyle.setText(user.getMusicStyle());
+                    } else {
+                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_musicstyle), Toast.LENGTH_SHORT).show();
                     }
                 }
 

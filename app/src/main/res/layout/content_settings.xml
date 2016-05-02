@@ -1,6 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:clickable="true" >
 
+    <!-- Toolbar -->
+    <android.support.v7.widget.Toolbar
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:minHeight="?attr/actionBarSize"
+        android:background="@color/AZUL_CLARO_APP"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <!-- Resto de la interfaz de usuario -->
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/button_help"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/info_button_padding"
+                android:text="@string/info_button_help"
+                android:textAllCaps="false"
+                android:textSize="@dimen/info_button_size"
+                android:textColor="@color/GRIS_1"
+                android:gravity="left"
+                android:background="?android:attr/selectableItemBackground"
+                android:drawableLeft="@drawable/ic_help_blue_24dp"
+                android:drawablePadding="@dimen/info_button_padding" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/GRIS_5"
+                android:id="@+id/view_separator_1" >
+            </View>
+
+            <Button
+                android:id="@+id/button_terms_of_service"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/info_button_padding"
+                android:text="@string/info_button_terms_of_service"
+                android:textAllCaps="false"
+                android:textSize="@dimen/info_button_size"
+                android:textColor="@color/GRIS_1"
+                android:gravity="left"
+                android:background="?android:attr/selectableItemBackground"
+                android:drawableLeft="@drawable/ic_info_blue_24dp"
+                android:drawablePadding="@dimen/info_button_padding" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/GRIS_5"
+                android:id="@+id/view_separator_2" >
+            </View>
+
+            <Button
+                android:id="@+id/button_privacy_policy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/info_button_padding"
+                android:text="@string/info_button_privacy_policy"
+                android:textAllCaps="false"
+                android:textSize="@dimen/info_button_size"
+                android:textColor="@color/GRIS_1"
+                android:gravity="left"
+                android:background="?android:attr/selectableItemBackground"
+                android:drawableLeft="@drawable/ic_description_blue_24dp"
+                android:drawablePadding="@dimen/info_button_padding" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/GRIS_5"
+                android:id="@+id/view_separator_3" >
+            </View>
+
+            <Button
+                android:id="@+id/button_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/info_button_padding"
+                android:text="@string/info_button_version"
+                android:textAllCaps="false"
+                android:textSize="@dimen/info_button_size"
+                android:textColor="@color/GRIS_1"
+                android:gravity="left"
+                android:background="?android:attr/selectableItemBackground"
+                android:drawableLeft="@drawable/ic_play_install_blue_24dp"
+                android:drawablePadding="@dimen/info_button_padding" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/GRIS_5"
+                android:id="@+id/view_separator_4" >
+            </View>
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

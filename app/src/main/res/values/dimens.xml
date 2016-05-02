@@ -17,7 +17,7 @@
     <dimen name="text_size_email_name">10dp</dimen>
     <dimen name="text_size_user_location">16dp</dimen>
 
-    <!-- AÑADIDO : MAIN ACTIVITY -->
+    <!-- AÑADIDO : Main -->
     <dimen name="geolocation_title">24sp</dimen>
     <dimen name="know_the_events">20sp</dimen>
     <dimen name="button_use_location">18sp</dimen>
@@ -26,5 +26,9 @@
     <dimen name="circle_image_profile">120dp</dimen>
     <dimen name="text_about_me">20sp</dimen>
     <dimen name="profile_text_profile">16sp</dimen>
+
+    <!-- AÑADIDO : Info -->
+    <dimen name="info_button_padding">16dp</dimen>
+    <dimen name="info_button_size">18sp</dimen>
 
 </resources>

@@ -7,7 +7,7 @@
         <item name="colorPrimaryDark">@color/AZUL_CLARO_BAR</item>
         <item name="colorAccent">@color/ROJO</item>
 
-        <item name="android:windowAnimationStyle">@style/MyAnimation.Activity</item>
+        <!-- <item name="android:windowAnimationStyle">@style/MyAnimation.Activity</item> -->
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -21,10 +21,10 @@
     <!-- AÑADIDO -->
     <!-- *************************************************************************************** -->
     <!-- Animation -->
-    <style name="MyAnimation.Activity" parent="@android:style/Animation.Activity">
-        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
-        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
-    </style>
+    <!--<style name="MyAnimation.Activity" parent="@android:style/Animation.Activity"> -->
+    <!--    <item name="android:windowEnterAnimation">@android:anim/fade_in</item> -->
+    <!--    <item name="android:windowExitAnimation">@android:anim/fade_out</item> -->
+    <!--</style> -->
     <!-- *************************************************************************************** -->
 
 </resources>

@@ -8,7 +8,6 @@
 
     <!-- Resto de la interfaz de usuario -->
     <RelativeLayout
-        android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
@@ -23,10 +22,8 @@
                 android:orientation="vertical" >
 
                 <RelativeLayout
-                    android:id="@+id/relative_picture_profile"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
+                    android:layout_height="match_parent" >
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/circle_image_profile"
@@ -40,7 +37,7 @@
                 </RelativeLayout>
 
                 <LinearLayout
-                    android:id="@+id/linear_info_profile"
+                    android:id="@+id/profile_linear_info_account"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical" >
@@ -49,8 +46,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:id="@+id/text_about_me"
-                        android:text="@string/text_about_me"
+                        android:id="@+id/profile_text_info_account"
+                        android:text="@string/profile_text_info_account"
                         android:textSize="@dimen/text_about_me"
                         android:textColor="@color/GRIS_1"
                         android:gravity="center"
@@ -75,14 +72,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:padding="12dp"
-                            android:id="@+id/profile_relative_name"
+                            android:id="@+id/profile_relative_username"
                             android:background="@drawable/profile_button_animation_personalice"
                             android:clickable="true" >
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/text_name"
+                                android:text="@string/profile_text_username"
                                 android:layout_alignParentLeft="true"
                                 android:textSize="@dimen/profile_text_profile" />
 
@@ -90,8 +87,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
-                                android:id="@+id/profile_text_name"
-                                android:text="@string/text_cl_name"
+                                android:id="@+id/profile_text_username"
+                                android:text="@string/profile_text_cl_username"
                                 android:textColor="@color/ROJO"
                                 android:textSize="@dimen/profile_text_profile" />
                         </RelativeLayout>
@@ -100,75 +97,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/GRIS_5"
-                            android:id="@+id/view_separator_1"
-                            android:layout_marginLeft="12dp"
-                            android:layout_marginRight="12dp">
-                        </View>
-
-                        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:padding="12dp"
-                            android:id="@+id/profile_relative_gender"
-                            android:background="@drawable/profile_button_animation_personalice"
-                            android:clickable="true" >
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/text_gender"
-                                android:layout_alignParentLeft="true"
-                                android:textSize="@dimen/profile_text_profile" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:id="@+id/profile_text_gender"
-                                android:text="@string/text_cl_gender"
-                                android:textColor="@color/ROJO"
-                                android:textSize="@dimen/profile_text_profile" />
-                        </RelativeLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/GRIS_5"
-                            android:id="@+id/view_separator_2"
-                            android:layout_marginLeft="12dp"
-                            android:layout_marginRight="12dp">
-                        </View>
-
-                        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:padding="12dp"
-                            android:id="@+id/profile_relative_birthday"
-                            android:background="@drawable/profile_button_animation_personalice"
-                            android:clickable="true" >
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/text_birthday"
-                                android:layout_alignParentLeft="true"
-                                android:textSize="@dimen/profile_text_profile" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:id="@+id/profile_text_birthday"
-                                android:text="@string/text_cl_birthday"
-                                android:textColor="@color/ROJO"
-                                android:textSize="@dimen/profile_text_profile" />
-                        </RelativeLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/GRIS_5"
-                            android:id="@+id/view_separator_3"
+                            android:id="@+id/view_separator_1.1"
                             android:layout_marginLeft="12dp"
                             android:layout_marginRight="12dp">
                         </View>
@@ -184,7 +113,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/text_email"
+                                android:text="@string/profile_text_email"
                                 android:layout_alignParentLeft="true"
                                 android:textSize="@dimen/profile_text_profile" />
 
@@ -193,7 +122,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:id="@+id/profile_text_email"
-                                android:text="@string/text_cl_email"
+                                android:text="@string/profile_text_cl_email"
                                 android:textColor="@color/ROJO"
                                 android:textSize="@dimen/profile_text_profile" />
                         </RelativeLayout>
@@ -202,7 +131,210 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/GRIS_5"
-                            android:id="@+id/view_separator_4" >
+                            android:id="@+id/view_separator_1.2">
+                        </View>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_info_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="30dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:id="@+id/text_about_me"
+                        android:text="@string/profile_text_info_personal"
+                        android:textSize="@dimen/text_about_me"
+                        android:textColor="@color/GRIS_1"
+                        android:gravity="center"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="30dp"
+                        android:editable="false"
+                        android:layout_gravity="center_horizontal|top"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@color/BLANCO"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="10dp" >
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="12dp"
+                            android:id="@+id/profile_relative_name"
+                            android:background="@drawable/profile_button_animation_personalice"
+                            android:clickable="true" >
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/profile_text_name"
+                                android:layout_alignParentLeft="true"
+                                android:textSize="@dimen/profile_text_profile" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:id="@+id/profile_text_name"
+                                android:text="@string/profile_text_cl_name"
+                                android:textColor="@color/ROJO"
+                                android:textSize="@dimen/profile_text_profile" />
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/GRIS_5"
+                            android:id="@+id/view_separator_2.1"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginRight="12dp">
+                        </View>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="12dp"
+                            android:id="@+id/profile_relative_gender"
+                            android:background="@drawable/profile_button_animation_personalice"
+                            android:clickable="true" >
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/profile_text_gender"
+                                android:layout_alignParentLeft="true"
+                                android:textSize="@dimen/profile_text_profile" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:id="@+id/profile_text_gender"
+                                android:text="@string/profile_text_cl_gender"
+                                android:textColor="@color/ROJO"
+                                android:textSize="@dimen/profile_text_profile" />
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/GRIS_5"
+                            android:id="@+id/view_separator_2.2"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginRight="12dp">
+                        </View>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="12dp"
+                            android:id="@+id/profile_relative_birthday"
+                            android:background="@drawable/profile_button_animation_personalice"
+                            android:clickable="true" >
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/profile_text_birthday"
+                                android:layout_alignParentLeft="true"
+                                android:textSize="@dimen/profile_text_profile" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:id="@+id/profile_text_birthday"
+                                android:text="@string/profile_text_cl_birthday"
+                                android:textColor="@color/ROJO"
+                                android:textSize="@dimen/profile_text_profile" />
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/GRIS_5"
+                            android:id="@+id/view_separator_2.3"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginRight="12dp">
+                        </View>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="12dp"
+                            android:id="@+id/profile_relative_place"
+                            android:background="@drawable/profile_button_animation_personalice"
+                            android:clickable="true" >
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/profile_text_place"
+                                android:layout_alignParentLeft="true"
+                                android:textSize="@dimen/profile_text_profile" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:id="@+id/profile_text_place"
+                                android:text="@string/profile_text_cl_place"
+                                android:textColor="@color/ROJO"
+                                android:textSize="@dimen/profile_text_profile" />
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/GRIS_5"
+                            android:id="@+id/view_separator_2.4"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginRight="12dp">
+                        </View>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="12dp"
+                            android:id="@+id/profile_relative_musicStyle"
+                            android:background="@drawable/profile_button_animation_personalice"
+                            android:clickable="true" >
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/profile_text_musicstyle"
+                                android:layout_alignParentLeft="true"
+                                android:textSize="@dimen/profile_text_profile" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:id="@+id/profile_text_musicStyle"
+                                android:text="@string/profile_text_cl_musicstyle"
+                                android:textColor="@color/ROJO"
+                                android:textSize="@dimen/profile_text_profile" />
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/GRIS_5"
+                            android:id="@+id/view_separator_2.5">
                         </View>
                     </LinearLayout>
                 </LinearLayout>
@@ -210,27 +342,5 @@
             </LinearLayout>
         </ScrollView>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/GRIS_4"
-            android:id="@+id/view_separator_5"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_above="@+id/button_change_password"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
-        </View>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/button_change_password"
-            android:text="@string/text_change_password"
-            android:background="?android:attr/selectableItemBackground"
-            android:textColor="@color/AZUL_CLARO_APP"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
     </RelativeLayout>
 </LinearLayout>

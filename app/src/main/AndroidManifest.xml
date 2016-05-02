@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
-    <!-- AÑADIDO -->
+    <!-- AÑADIDOS -->
     <!-- ********************************************************************************** -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -40,7 +40,7 @@
         <!-- ********************************************************************************** -->
 
         <activity
-            android:name=".MainActivity"
+            android:name=".Inicializate"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
@@ -48,6 +48,13 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
         <activity
@@ -60,15 +67,16 @@
         <activity
             android:name=".AccountActivity"
             android:label="@string/title_activity_account"
-            android:parentActivityName=".MainActivity">
+            android:launchMode="singleTask"
+            android:parentActivityName=".Inicializate">
 
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.MainActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.Inicializate" />
         </activity>
 
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:noHistory="true"
+            android:launchMode="singleTask"
             android:parentActivityName=".AccountActivity">
 
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.AccountActivity" />
@@ -77,7 +85,7 @@
         <activity
             android:name=".SignupActivity"
             android:label="@string/title_activity_signup"
-            android:noHistory="true"
+            android:launchMode="singleTask"
             android:parentActivityName=".AccountActivity">
 
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.AccountActivity" />
@@ -86,7 +94,7 @@
         <activity
             android:name=".ForgottenPasswordActivity"
             android:label="@string/title_activity_forgotten_password"
-            android:noHistory="true"
+            android:launchMode="singleTask"
             android:parentActivityName=".LoginActivity">
 
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.LoginActivity" />
@@ -95,45 +103,57 @@
         <activity
             android:name=".PublishActivity"
             android:label="@string/title_activity_publish"
-            android:noHistory="true"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
         <activity
             android:name=".SearchActivity"
             android:label="@string/title_activity_search"
-            android:noHistory="true"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
         <activity
             android:name=".InfoActivity"
             android:label="@string/title_activity_info"
-            android:noHistory="true"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:launchMode="singleTask"
+            android:parentActivityName=".Inicializate">
+
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.Inicializate" />
+        </activity>
+
+        <activity
+            android:name=".VersionActivity"
+            android:label="@string/title_activity_version"
+            android:launchMode="singleTask"
+            android:parentActivityName=".InfoActivity">
+
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.InfoActivity" />
         </activity>
 
         <activity
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
-            android:noHistory="true"
-            android:parentActivityName=".MainActivity">
+            android:launchMode="singleTask"
+            android:parentActivityName=".Inicializate">
 
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.MainActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.Inicializate" />
         </activity>
 
         <activity
             android:name=".LocationActivity"
             android:label="@string/title_activity_location"
-            android:parentActivityName=".MainActivity">
+            android:launchMode="singleTask"
+            android:parentActivityName=".Inicializate">
 
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.MainActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.Inicializate" />
         </activity>
 
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:noHistory="true"
+            android:launchMode="singleTask"
             android:parentActivityName=".ProfileActivity">
 
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.ProfileActivity" />

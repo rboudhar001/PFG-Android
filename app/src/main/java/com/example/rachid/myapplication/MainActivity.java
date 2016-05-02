@@ -38,40 +38,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        //AÑADIDO: LOGIN
-        // ----------------------------------------------------------------------------------------
-        Log.i(TAG, "ENTRO A M:getLoged_1: " + MyState.getLoged());
-        Log.i(TAG, "ENTRO A M:getExistsLocation_1: " + MyState.getExistsLocation());
-
-        if ( (!MyState.getLoged()) || (!MyState.getExistsLocation()) ){ // Si no estoy logeado o no tengo la localizacion
-            // Intentar inicializar de la DB
-            MyDatabase.inicializate(TAG, this);
-        }
-        // ----------------------------------------------------------------------------------------
-
-        // OPEN MainActivity OR EventsActivity
-        // ----------------------------------------------------------------------------------------
-        if (MyState.getExistsLocation()) { // Si existe la localizacion pasar a la ventana de eventos
-
-            Log.i(TAG, "ENTRO A Main:FINISH:0");
-
-            startActivity(new Intent(MainActivity.this, EventsActivity.class));
-            //overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Cambiar la animacion
-
-            Log.i(TAG, "ENTRO A Main:FINISH:1");
-
-            activity = null;
-
-            this.finish();
-            return;
-            //Log.i(TAG, "ENTRO A Main:FINISH:2");
-        }
         activity = this;
         myMenu = new MyMenu(activity);
-
-        setContentView(R.layout.activity_main);
-        // ----------------------------------------------------------------------------------------
 
         // AÑADIDO: VISIBLE OR INVISIBLE - NAV_HEADER_MAIN or NAV_HEADER_LOGIN
         // ----------------------------------------------------------------------------------------
@@ -84,16 +54,6 @@ public class MainActivity extends AppCompatActivity implements
         // ----------------------------------------------------------------------------------------
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            }
-        });
-        */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -138,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements
                 public void run() {
                     doubleBackToExitPressedOnce = false;
                 }
-            }, 2000);
+            }, 3000);
             // ---------------------------------------------------------------------------------------
         }
     }

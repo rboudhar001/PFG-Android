@@ -314,6 +314,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     }
     // -------------------------------------------------------------------------------------------
 
+    // **********
+    // FUNCTION
+    // **********
     //
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
 
@@ -326,6 +329,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         mEmailView.setAdapter(adapter);
     }
 
+    // **********
+    // CLASS
+    // **********
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -406,6 +412,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         }
     }
 
+    // **********
+    // FUNTIONS
+    // **********
     private void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);

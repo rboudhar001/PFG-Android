@@ -9,6 +9,6 @@
     tools:openDrawer="start" >
 
     <!-- Layout real de la actividad -->
-    <include layout="@layout/content_info" />
+    <include layout="@layout/content_version" />
 
 </android.support.v4.widget.DrawerLayout>
