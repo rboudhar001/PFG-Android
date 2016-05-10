@@ -145,6 +145,14 @@
     <string name="facebook_app_id">1592965991028641</string>
     <!-- *************************************************************************************** -->
 
+    <!-- EVENTS -->
+    <!-- *************************************************************************************** -->
+    <string name="tabEvents_text_no_events">No hay eventos</string>
+    <string name="tabPublished_text_no_events">No has publicado ningun evento</string>
+    <string name="tabRegistered_text_no_events">No te has registrado en ningun evento</string>
+    <!-- *************************************************************************************** -->
+
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

@@ -8,15 +8,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="You Are In Tab Events"
-        android:id="@+id/textView"
+        android:id="@+id/tabEvents_text_no_events"
+        android:text="@string/tabEvents_text_no_events"
+        android:textSize="24dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
-    <ListView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/events_listView"
-        android:layout_gravity="center_horizontal" />
+        android:layout_height="match_parent"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tabEvents_listView_events"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
 
 </RelativeLayout>

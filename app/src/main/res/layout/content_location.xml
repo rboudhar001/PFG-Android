@@ -29,18 +29,19 @@ android:clickable="true" >
                     android:layout_height="wrap_content"
                     android:padding="18dp"
                     android:text="@string/button_use_my_current_location"
-                    android:textSize="18sp"
+                    android:textAllCaps="false"
+                    android:textSize="20sp"
                     android:textColor="@color/AZUL_CLARO_APP"
                     android:gravity="left"
                     android:background="?android:attr/selectableItemBackground"
                     android:drawableLeft="@drawable/ic_gps_fixed_blue_24dp"
-                    android:drawablePadding="20dp" />
+                    android:drawablePadding="18dp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:id="@+id/textView"
+                    android:id="@+id/location_textView"
                     android:text="@string/text_popular_location"
                     android:textSize="20dp"
                     android:textColor="@color/GRIS_1"
@@ -51,7 +52,7 @@ android:clickable="true" >
                 <ListView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/listView_citys"
+                    android:id="@+id/location_listView_citys"
                     android:layout_gravity="center" />
             </LinearLayout>
         </ScrollView>
