@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class TabEvents extends Fragment {
 
     private ListView list;
     private EventsAdapter adapter;
-    public ArrayList<Event> listViewValues = new ArrayList<Event>();
+    private ArrayList<Event> listViewValues = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,21 +35,52 @@ public class TabEvents extends Fragment {
         list = (ListView) view.findViewById(R.id.tabEvents_listView_events);
 
         //TODO: Recoger de la DB del servidor de Junguitu los eventos.
-        //Resources res = MyNetwork.getEvents();
+        Resources res = getResources();
 
         // TEMPORAL
-        Resources res = null;
+        // ----------------------------------------------------------------------------------------
+        Event event_1 = new Event();
+        event_1.setName("Evento numero 1");
+        event_1.setPlace("Vitoria");
+        event_1.setFirstDate("01/01/1990");
+        event_1.setLastDate("31/12/2016");
+
+        Event event_2 = new Event();
+        event_2.setName("Evento numero 2");
+        event_2.setPlace("Bilbao");
+        event_2.setFirstDate("01/01/1990");
+        event_2.setLastDate("31/12/2016");
+
+        Event event_3 = new Event();
+        event_3.setName("Evento numero 3");
+        event_3.setPlace("Donostia");
+        event_3.setFirstDate("01/01/1990");
+        event_3.setLastDate("31/12/2016");
+
+        listViewValues.add(event_1);
+        listViewValues.add(event_2);
+        listViewValues.add(event_3);
+        // ----------------------------------------------------------------------------------------
+
+        TextView no_events = (TextView) view.findViewById(R.id.tabEvents_text_no_events);
+        if (listViewValues.isEmpty()) {
+            no_events.setVisibility(View.VISIBLE);
+            list.setVisibility(View.INVISIBLE);
+        }
+        else {
+            no_events.setVisibility(View.INVISIBLE);
+            list.setVisibility(View.VISIBLE);
+        }
 
         adapter = new EventsAdapter(EventsActivity.activity, listViewValues, res);
         list.setAdapter(adapter);
-        // ----------------------------------------------------------------------------------------
 
         return view;
     }
 
     /*****************  This function used by adapter ****************/
     public void onItemClick(int mPosition) {
-        Event tempValues = ( Event ) listViewValues.get(mPosition);
+        Event tempValues = listViewValues.get(mPosition);
 
         // SHOW ALERT
         Toast.makeText(EventsActivity.activity, "Event Name: " + tempValues.getName(), Toast.LENGTH_LONG).show();

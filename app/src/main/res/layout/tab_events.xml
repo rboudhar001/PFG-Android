@@ -10,23 +10,25 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/tabEvents_text_no_events"
         android:text="@string/tabEvents_text_no_events"
-        android:textSize="24dp"
+        android:textSize="22dp"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:gravity="center" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp">
+        android:layout_marginRight="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp">
 
         <ListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tabEvents_listView_events"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:scrollbars="none" />
     </LinearLayout>
 
 </RelativeLayout>

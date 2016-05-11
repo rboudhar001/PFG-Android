@@ -657,8 +657,10 @@ public class ProfileActivity extends AppCompatActivity {
                     EventsActivity.activity.finish();
                 }
 
+                startActivity(new Intent(ProfileActivity.this, Inicializate.class));
+
                 dialog.dismiss();
-                startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                ProfileActivity.activity.finish();
             }
         });
         dialog.show();

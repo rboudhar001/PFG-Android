@@ -14,6 +14,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -49,6 +50,9 @@ public abstract class MyLocation {
     private static boolean obtainedLocation = false;
 
     private static ProgressDialog mProgressDialog;
+
+    private static Handler handler;
+    private static Runnable runnable;
 
     // Funciones
     public static void location_function(String T, Activity A, int R) {
@@ -202,6 +206,8 @@ public abstract class MyLocation {
                                     obtainedLocation = true;
                                 }
 
+                                endTime(); // Cancelamos la espera max de 15 seg
+
                                 if (mGoogleApiClient != null) {
                                     mGoogleApiClient.disconnect();
                                 }
@@ -256,36 +262,34 @@ public abstract class MyLocation {
                         activity.getApplicationContext().getPackageName()) == PackageManager.PERMISSION_GRANTED) {
 
                     Log.i(TAG, "ENTRO A M:getLocation:10");
-                    locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+                    locationManager.requestLocationUpdates(locationProvider, 1000, 1000, locationListener);
+                    //locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
                 }
+
+                startTime(); // Activate el reloj de espera maximo de 15 segundos, si pasa el tiempo, cerrar.
             } else{
+                if (mGoogleApiClient != null) {
+                    mGoogleApiClient.disconnect();
+                }
+
                 hideProgressDialog();
                 Toast.makeText(activity.getBaseContext(), "Not network connected, impossible to detect the location", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    //
     private static boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
 
-    public static void delete(String T, Activity A){
-
-        MyDatabase.deleteLocation(T, A);
-
-        MyState.getUser().setLocation(null);
-        MyState.setExistsLocation(false);
-    }
-
-    public static boolean isObtainedLocation() {
-        return obtainedLocation;
-    }
-
+    //
     public static void disconnectGoogleApiClient(){
         mGoogleApiClient.disconnect();
     }
 
+    //
     private static void showProgressDialog() {
         mProgressDialog = new ProgressDialog(activity);
         mProgressDialog.setMessage(activity.getString(R.string.loading));
@@ -297,10 +301,42 @@ public abstract class MyLocation {
         mProgressDialog.show();
     }
 
+    //
     private static void hideProgressDialog() {
 
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.hide();
         }
+    }
+
+    //
+    private static void startTime() {
+        // ---------------------------------------------------------------------------------------
+        handler = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (mGoogleApiClient != null) {
+                    mGoogleApiClient.disconnect();
+                }
+
+                PackageManager packageManager = activity.getApplicationContext().getPackageManager();
+                if (packageManager.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
+                        activity.getApplicationContext().getPackageName()) == PackageManager.PERMISSION_GRANTED) {
+                    locationManager.removeUpdates(locationListener);
+                }
+
+                hideProgressDialog();
+                Toast.makeText(activity.getBaseContext(), "Impossible to detect the location", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        handler.postDelayed(runnable, 15000); // 15 seg
+        // ---------------------------------------------------------------------------------------
+    }
+
+    //
+    private static void endTime() {
+        handler.removeCallbacks(runnable);
     }
 }

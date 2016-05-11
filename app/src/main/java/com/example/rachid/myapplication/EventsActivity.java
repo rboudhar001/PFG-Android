@@ -1,6 +1,5 @@
 package com.example.rachid.myapplication;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

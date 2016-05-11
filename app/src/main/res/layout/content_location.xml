@@ -6,55 +6,49 @@ android:layout_height="match_parent"
 android:orientation="vertical"
 android:clickable="true" >
 
-    <!-- Interfaz de usuario -->
+    <!-- Resto de la interfaz de usuario -->
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <!-- Resto de la interfaz de usuario -->
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
 
-            <LinearLayout
+            <Button
+                android:id="@+id/location_button_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="18dp"
+                android:text="@string/button_use_my_current_location"
+                android:textAllCaps="false"
+                android:textSize="20sp"
+                android:textColor="@color/AZUL_CLARO_APP"
+                android:gravity="left"
+                android:background="?android:attr/selectableItemBackground"
+                android:drawableLeft="@drawable/ic_gps_fixed_blue_24dp"
+                android:drawablePadding="18dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/location_textView"
+                android:text="@string/text_popular_location"
+                android:textSize="20dp"
+                android:textColor="@color/GRIS_1"
+                android:background="@color/GRIS_5"
+                android:paddingLeft="15dp"
+                android:gravity="left" />
+
+            <ListView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical" >
+                android:id="@+id/location_listView_country"
+                android:layout_gravity="center_horizontal" />
 
-                <Button
-                    android:id="@+id/location_button_location"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="18dp"
-                    android:text="@string/button_use_my_current_location"
-                    android:textAllCaps="false"
-                    android:textSize="20sp"
-                    android:textColor="@color/AZUL_CLARO_APP"
-                    android:gravity="left"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:drawableLeft="@drawable/ic_gps_fixed_blue_24dp"
-                    android:drawablePadding="18dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:id="@+id/location_textView"
-                    android:text="@string/text_popular_location"
-                    android:textSize="20dp"
-                    android:textColor="@color/GRIS_1"
-                    android:background="@color/GRIS_5"
-                    android:paddingLeft="15dp"
-                    android:gravity="left" />
-
-                <ListView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/location_listView_citys"
-                    android:layout_gravity="center" />
-            </LinearLayout>
-        </ScrollView>
+        </LinearLayout>
     </FrameLayout>
 </LinearLayout>

@@ -5,6 +5,9 @@ package com.example.rachid.myapplication;
  */
 public class Event {
 
+    // ******************
+    // Variables
+    // ******************
     private String image; //URL de la imagen
     private String name; // Titulo del evento
     private String description;
@@ -22,6 +25,47 @@ public class Event {
 
     private String creator; // Creador
     private String created_on; // Fecha del dia en el que se creo este evento
+
+    // ******************
+    // Constructor
+    // ******************
+    public Event() {
+        this.image = null;
+        this.name = null;
+        this.description = null;
+        this.place = null;
+        this.firstDate = null;
+        this.lastDate = null;
+        this.capacity = null;
+        this.assistants = null;
+        this.sales = null;
+        this.webpage = null;
+        this.contact_number = null;
+        this.creator = null;
+        this.created_on = null;
+    }
+
+    public Event(String image, String name, String description, String place, String firstDate,
+                 String lastDate, String capacity, String assistants, String sales, String webpage,
+                 String contact_number, String creator, String created_on) {
+        this.image = image;
+        this.name = name;
+        this.description = description;
+        this.place = place;
+        this.firstDate = firstDate;
+        this.lastDate = lastDate;
+        this.capacity = capacity;
+        this.assistants = assistants;
+        this.sales = sales;
+        this.webpage = webpage;
+        this.contact_number = contact_number;
+        this.creator = creator;
+        this.created_on = created_on;
+    }
+
+    // ******************
+    // Funciones
+    // ******************
 
     //
     public String getAssistants() {

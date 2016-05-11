@@ -92,16 +92,7 @@ public class EventsAdapter extends BaseAdapter implements View.OnClickListener {
             holder = (ViewHolder) view.getTag();
         }
 
-        TextView no_events = (TextView) activity.findViewById(R.id.tabEvents_text_no_events);
-        if(data.size() <= 0)
-        {
-            //holder.name.setText("No Data");
-            no_events.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            no_events.setVisibility(View.INVISIBLE);
-
+        if (data.size() > 0) {
             /***** Get each Model object from Arraylist ********/
             tempValues = null;
             tempValues = ( Event ) data.get( position );
