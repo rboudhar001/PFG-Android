@@ -192,7 +192,7 @@ public class AccountActivity extends AppCompatActivity implements
                         // Save the Location
                         user.setLocation(MyState.getUser().getLocation());
 
-                        String id = MyNetwork.signupUser(user); //Insert MyNetwork
+                        String id = MyNetwork.signupUser(activity, user); //Insert MyNetwork
                         if (id != null) {
 
                             Log.i(TAG, "ENTRO A Account:loginGoogle:2");
@@ -406,7 +406,7 @@ public class AccountActivity extends AppCompatActivity implements
             // --------------------------------------------------------------------------------
 
             //Insert MyNetwork
-            String id = MyNetwork.signupUser(user);
+            String id = MyNetwork.signupUser(activity, user);
             if (id != null) {
 
                 Log.i(TAG, "ENTRO A Account:loginGoogle:2");

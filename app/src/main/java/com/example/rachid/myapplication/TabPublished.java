@@ -39,6 +39,7 @@ public class TabPublished extends Fragment {
 
         // TEMPORAL
         // ----------------------------------------------------------------------------------------
+        /*
         Event event_1 = new Event();
         event_1.setName("Evento numero 1");
         event_1.setPlace("Vitoria");
@@ -46,6 +47,9 @@ public class TabPublished extends Fragment {
         event_1.setLastDay("31/12/2016");
 
         listViewValues.add(event_1);
+        */
+
+        listViewValues = MyNetwork.getPublishedEvents(tabPublished, MyState.getUser().getID());
         // ----------------------------------------------------------------------------------------
 
         TextView no_events = (TextView) view.findViewById(R.id.tabPublished_text_no_events);

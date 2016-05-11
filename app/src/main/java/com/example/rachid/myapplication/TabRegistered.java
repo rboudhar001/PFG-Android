@@ -38,8 +38,8 @@ public class TabRegistered extends Fragment {
         Resources res = getResources();
 
         // TEMPORAL
-        /*
         // ----------------------------------------------------------------------------------------
+        /*
         Event event_3 = new Event();
         event_3.setName("Evento numero 3");
         event_3.setPlace("Donostia");
@@ -47,8 +47,10 @@ public class TabRegistered extends Fragment {
         event_3.setLastDay("31/12/2016");
 
         listViewValues.add(event_3);
-        // ----------------------------------------------------------------------------------------
         */
+
+        listViewValues = MyNetwork.getRegisteredEvents(tabRegistered, MyState.getUser().getID());
+        // ----------------------------------------------------------------------------------------
 
         TextView no_events = (TextView) view.findViewById(R.id.tabRegistered_text_no_events);
         if (listViewValues.isEmpty()) {

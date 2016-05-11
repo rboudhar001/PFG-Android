@@ -2,6 +2,7 @@ package com.example.rachid.myapplication;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,8 +25,10 @@ import im.delight.android.ddp.db.Query;
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-public class MyMeteor extends Activity implements MeteorCallback {
+public class MyMeteor implements MeteorCallback {
 
+    private Activity activity;
+    private Fragment fragment;
     private Meteor mMeteor;
 
     // Añadido: Collection Names
@@ -34,20 +37,35 @@ public class MyMeteor extends Activity implements MeteorCallback {
     private String Events = "Festivales";
     // -------------------------------------------------------------------------------------------
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public MyMeteor(Activity a){
 
-        // ...
+        activity = a;
 
         // create a new instance
-        mMeteor = new Meteor(this, "ws://example.meteor.com/websocket");
+        mMeteor = new Meteor(activity, "ws://example.meteor.com/websocket");
 
         // register the callback that will handle events and receive messages
         mMeteor.addCallback(this);
+    }
 
+    public MyMeteor(Fragment f){
+
+        fragment = f;
+
+        // create a new instance
+        mMeteor = new Meteor(activity, "ws://example.meteor.com/websocket");
+
+        // register the callback that will handle events and receive messages
+        mMeteor.addCallback(this);
+    }
+
+    public void Connect(){
         // establish the connection
         mMeteor.connect();
+    }
+
+    public void Disconnect(){
+        mMeteor.disconnect();
     }
 
     public void onConnect(boolean signedInAutomatically) {
@@ -125,6 +143,8 @@ public class MyMeteor extends Activity implements MeteorCallback {
     }
 
     public void onDisconnect() {
+        System.out.println("Disconnected");
+        mMeteor.removeCallback(this);
     }
 
     public void onDataAdded(String collectionName, String documentID, String newValuesJson) {
@@ -148,27 +168,13 @@ public class MyMeteor extends Activity implements MeteorCallback {
     public void onException(Exception e) {
     }
 
-    @Override
-    public void onDestroy() {
-        mMeteor.disconnect();
-        mMeteor.removeCallback(this);
-        // or
-        // mMeteor.removeCallbacks();
-
-        // ...
-
-        super.onDestroy();
-    }
-
-    // AÑADIDO: User
-    // --------------------------------------------------------------------------------------------
-
-    // AÑADIDO: User
-    // --------------------------------------------------------------------------------------------
+    // AÑADIDO: USERS
+    // ********************************************************************************************
     //
-    public void addUser(User user) {
+    public String addUser(User user) {
 
         // Inserting new user into a collection "Users"
+        // ----------------------------------------------------------------------------------------
         Map<String, Object> values = new HashMap<String, Object>();
         //values.put("_id", "my-id");
         values.put("email", user.getEmail());
@@ -183,13 +189,25 @@ public class MyMeteor extends Activity implements MeteorCallback {
         values.put("image", user.getImage());
 
         mMeteor.insert(Users, values);
-    }
+        // ----------------------------------------------------------------------------------------
 
-    /*
-    public boolean removeUser(User user) {
-        return false;
+        // Get ID user of the new user
+        // ----------------------------------------------------------------------------------------
+        // Get Database
+        Database database = mMeteor.getDatabase();
+
+        // Get Collection name is "Users"
+        Collection collection = database.getCollection(Users);
+
+        // Get of Collection "Users" where Age of all users is equal to 30
+        Query query = collection.whereEqual("email", user.getEmail());
+        Document document = query.findOne();
+
+        String id = document.getId();
+
+        return id;
+        // ----------------------------------------------------------------------------------------
     }
-    */
 
     //
     public void updateUser(User user) {
@@ -253,10 +271,48 @@ public class MyMeteor extends Activity implements MeteorCallback {
 
         return user;
     }
-    // --------------------------------------------------------------------------------------------
 
-    // AÑADIDO: Event
-    // --------------------------------------------------------------------------------------------
+    //
+    public User getUser(String _email, String _password) {
+
+        // Get Database
+        Database database = mMeteor.getDatabase();
+
+        // Get Collection name is "Users"
+        Collection collection = database.getCollection(Users);
+
+        // Get of Collection "Users" where Age of all users is equal to 30
+        Query query = collection.whereEqual("email", _email);
+        Document document = query.findOne();
+
+        String password = (String) document.getField("password");
+        if (_password != null) {
+            if (_password.equals(password)) {
+
+                String id = document.getId();
+                String email = (String) document.getField("email");
+                String user_name = (String) document.getField("user_name");
+                //String password = (String) document.getField("password");
+                String name = (String) document.getField("name");
+                String surname = (String) document.getField("surname");
+                String gender = (String) document.getField("gender");
+                String birthday= (String) document.getField("birthday");
+                String place = (String) document.getField("place");
+                String music_style= (String) document.getField("music_style");
+                String image = (String) document.getField("image");
+                String location = MyState.getUser().getLocation();
+
+                User user = new User(id, email, user_name, password, name, surname, gender, birthday, place, music_style, image, location);
+                return user;
+            }
+        }
+
+        return null;
+    }
+    // ********************************************************************************************
+
+    // AÑADIDO: EVENTS
+    // ********************************************************************************************
     //
     public void addEvent(Event event) {
 
@@ -320,6 +376,46 @@ public class MyMeteor extends Activity implements MeteorCallback {
     }
 
     //
+    public Event getEvent(String _id) {
+
+        // Get Database
+        Database database = mMeteor.getDatabase();
+
+        // Get Collection name is "Events"
+        Collection collection = database.getCollection(Events);
+
+        // Get of Collection "Events" where "place" of all events is equal to "location"
+        Query query = collection.whereEqual("_id", _id);
+
+        Document document = query.findOne();
+
+        String id = document.getId();
+
+        String image = (String) document.getField("image");
+        String name = (String) document.getField("name");
+        String description = (String) document.getField("descripton");
+
+        String place = (String) document.getField("place");
+        String first_day = (String) document.getField("first_day");
+        String last_day = (String) document.getField("last_day");
+
+        String capacity = (String) document.getField("capacity");
+        String assistants = (String) document.getField("assistants");
+
+        String sales = (String) document.getField("sales");
+        String webpage = (String) document.getField("webpage");
+        String contact_number = (String) document.getField("contact_number");
+
+        String creator = (String) document.getField("creator");
+        String created_on = (String) document.getField("created_on");
+
+        Event event = new Event(image, name, description, place, first_day, last_day, capacity,
+                assistants, sales, webpage, contact_number, creator, created_on);
+
+        return event;
+    }
+
+    //
     public ArrayList<Event> getAllEvents(String location) {
 
         Event event;
@@ -367,43 +463,24 @@ public class MyMeteor extends Activity implements MeteorCallback {
     }
 
     //
-    public Event getEvent(String _id) {
+    public ArrayList<Event> getRegisteredEvents(String userID) {
 
-        // Get Database
-        Database database = mMeteor.getDatabase();
+        ArrayList<Event> list = new ArrayList<>();
 
-        // Get Collection name is "Events"
-        Collection collection = database.getCollection(Events);
+        //TODO: Terminar esto ...
 
-        // Get of Collection "Events" where "place" of all events is equal to "location"
-        Query query = collection.whereEqual("_id", _id);
-
-        Document document = query.findOne();
-
-        String id = document.getId();
-
-        String image = (String) document.getField("image");
-        String name = (String) document.getField("name");
-        String description = (String) document.getField("descripton");
-
-        String place = (String) document.getField("place");
-        String first_day = (String) document.getField("first_day");
-        String last_day = (String) document.getField("last_day");
-
-        String capacity = (String) document.getField("capacity");
-        String assistants = (String) document.getField("assistants");
-
-        String sales = (String) document.getField("sales");
-        String webpage = (String) document.getField("webpage");
-        String contact_number = (String) document.getField("contact_number");
-
-        String creator = (String) document.getField("creator");
-        String created_on = (String) document.getField("created_on");
-
-        Event event = new Event(image, name, description, place, first_day, last_day, capacity,
-                assistants, sales, webpage, contact_number, creator, created_on);
-
-        return event;
+        return list;
     }
-    // --------------------------------------------------------------------------------------------
+
+
+    //
+    public ArrayList<Event> getPublishedEvents(String userID) {
+
+        ArrayList<Event> list = new ArrayList<>();
+
+        //TODO: Terminar esto ...
+
+        return list;
+    }
+    // ********************************************************************************************
 }

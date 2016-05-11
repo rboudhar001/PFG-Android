@@ -1,5 +1,6 @@
 package com.example.rachid.myapplication;
 
+import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,7 +24,7 @@ public class TabEvents extends Fragment {
 
     private ListView list;
     private EventsAdapter adapter;
-    private ArrayList<Event> listViewValues = new ArrayList<>();
+    private ArrayList<Event> listViewValues;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,11 +35,13 @@ public class TabEvents extends Fragment {
         // ----------------------------------------------------------------------------------------
         list = (ListView) view.findViewById(R.id.tabEvents_listView_events);
 
-        //TODO: Recoger de la DB del servidor de Junguitu los eventos.
         Resources res = getResources();
 
+        //TODO: Recoger de la DB del servidor de Junguitu los eventos.
         // TEMPORAL
         // ----------------------------------------------------------------------------------------
+
+        /*
         Event event_1 = new Event();
         event_1.setName("Evento numero 1");
         event_1.setPlace("Vitoria");
@@ -60,6 +63,9 @@ public class TabEvents extends Fragment {
         listViewValues.add(event_1);
         listViewValues.add(event_2);
         listViewValues.add(event_3);
+        */
+
+        listViewValues = MyNetwork.getAllEvents(tabEvents, MyState.getUser().getLocation());
         // ----------------------------------------------------------------------------------------
 
         TextView no_events = (TextView) view.findViewById(R.id.tabEvents_text_no_events);

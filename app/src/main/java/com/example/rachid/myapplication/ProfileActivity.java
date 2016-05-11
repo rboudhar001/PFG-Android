@@ -224,7 +224,7 @@ public class ProfileActivity extends AppCompatActivity {
                     User user = MyState.getUser();
                     user.setUserName(newUserName);
 
-                    if (MyNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
+                    if (MyNetwork.updateUser(activity, user)) { // devuelve true si se logro actualizar con exito
                         MyDatabase.updateUser(TAG, activity, user);
                         MyState.setUser(user);
 
@@ -289,7 +289,7 @@ public class ProfileActivity extends AppCompatActivity {
                     User user = MyState.getUser();
                     user.setEmail(newEmail);
 
-                    if (MyNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
+                    if (MyNetwork.updateUser(activity, user)) { // devuelve true si se logro actualizar con exito
                         MyDatabase.updateUser(TAG, activity, user);
                         MyState.setUser(user);
 
@@ -362,7 +362,7 @@ public class ProfileActivity extends AppCompatActivity {
                     user.setName(newName);
                     user.setSurname(newSurname);
 
-                    if (MyNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
+                    if (MyNetwork.updateUser(activity, user)) { // devuelve true si se logro actualizar con exito
                         MyDatabase.updateUser(TAG, activity, user);
                         MyState.setUser(user);
 
@@ -414,7 +414,7 @@ public class ProfileActivity extends AppCompatActivity {
                     User user = MyState.getUser();
                     user.setGender(items[item].toString());
 
-                    if (MyNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
+                    if (MyNetwork.updateUser(activity, user)) { // devuelve true si se logro actualizar con exito
                         MyDatabase.updateUser(TAG, activity, user);
                         MyState.setUser(user);
 
@@ -479,7 +479,7 @@ public class ProfileActivity extends AppCompatActivity {
                 User user = MyState.getUser();
                 user.setBirthday("" + day + "/" + month + "/" + year);
 
-                if (MyNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
+                if (MyNetwork.updateUser(activity, user)) { // devuelve true si se logro actualizar con exito
                     MyDatabase.updateUser(TAG, activity, user);
                     MyState.setUser(user);
 
@@ -525,7 +525,7 @@ public class ProfileActivity extends AppCompatActivity {
                     User user = MyState.getUser();
                     user.setPlace(newPlace);
 
-                    if (MyNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
+                    if (MyNetwork.updateUser(activity, user)) { // devuelve true si se logro actualizar con exito
                         MyDatabase.updateUser(TAG, activity, user);
                         MyState.setUser(user);
 
@@ -575,7 +575,7 @@ public class ProfileActivity extends AppCompatActivity {
                     User user = MyState.getUser();
                     user.setMusicStyle(newMusicStyle);
 
-                    if (MyNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
+                    if (MyNetwork.updateUser(activity, user)) { // devuelve true si se logro actualizar con exito
                         MyDatabase.updateUser(TAG, activity, user);
                         MyState.setUser(user);
 

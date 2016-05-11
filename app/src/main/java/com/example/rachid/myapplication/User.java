@@ -19,6 +19,7 @@ public class User {
     private String place;
     private String music_style;
     private String image;
+
     private String location;
 
     // **************
@@ -44,6 +45,7 @@ public class User {
         this.place = place;
         this.music_style = music_style;
         this.image = image;
+
         this.location = location;
     }
 
