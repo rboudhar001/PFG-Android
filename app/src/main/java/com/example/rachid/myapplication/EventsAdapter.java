@@ -101,8 +101,8 @@ public class EventsAdapter extends BaseAdapter implements View.OnClickListener {
             holder.image.setImageResource(res.getIdentifier("com.androidexample.customlistview:drawable/" + tempValues.getImage(), null, null));
             holder.name.setText(tempValues.getName());
             holder.place.setText(tempValues.getPlace());
-            holder.firstDate.setText(tempValues.getFirstDate());
-            holder.lastDate.setText(tempValues.getLastDate());
+            holder.firstDate.setText(tempValues.getFirstDay());
+            holder.lastDate.setText(tempValues.getLastDay());
 
             /******** Set Item Click Listner for LayoutInflater for each row *******/
             view.setOnClickListener(new OnItemClickListener(position));

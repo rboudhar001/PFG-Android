@@ -42,7 +42,6 @@ import com.google.android.gms.common.api.Status;
 
 import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.Plus;
-import com.google.android.gms.vision.barcode.Barcode;
 // ----------------------------------------------------------------------------------------
 
 /**
@@ -188,8 +187,8 @@ public class AccountActivity extends AppCompatActivity implements
                         // Save the Music Style
                         user.setMusicStyle(null);
                         // Save the Url Image Profile
-                        user.setUrlImageProfile("https://graph.facebook.com/" + object.optString("id") + "/picture?width=400&height=400");
-                        //user.setUrlImageProfile("https://graph.facebook.com/" + user.getID() + "/picture?width=120&height=120");
+                        user.setImage("https://graph.facebook.com/" + object.optString("id") + "/picture?width=400&height=400");
+                        //user.setImage("https://graph.facebook.com/" + user.getID() + "/picture?width=120&height=120");
                         // Save the Location
                         user.setLocation(MyState.getUser().getLocation());
 
@@ -388,8 +387,8 @@ public class AccountActivity extends AppCompatActivity implements
             user.setMusicStyle(null);
             // Save the Url Image Profile
             if (personProfile.hasImage()) {
-                user.setUrlImageProfile(personProfile.getImage().getUrl());
-                //user.setUrlImageProfile(acct.getPhotoUrl().toString());
+                user.setImage(personProfile.getImage().getUrl());
+                //user.setImage(acct.getPhotoUrl().toString());
             }
             // Save the Location
             user.setLocation(MyState.getUser().getLocation());

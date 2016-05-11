@@ -9,12 +9,12 @@ public class Event {
     // Variables
     // ******************
     private String image; //URL de la imagen
-    private String name; // Titulo del evento
+    private String name; // Titulo del evento and Primary Key
     private String description;
 
     private String place;
-    private String firstDate; // Fecha del dia de inicio del evento
-    private String lastDate; // Fecha del dia final del evento
+    private String firstDay; // Fecha del dia de inicio del evento
+    private String lastDay; // Fecha del dia final del evento
 
     private String capacity;
     private String assistants;
@@ -34,8 +34,8 @@ public class Event {
         this.name = null;
         this.description = null;
         this.place = null;
-        this.firstDate = null;
-        this.lastDate = null;
+        this.firstDay = null;
+        this.lastDay = null;
         this.capacity = null;
         this.assistants = null;
         this.sales = null;
@@ -45,15 +45,15 @@ public class Event {
         this.created_on = null;
     }
 
-    public Event(String image, String name, String description, String place, String firstDate,
-                 String lastDate, String capacity, String assistants, String sales, String webpage,
+    public Event(String image, String name, String description, String place, String firstDay,
+                 String lastDay, String capacity, String assistants, String sales, String webpage,
                  String contact_number, String creator, String created_on) {
         this.image = image;
         this.name = name;
         this.description = description;
         this.place = place;
-        this.firstDate = firstDate;
-        this.lastDate = lastDate;
+        this.firstDay = firstDay;
+        this.lastDay = lastDay;
         this.capacity = capacity;
         this.assistants = assistants;
         this.sales = sales;
@@ -122,12 +122,12 @@ public class Event {
     }
 
     //
-    public String getFirstDate() {
-        return firstDate;
+    public String getFirstDay() {
+        return firstDay;
     }
 
-    public void setFirstDate(String firstDate) {
-        this.firstDate = firstDate;
+    public void setFirstDay(String firstDay) {
+        this.firstDay = firstDay;
     }
 
     //
@@ -140,12 +140,12 @@ public class Event {
     }
 
     //
-    public String getLastDate() {
-        return lastDate;
+    public String getLastDay() {
+        return lastDay;
     }
 
-    public void setLastDate(String lastDate) {
-        this.lastDate = lastDate;
+    public void setLastDay(String lastDay) {
+        this.lastDay = lastDay;
     }
 
     //

@@ -10,20 +10,13 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.text.Layout;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -77,8 +70,8 @@ public class ProfileActivity extends AppCompatActivity {
         // VALUES OF FORM USER
         // ----------------------------------------------------------------------------------------
         circleImageProfile = (CircleImageView) findViewById(R.id.circle_image_profile);
-        if (MyState.getUser().getUrlImageProfile() != null) {
-            Picasso.with(getApplicationContext()).load(MyState.getUser().getUrlImageProfile()).into(circleImageProfile);
+        if (MyState.getUser().getImage() != null) {
+            Picasso.with(getApplicationContext()).load(MyState.getUser().getImage()).into(circleImageProfile);
         }
 
         textEditUserName = (TextView) findViewById(R.id.profile_text_username);

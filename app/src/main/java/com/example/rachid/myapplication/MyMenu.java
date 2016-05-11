@@ -3,8 +3,6 @@ package com.example.rachid.myapplication;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -53,7 +51,7 @@ public class MyMenu {
 
     // IMAGE
     public void updateImage() {
-        Picasso.with(activity.getApplicationContext()).load(MyState.getUser().getUrlImageProfile()).into(circleImageProfile);
+        Picasso.with(activity.getApplicationContext()).load(MyState.getUser().getImage()).into(circleImageProfile);
     }
 
     // NAME
@@ -85,8 +83,8 @@ public class MyMenu {
         navViewHeader = navHeader.inflateHeaderView(R.layout.nav_header_login);
 
         circleImageProfile = (CircleImageView) navViewHeader.findViewById(R.id.circle_image_profile);
-        if (MyState.getUser().getUrlImageProfile() != null) {
-            Picasso.with(activity.getApplicationContext()).load(MyState.getUser().getUrlImageProfile()).into(circleImageProfile);
+        if (MyState.getUser().getImage() != null) {
+            Picasso.with(activity.getApplicationContext()).load(MyState.getUser().getImage()).into(circleImageProfile);
         }
 
         textUserName = (TextView) navViewHeader.findViewById(R.id.text_user_name);

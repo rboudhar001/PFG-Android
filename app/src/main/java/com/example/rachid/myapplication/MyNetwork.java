@@ -1,20 +1,28 @@
 package com.example.rachid.myapplication;
 
+import android.app.Activity;
+
 /**
  * Created by Rachid on 18/04/2016.
  */
 public abstract class MyNetwork {
+
+    private static Activity activity;
+    private static MyMeteor myMeteor;
 
     //
     public static String signupUser(User mUser) {
 
         if (mUser != null) {
 
-            // TODO: Accede al servidor y guarda en la DB este nuevo usuario, devuelve el ID que se le ha dado en la DB del servidor
+            // TODO: Accede al servidor y guarda en la DB este nuevo usuario, devuelve el ID que se le ha dado en la DB del servidor.
             // ---------------------------------------------------------------------------------------
+            MyMeteor.connect();
+            String id = MyMeteor.addUser(mUser);
+            MyMeteor.disconnect();
             // ---------------------------------------------------------------------------------------
 
-            return "";
+            return id;
         }
 
         return null;

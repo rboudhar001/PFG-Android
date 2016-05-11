@@ -1,7 +1,5 @@
 package com.example.rachid.myapplication;
 
-import java.util.Date;
-
 /**
  * Created by Rachid on 06/04/2016.
  */
@@ -20,7 +18,7 @@ public class User {
     private String birthday;
     private String place;
     private String music_style;
-    private String url_image_profile;
+    private String image;
     private String location;
 
     // **************
@@ -33,7 +31,8 @@ public class User {
         this.location = location;
     }
 
-    public User(String id, String email, String user_name, String password, String name, String surname, String gender, String birthday, String place, String music_style, String url_image_profile, String location) {
+    public User(String id, String email, String user_name, String password, String name,
+                String surname, String gender, String birthday, String place, String music_style, String image, String location) {
         this.id = id;
         this.email = email;
         this.user_name = user_name;
@@ -44,7 +43,7 @@ public class User {
         this.birthday = birthday;
         this.place = place;
         this.music_style = music_style;
-        this.url_image_profile = url_image_profile;
+        this.image = image;
         this.location = location;
     }
 
@@ -125,12 +124,12 @@ public class User {
     }
 
     // URL Image Profile
-    public void setUrlImageProfile(String url_image_profile) {
-        this.url_image_profile = url_image_profile;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public String getUrlImageProfile() {
-        return url_image_profile;
+    public String getImage() {
+        return image;
     }
 
     // Place

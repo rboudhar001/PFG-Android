@@ -42,8 +42,8 @@ public class TabPublished extends Fragment {
         Event event_1 = new Event();
         event_1.setName("Evento numero 1");
         event_1.setPlace("Vitoria");
-        event_1.setFirstDate("01/01/1990");
-        event_1.setLastDate("31/12/2016");
+        event_1.setFirstDay("01/01/1990");
+        event_1.setLastDay("31/12/2016");
 
         listViewValues.add(event_1);
         // ----------------------------------------------------------------------------------------

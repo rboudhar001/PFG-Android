@@ -50,4 +50,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:1.3.0'
 
     compile 'com.squareup.picasso:picasso:2.5.2'
+
+    // AÑADIDO: MongoDB
+    compile 'com.github.delight-im:Android-DDP:v3.1.2'
 }

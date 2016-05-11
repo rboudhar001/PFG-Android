@@ -205,7 +205,7 @@ public abstract class MyDatabase {
                 valores.put("birthday", user.getBirthday());
                 valores.put("place", user.getPlace());
                 valores.put("music_style", user.getMusicStyle());
-                valores.put("image", user.getUrlImageProfile());
+                valores.put("image", user.getImage());
 
                 String[] args = new String[]{location};
                 db.update("Users", valores, "location=?", args);
@@ -232,7 +232,7 @@ public abstract class MyDatabase {
                 valores.put("birthday", user.getBirthday());
                 valores.put("place", user.getPlace());
                 valores.put("music_style", user.getMusicStyle());
-                valores.put("image", user.getUrlImageProfile());
+                valores.put("image", user.getImage());
                 valores.put("location", (String) null);
 
                 db.insert("Users", null, valores);
@@ -266,7 +266,7 @@ public abstract class MyDatabase {
             valores.put("birthday", user.getBirthday());
             valores.put("place", user.getPlace());
             valores.put("music_style", user.getMusicStyle());
-            valores.put("image", user.getUrlImageProfile());
+            valores.put("image", user.getImage());
             valores.put("location", user.getLocation());
 
             String[] args = new String[]{user.getID()};

@@ -42,20 +42,20 @@ public class TabEvents extends Fragment {
         Event event_1 = new Event();
         event_1.setName("Evento numero 1");
         event_1.setPlace("Vitoria");
-        event_1.setFirstDate("01/01/1990");
-        event_1.setLastDate("31/12/2016");
+        event_1.setFirstDay("01/01/1990");
+        event_1.setLastDay("31/12/2016");
 
         Event event_2 = new Event();
         event_2.setName("Evento numero 2");
         event_2.setPlace("Bilbao");
-        event_2.setFirstDate("01/01/1990");
-        event_2.setLastDate("31/12/2016");
+        event_2.setFirstDay("01/01/1990");
+        event_2.setLastDay("31/12/2016");
 
         Event event_3 = new Event();
         event_3.setName("Evento numero 3");
         event_3.setPlace("Donostia");
-        event_3.setFirstDate("01/01/1990");
-        event_3.setLastDate("31/12/2016");
+        event_3.setFirstDay("01/01/1990");
+        event_3.setLastDay("31/12/2016");
 
         listViewValues.add(event_1);
         listViewValues.add(event_2);

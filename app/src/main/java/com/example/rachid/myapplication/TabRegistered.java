@@ -43,8 +43,8 @@ public class TabRegistered extends Fragment {
         Event event_3 = new Event();
         event_3.setName("Evento numero 3");
         event_3.setPlace("Donostia");
-        event_3.setFirstDate("01/01/1990");
-        event_3.setLastDate("31/12/2016");
+        event_3.setFirstDay("01/01/1990");
+        event_3.setLastDay("31/12/2016");
 
         listViewValues.add(event_3);
         // ----------------------------------------------------------------------------------------
