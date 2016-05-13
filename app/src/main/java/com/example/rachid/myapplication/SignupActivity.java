@@ -353,7 +353,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
             User user = MyState.getUser();
 
             //user.setID(MyState.getUser().getID());
-            user.setUserName(mUserName);
+            user.setUsername(mUserName);
             user.setEmail(mEmail);
             user.setPassword(mPassword);
 

@@ -66,16 +66,19 @@ public class TabEvents extends Fragment {
         */
 
         listViewValues = MyNetwork.getAllEvents(tabEvents, MyState.getUser().getLocation());
+        if (listViewValues == null) {
+            listViewValues = new ArrayList<>();
+        }
         // ----------------------------------------------------------------------------------------
 
         TextView no_events = (TextView) view.findViewById(R.id.tabEvents_text_no_events);
-        if (listViewValues.isEmpty()) {
-            no_events.setVisibility(View.VISIBLE);
-            list.setVisibility(View.INVISIBLE);
-        }
-        else {
+        if (!listViewValues.isEmpty()) {
             no_events.setVisibility(View.INVISIBLE);
             list.setVisibility(View.VISIBLE);
+        }
+        else {
+            no_events.setVisibility(View.VISIBLE);
+            list.setVisibility(View.INVISIBLE);
         }
 
         adapter = new EventsAdapter(EventsActivity.activity, listViewValues, res);

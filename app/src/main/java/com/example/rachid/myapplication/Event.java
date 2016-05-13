@@ -8,6 +8,8 @@ public class Event {
     // ******************
     // Variables
     // ******************
+    private String id; // ID del evento and Primary Key
+
     private String image; //URL de la imagen
     private String name; // Titulo del evento and Primary Key
     private String description;
@@ -30,24 +32,12 @@ public class Event {
     // Constructor
     // ******************
     public Event() {
-        this.image = null;
-        this.name = null;
-        this.description = null;
-        this.place = null;
-        this.firstDay = null;
-        this.lastDay = null;
-        this.capacity = null;
-        this.assistants = null;
-        this.sales = null;
-        this.webpage = null;
-        this.contact_number = null;
-        this.creator = null;
-        this.created_on = null;
     }
 
-    public Event(String image, String name, String description, String place, String firstDay,
+    public Event(String id, String image, String name, String description, String place, String firstDay,
                  String lastDay, String capacity, String assistants, String sales, String webpage,
                  String contact_number, String creator, String created_on) {
+        this.id = id;
         this.image = image;
         this.name = name;
         this.description = description;
@@ -67,7 +57,16 @@ public class Event {
     // Funciones
     // ******************
 
-    //
+    // ID
+    public String getID() {
+        return this.id;
+    }
+
+    public void setID(String id) {
+        this.id = id;
+    }
+
+    // Assistants
     public String getAssistants() {
         return assistants;
     }
@@ -76,7 +75,7 @@ public class Event {
         this.assistants = assistants;
     }
 
-    //
+    // Capacity
     public String getCapacity() {
         return capacity;
     }
@@ -85,7 +84,7 @@ public class Event {
         this.capacity = capacity;
     }
 
-    //
+    // Contact_number
     public String getContact_number() {
         return contact_number;
     }
@@ -94,7 +93,7 @@ public class Event {
         this.contact_number = contact_number;
     }
 
-    //
+    // Created_on
     public String getCreated_on() {
         return created_on;
     }
@@ -103,7 +102,7 @@ public class Event {
         this.created_on = created_on;
     }
 
-    //
+    // Creator
     public String getCreator() {
         return creator;
     }
@@ -112,7 +111,7 @@ public class Event {
         this.creator = creator;
     }
 
-    //
+    // Description
     public String getDescription() {
         return description;
     }
@@ -121,7 +120,7 @@ public class Event {
         this.description = description;
     }
 
-    //
+    // FirstDay
     public String getFirstDay() {
         return firstDay;
     }
@@ -130,7 +129,7 @@ public class Event {
         this.firstDay = firstDay;
     }
 
-    //
+    // Image
     public String getImage() {
         return image;
     }
@@ -139,7 +138,7 @@ public class Event {
         this.image = image;
     }
 
-    //
+    // LastDay
     public String getLastDay() {
         return lastDay;
     }
@@ -148,7 +147,7 @@ public class Event {
         this.lastDay = lastDay;
     }
 
-    //
+    // Name
     public String getName() {
         return name;
     }
@@ -157,7 +156,7 @@ public class Event {
         this.name = name;
     }
 
-    //
+    // Place
     public String getPlace() {
         return place;
     }
@@ -166,7 +165,7 @@ public class Event {
         this.place = place;
     }
 
-    //
+    // Sales
     public String getSales() {
         return sales;
     }
@@ -175,7 +174,7 @@ public class Event {
         this.sales = sales;
     }
 
-    //
+    // Webpage
     public String getWebpage() {
         return webpage;
     }

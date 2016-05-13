@@ -197,7 +197,7 @@ public abstract class MyDatabase {
                 ContentValues valores = new ContentValues();
                 valores.put("id", user.getID());
                 valores.put("email", user.getEmail());
-                valores.put("user_name", user.getUserName());
+                valores.put("user_name", user.getUsername());
                 valores.put("password", user.getPassword());
                 valores.put("name", user.getName());
                 valores.put("surname", user.getSurname());
@@ -224,7 +224,7 @@ public abstract class MyDatabase {
                 ContentValues valores = new ContentValues();
                 valores.put("id", user.getID());
                 valores.put("email", user.getEmail());
-                valores.put("user_name", user.getUserName());
+                valores.put("user_name", user.getUsername());
                 valores.put("password", user.getPassword());
                 valores.put("name", user.getName());
                 valores.put("surname", user.getSurname());
@@ -258,7 +258,7 @@ public abstract class MyDatabase {
             ContentValues valores = new ContentValues();
             valores.put("id", user.getID());
             valores.put("email", user.getEmail());
-            valores.put("user_name", user.getUserName());
+            valores.put("user_name", user.getUsername());
             valores.put("password", user.getPassword());
             valores.put("name", user.getName());
             valores.put("surname", user.getSurname());

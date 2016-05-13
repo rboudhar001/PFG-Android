@@ -23,7 +23,7 @@ public class TabRegistered extends Fragment {
 
     private ListView list;
     private EventsAdapter adapter;
-    private ArrayList<Event> listViewValues = new ArrayList<>();
+    private ArrayList<Event> listViewValues;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -50,16 +50,19 @@ public class TabRegistered extends Fragment {
         */
 
         listViewValues = MyNetwork.getRegisteredEvents(tabRegistered, MyState.getUser().getID());
+        if (listViewValues == null) {
+            listViewValues = new ArrayList<>();
+        }
         // ----------------------------------------------------------------------------------------
 
         TextView no_events = (TextView) view.findViewById(R.id.tabRegistered_text_no_events);
-        if (listViewValues.isEmpty()) {
-            no_events.setVisibility(View.VISIBLE);
-            list.setVisibility(View.INVISIBLE);
-        }
-        else {
+        if (!listViewValues.isEmpty()) {
             no_events.setVisibility(View.INVISIBLE);
             list.setVisibility(View.VISIBLE);
+        }
+        else {
+            no_events.setVisibility(View.VISIBLE);
+            list.setVisibility(View.INVISIBLE);
         }
 
         adapter = new EventsAdapter(EventsActivity.activity, listViewValues, res);

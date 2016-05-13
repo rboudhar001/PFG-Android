@@ -56,7 +56,7 @@ public class MyMenu {
 
     // NAME
     public void updateUserName() {
-        textUserName.setText(MyState.getUser().getUserName());
+        textUserName.setText(MyState.getUser().getUsername());
     }
 
     // EMAIL
@@ -88,7 +88,7 @@ public class MyMenu {
         }
 
         textUserName = (TextView) navViewHeader.findViewById(R.id.text_user_name);
-        textUserName.setText(MyState.getUser().getUserName());
+        textUserName.setText(MyState.getUser().getUsername());
 
         textUserEmail = (TextView) navViewHeader.findViewById(R.id.text_user_email);
         textUserEmail.setText(MyState.getUser().getEmail());

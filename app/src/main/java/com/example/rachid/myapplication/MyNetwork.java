@@ -2,7 +2,9 @@ package com.example.rachid.myapplication;
 
 import android.app.Activity;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -10,6 +12,7 @@ import java.util.ArrayList;
  */
 public abstract class MyNetwork {
 
+    private static String TAG = "MyNetwork";
     private static MyMeteor myMeteor;
 
     // USUARIOS
@@ -72,24 +75,38 @@ public abstract class MyNetwork {
     //
     public static ArrayList<Event> getAllEvents(Fragment fragment, String location){
 
+        ArrayList<Event> list = null;
+
         if (location != null) {
 
             // TODO: Accede al servidor y obtiene todos los eventos cuyo valor "place" sea igual a "location"
             // ------------------------------------------------------------------------------------
             myMeteor = new MyMeteor(fragment);
             myMeteor.Connect();
-            ArrayList<Event> list = myMeteor.getAllEvents(location);
-            myMeteor.Disconnect();
-            // ------------------------------------------------------------------------------------
 
-            return list;
+            if (myMeteor.isConnected()) {
+                if (myMeteor.isLoggedIn()) {
+                    list = myMeteor.getAllEvents(location);
+                }
+                else {
+                    Log.i(TAG, "ENTRO A MyNetwork:getAllEvents:NO_LOGGED_IN");
+                }
+
+                myMeteor.Disconnect();
+            }
+            else {
+                Log.i(TAG, "ENTRO A MyNetwork:getAllEvents:NO_CONNECT");
+            }
+            // ------------------------------------------------------------------------------------
         }
 
-        return null;
+        return list;
     }
 
     //
     public static ArrayList<Event> getRegisteredEvents(Fragment fragment, String userID) {
+
+        ArrayList<Event> list = null;
 
         if (userID != null) {
 
@@ -97,18 +114,30 @@ public abstract class MyNetwork {
             // ------------------------------------------------------------------------------------
             myMeteor = new MyMeteor(fragment);
             myMeteor.Connect();
-            ArrayList<Event> list = myMeteor.getRegisteredEvents(userID);
-            myMeteor.Disconnect();
-            // ------------------------------------------------------------------------------------
 
-            return list;
+            if (myMeteor.isConnected()) {
+                if (myMeteor.isLoggedIn()) {
+                    list = myMeteor.getRegisteredEvents(userID);
+                }
+                else {
+                    Log.i(TAG, "ENTRO A MyNetwork:getRegisteredEvents:NO_LOGGED_IN");
+                }
+
+                myMeteor.Disconnect();
+            }
+            else {
+                Log.i(TAG, "ENTRO A MyNetwork:getRegisteredEvents:NO_CONNECT");
+            }
+            // ------------------------------------------------------------------------------------
         }
 
-        return null;
+        return list;
     }
 
     //
     public static ArrayList<Event> getPublishedEvents(Fragment fragment, String userID) {
+
+        ArrayList<Event> list = null;
 
         if (userID != null) {
 
@@ -116,14 +145,24 @@ public abstract class MyNetwork {
             // ------------------------------------------------------------------------------------
             myMeteor = new MyMeteor(fragment);
             myMeteor.Connect();
-            ArrayList<Event> list = myMeteor.getPublishedEvents(userID);
-            myMeteor.Disconnect();
-            // ------------------------------------------------------------------------------------
 
-            return list;
+            if (myMeteor.isConnected()) {
+                if (myMeteor.isLoggedIn()) {
+                    list = myMeteor.getPublishedEvents(userID);
+                }
+                else {
+                    Log.i(TAG, "ENTRO A MyNetwork:getPublishedEvents:NO_LOGGED_IN");
+                }
+
+                myMeteor.Disconnect();
+            }
+            else {
+                Log.i(TAG, "ENTRO A MyNetwork:getPublishedEvents:NO_CONNECT");
+            }
+            // ------------------------------------------------------------------------------------
         }
 
-        return null;
+        return list;
     }
 
     // ********************************************************************************************

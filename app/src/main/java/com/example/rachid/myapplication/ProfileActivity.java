@@ -75,7 +75,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         textEditUserName = (TextView) findViewById(R.id.profile_text_username);
-        textEditUserName.setText(MyState.getUser().getUserName());
+        textEditUserName.setText(MyState.getUser().getUsername());
 
         textEditEmail = (TextView) findViewById(R.id.profile_text_email);
         textEditEmail.setText(MyState.getUser().getEmail());
@@ -202,7 +202,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         final AutoCompleteTextView mUserNameView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_username);
 
-        final String userName = MyState.getUser().getUserName();
+        final String userName = MyState.getUser().getUsername();
         if (userName != null) {
             mUserNameView.setText(userName);
         }
@@ -222,13 +222,13 @@ public class ProfileActivity extends AppCompatActivity {
                 if ( ((userName == null) && (newUserName != null)) || ((userName != null) & (!userName.equals(newUserName))) ) {
 
                     User user = MyState.getUser();
-                    user.setUserName(newUserName);
+                    user.setUsername(newUserName);
 
                     if (MyNetwork.updateUser(activity, user)) { // devuelve true si se logro actualizar con exito
                         MyDatabase.updateUser(TAG, activity, user);
                         MyState.setUser(user);
 
-                        textEditUserName.setText(user.getUserName());
+                        textEditUserName.setText(user.getUsername());
 
                         // --------------------------------------------------------------------------------
                         if (MainActivity.activity != null) {

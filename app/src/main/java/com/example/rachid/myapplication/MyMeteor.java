@@ -1,8 +1,8 @@
 package com.example.rachid.myapplication;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,14 +27,15 @@ import im.delight.android.ddp.db.Query;
  */
 public class MyMeteor implements MeteorCallback {
 
+    private static String TAG = "MyMeteor";
     private Activity activity;
     private Fragment fragment;
     private Meteor mMeteor;
 
     // Añadido: Collection Names
     // -------------------------------------------------------------------------------------------
-    private String Users = "Users";
-    private String Events = "Festivales";
+    private String Users = "Accounts";
+    private String Events = "festivals";
     // -------------------------------------------------------------------------------------------
 
     public MyMeteor(Activity a){
@@ -53,7 +54,7 @@ public class MyMeteor implements MeteorCallback {
         fragment = f;
 
         // create a new instance
-        mMeteor = new Meteor(activity, "ws://example.meteor.com/websocket");
+        mMeteor = new Meteor(fragment.getContext(), "ws://example.meteor.com/websocket");
 
         // register the callback that will handle events and receive messages
         mMeteor.addCallback(this);
@@ -64,19 +65,30 @@ public class MyMeteor implements MeteorCallback {
         mMeteor.connect();
     }
 
+    public boolean isConnected(){
+        return mMeteor.isConnected();
+    }
+
+    public boolean isLoggedIn(){
+        return mMeteor.isLoggedIn();
+    }
+
     public void Disconnect(){
         mMeteor.disconnect();
     }
 
     public void onConnect(boolean signedInAutomatically) {
-        System.out.println("Connected");
-        System.out.println("Is logged in: " + mMeteor.isLoggedIn());
-        System.out.println("User ID: " + mMeteor.getUserId());
+
+        Log.i(TAG, "ENTRO A MyMeteor:onConnect: Connected");
+        Log.i(TAG, "ENTRO A MyMeteor:onConnect: Is logged in: " + mMeteor.isLoggedIn());
+        Log.i(TAG, "ENTRO A MyMeteor:onConnect: User ID: " + mMeteor.getUserId());
 
         if (signedInAutomatically) {
-            System.out.println("Successfully logged in automatically");
+            Log.i(TAG, "ENTRO A MyMeteor:onConnect: Successfully logged in automatically");
         }
         else {
+            Log.i(TAG, "ENTRO A MyMeteor:onConnect: NOT Successfully logged in automatically");
+
             /*
             // sign up for a new account
             mMeteor.registerAndLogin("john-doe", "john.doe@example.com", "password1", new ResultListener() {
@@ -95,19 +107,19 @@ public class MyMeteor implements MeteorCallback {
             */
 
             // sign in to the server
-            mMeteor.loginWithUsername("john-doe", "password1", new ResultListener() {
+            mMeteor.loginWithUsername("USER_NAME", "PASSWORD", new ResultListener() {
 
                 @Override
                 public void onSuccess(String result) {
-                    System.out.println("Successfully logged in: "+result);
+                    Log.i(TAG, "ENTRO A MyMeteor:onConnect:loginWithUsername: Successfully logged in: " + result);
 
-                    System.out.println("Is logged in: " + mMeteor.isLoggedIn());
-                    System.out.println("User ID: " + mMeteor.getUserId());
+                    Log.i(TAG, "ENTRO A MyMeteor:onConnect:loginWithUsername: Is logged in: " + mMeteor.isLoggedIn());
+                    Log.i(TAG, "ENTRO A MyMeteor:onConnect:loginWithUsername: User ID: " + mMeteor.getUserId());
                 }
 
                 @Override
                 public void onError(String error, String reason, String details) {
-                    System.out.println("Could not log in: "+error+" / " + reason + " / "+details);
+                    Log.i(TAG, "ENTRO A MyMeteor:onConnect:loginWithUsername: Could not log in: " + error + " / " + reason + " / " + details);
                 }
 
             });
@@ -178,7 +190,7 @@ public class MyMeteor implements MeteorCallback {
         Map<String, Object> values = new HashMap<String, Object>();
         //values.put("_id", "my-id");
         values.put("email", user.getEmail());
-        values.put("user_name", user.getUserName());
+        values.put("user_name", user.getUsername());
         values.put("password", user.getPassword());
         values.put("name", user.getName());
         values.put("surname", user.getSurname());
@@ -219,7 +231,7 @@ public class MyMeteor implements MeteorCallback {
         // Updating user into a collection "Users"
         Map<String, Object> values = new HashMap<String, Object>();
         values.put("email", user.getEmail());
-        values.put("user_name", user.getUserName());
+        values.put("user_name", user.getUsername());
         values.put("password", user.getPassword());
         values.put("name", user.getName());
         values.put("surname", user.getSurname());
@@ -314,9 +326,10 @@ public class MyMeteor implements MeteorCallback {
     // AÑADIDO: EVENTS
     // ********************************************************************************************
     //
-    public void addEvent(Event event) {
+    public String addEvent(Event event) {
 
         // Inserting new event into a collection "Events"
+        // ----------------------------------------------------------------------------------------
         Map<String, Object> values = new HashMap<String, Object>();
         //values.put("_id", "my-id");
         values.put("image", event.getImage());
@@ -324,8 +337,8 @@ public class MyMeteor implements MeteorCallback {
         values.put("description", event.getDescription());
 
         values.put("place", event.getPlace());
-        values.put("first_day", event.getFirstDay());
-        values.put("last_day", event.getLastDay());
+        values.put("firstDay", event.getFirstDay());
+        values.put("lastDay", event.getLastDay());
 
         values.put("capacity", event.getCapacity());
         values.put("assistants", event.getAssistants());
@@ -338,6 +351,24 @@ public class MyMeteor implements MeteorCallback {
         values.put("created_on", event.getCreated_on());
 
         mMeteor.insert(Events, values);
+        // ----------------------------------------------------------------------------------------
+
+        // Get ID event of the new event
+        // ----------------------------------------------------------------------------------------
+        // Get Database
+        Database database = mMeteor.getDatabase();
+
+        // Get Collection name is "Users"
+        Collection collection = database.getCollection(Events);
+
+        // Get of Collection "Users" where Age of all users is equal to 30
+        Query query = collection.whereEqual("name", event.getName());
+        Document document = query.findOne();
+
+        String id = document.getId();
+
+        return id;
+        // ----------------------------------------------------------------------------------------
     }
 
     //
@@ -409,7 +440,7 @@ public class MyMeteor implements MeteorCallback {
         String creator = (String) document.getField("creator");
         String created_on = (String) document.getField("created_on");
 
-        Event event = new Event(image, name, description, place, first_day, last_day, capacity,
+        Event event = new Event(id, image, name, description, place, first_day, last_day, capacity,
                 assistants, sales, webpage, contact_number, creator, created_on);
 
         return event;
@@ -453,7 +484,7 @@ public class MyMeteor implements MeteorCallback {
             String creator = (String) doc.getField("creator");
             String created_on = (String) doc.getField("created_on");
 
-            event = new Event(image, name, description, place, first_day, last_day, capacity,
+            event = new Event(id, image, name, description, place, first_day, last_day, capacity,
                     assistants, sales, webpage, contact_number, creator, created_on);
 
             list.add(event);

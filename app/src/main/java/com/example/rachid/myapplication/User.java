@@ -10,7 +10,7 @@ public class User {
     // **************
     private String id;
     private String email;
-    private String user_name;
+    private String username;
     private String password;
     private String name;
     private String surname;
@@ -32,11 +32,11 @@ public class User {
         this.location = location;
     }
 
-    public User(String id, String email, String user_name, String password, String name,
+    public User(String id, String email, String username, String password, String name,
                 String surname, String gender, String birthday, String place, String music_style, String image, String location) {
         this.id = id;
         this.email = email;
-        this.user_name = user_name;
+        this.username = username;
         this.password = password;
         this.name = name;
         this.surname = surname;
@@ -71,13 +71,13 @@ public class User {
         return email;
     }
 
-    // User_Name
-    public void setUserName(String user_name) {
-        this.user_name = user_name;
+    // Username
+    public void setUsername(String user_name) {
+        this.username = user_name;
     }
 
-    public String getUserName() {
-        return user_name;
+    public String getUsername() {
+        return username;
     }
 
     // Password

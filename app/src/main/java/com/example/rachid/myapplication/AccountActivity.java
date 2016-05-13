@@ -149,7 +149,7 @@ public class AccountActivity extends AppCompatActivity implements
                         }
                         // Save the User_Name
                         if (object.has("name")) {
-                            user.setUserName(object.optString("name"));
+                            user.setUsername(object.optString("name"));
                         }
                         // Save the Password
                         user.setPassword(null);
@@ -344,10 +344,10 @@ public class AccountActivity extends AppCompatActivity implements
             // Save the Email
             user.setEmail(acct.getEmail());
             // Save the User Name
-            user.setUserName(acct.getDisplayName());
+            user.setUsername(acct.getDisplayName());
             /*
             if (personProfile.hasNickname()) {
-                user.setUserName(personProfile.getNickname());
+                user.setUsername(personProfile.getNickname());
             }
             */
             // Save the Password
