@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -390,8 +391,8 @@ public class MyMeteor implements MeteorCallback {
         values.put("description", event.getDescription());
 
         values.put("place", event.getPlace());
-        values.put("first_day", event.getFirstDay());
-        values.put("last_day", event.getLastDay());
+        values.put("firstDay", event.getFirstDay());
+        values.put("lastDay", event.getLastDay());
 
         values.put("capacity", event.getCapacity());
         values.put("assistants", event.getAssistants());
@@ -427,8 +428,8 @@ public class MyMeteor implements MeteorCallback {
         String description = (String) document.getField("descripton");
 
         String place = (String) document.getField("place");
-        String first_day = (String) document.getField("first_day");
-        String last_day = (String) document.getField("last_day");
+        String firstDay = (String) document.getField("firstDay");
+        String lastDay = (String) document.getField("lastDay");
 
         String capacity = (String) document.getField("capacity");
         String assistants = (String) document.getField("assistants");
@@ -440,7 +441,7 @@ public class MyMeteor implements MeteorCallback {
         String creator = (String) document.getField("creator");
         String created_on = (String) document.getField("created_on");
 
-        Event event = new Event(id, image, name, description, place, first_day, last_day, capacity,
+        Event event = new Event(id, image, name, description, place, firstDay, lastDay, capacity,
                 assistants, sales, webpage, contact_number, creator, created_on);
 
         return event;
@@ -471,8 +472,8 @@ public class MyMeteor implements MeteorCallback {
             String description = (String) doc.getField("descripton");
 
             String place = (String) doc.getField("place");
-            String first_day = (String) doc.getField("first_day");
-            String last_day = (String) doc.getField("last_day");
+            String firstDay = (String) doc.getField("firstDay");
+            String lastDay = (String) doc.getField("lastDay");
 
             String capacity = (String) doc.getField("capacity");
             String assistants = (String) doc.getField("assistants");
@@ -484,10 +485,89 @@ public class MyMeteor implements MeteorCallback {
             String creator = (String) doc.getField("creator");
             String created_on = (String) doc.getField("created_on");
 
-            event = new Event(id, image, name, description, place, first_day, last_day, capacity,
+            event = new Event(id, image, name, description, place, firstDay, lastDay, capacity,
                     assistants, sales, webpage, contact_number, creator, created_on);
 
             list.add(event);
+        }
+
+        return list;
+    }
+
+    //
+    public ArrayList<Event> getAllEvents(String location, String date) {
+
+        Event event;
+        ArrayList<Event> list = new ArrayList<>();
+
+        // Get Database
+        Database database = mMeteor.getDatabase();
+
+        // Get Collection name is "Events"
+        Collection collection = database.getCollection(Events);
+
+        // Get of Collection "Events" where "place" of all events is equal to "location"
+        Query query = collection.whereEqual("place", location);
+
+        String[] pieces;
+        Calendar mDate = null;
+        Calendar mFirstDate = null;
+        Calendar mLastDate = null;
+        int Day, Month, Year, fDay, fMonth, fYear, lDay, lMonth, lYear;
+
+        pieces = date.split("/");
+        Day = Integer.parseInt(pieces[0]);
+        Month = Integer.parseInt(pieces[1]);
+        Year = Integer.parseInt(pieces[2]);
+        mDate.set(Year, Month, Day);
+
+        // Create a list of events
+        Document[] documents = query.find();
+        for (Document doc : documents) {
+
+            String firstDay = (String) doc.getField("firstDay");
+            pieces = firstDay.split("/");
+            fDay = Integer.parseInt(pieces[0]);
+            fMonth = Integer.parseInt(pieces[1]);
+            fYear = Integer.parseInt(pieces[2]);
+            mFirstDate.set(fYear, fMonth, fDay);
+
+            String lastDay = (String) doc.getField("lastDay");
+            pieces = lastDay.split("/");
+            lDay = Integer.parseInt(pieces[0]);
+            lMonth = Integer.parseInt(pieces[1]);
+            lYear = Integer.parseInt(pieces[2]);
+            mLastDate.set(lYear, lMonth, lDay);
+
+            //(firstDay <= dia) && (dia <= lastDay)
+            if ( (mDate.after(mFirstDate)) && (mDate.before(mLastDate)) ) {
+
+                //Añadimos este evento al ArrayList
+                String id = doc.getId();
+
+                String image = (String) doc.getField("image");
+                String name = (String) doc.getField("name");
+                String description = (String) doc.getField("descripton");
+
+                String place = (String) doc.getField("place");
+                //String firstDay = (String) doc.getField("firstDay");
+                //String lastDay = (String) doc.getField("lastDay");
+
+                String capacity = (String) doc.getField("capacity");
+                String assistants = (String) doc.getField("assistants");
+
+                String sales = (String) doc.getField("sales");
+                String webpage = (String) doc.getField("webpage");
+                String contact_number = (String) doc.getField("contact_number");
+
+                String creator = (String) doc.getField("creator");
+                String created_on = (String) doc.getField("created_on");
+
+                event = new Event(id, image, name, description, place, firstDay, lastDay, capacity,
+                        assistants, sales, webpage, contact_number, creator, created_on);
+
+                list.add(event);
+            }
         }
 
         return list;
@@ -499,6 +579,7 @@ public class MyMeteor implements MeteorCallback {
         ArrayList<Event> list = new ArrayList<>();
 
         //TODO: Terminar esto ...
+        // ...
 
         return list;
     }
@@ -510,6 +591,7 @@ public class MyMeteor implements MeteorCallback {
         ArrayList<Event> list = new ArrayList<>();
 
         //TODO: Terminar esto ...
+        // ...
 
         return list;
     }

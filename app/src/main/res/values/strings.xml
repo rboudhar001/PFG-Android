@@ -12,6 +12,7 @@
     <string name="title_activity_forgotten_password">Contraseña olvidada</string>
     <string name="title_activity_publish">Publicar</string>
     <string name="title_activity_search">Buscar</string>
+    <string name="title_activity_search_results">Resultados</string>
     <string name="title_activity_info">Información</string>
     <string name="title_activity_version">Versión</string>
     <string name="title_activity_profile">Perfil</string>
@@ -150,6 +151,18 @@
     <string name="tabEvents_text_no_events">No hay eventos</string>
     <string name="tabPublished_text_no_events">No has publicado ningun evento</string>
     <string name="tabRegistered_text_no_events">No te has registrado en ningun evento</string>
+    <!-- *************************************************************************************** -->
+
+    <!-- SEARCH -->
+    <!-- *************************************************************************************** -->
+    <string name="searchResult_text_no_events">No se han encontrado eventos</string>
+    <string name="search_text_title">Buscar eventos</string>
+    <string name="action_search_short">Search</string>
+    <string name="prompt_city_or_country">Ciudad o Pais</string>
+    <string name="prompt_date">Fecha del dia</string>
+    <string name="prompt_first_day">Fecha de inicio</string>
+    <string name="prompt_last_day">Fecha final</string>
+    <string name="search_button_search">Buscar</string>
     <!-- *************************************************************************************** -->
 
 

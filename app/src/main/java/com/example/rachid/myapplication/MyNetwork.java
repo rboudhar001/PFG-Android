@@ -73,6 +73,8 @@ public abstract class MyNetwork {
     // EVENTOS
     // ********************************************************************************************
     //
+    // Obtiene todos los eventos de una localizacion <FRAGMENT>
+    //
     public static ArrayList<Event> getAllEvents(Fragment fragment, String location){
 
         ArrayList<Event> list = null;
@@ -103,6 +105,74 @@ public abstract class MyNetwork {
         return list;
     }
 
+    //
+    // Obtiene todos los eventos de una localizacion <ACTIVITY>
+    //
+    public static ArrayList<Event> getAllEvents(Activity activity, String location){
+
+        ArrayList<Event> list = null;
+
+        if (location != null) {
+
+            // TODO: Accede al servidor y obtiene todos los eventos de la localizacion pasados como parametros.
+            // ------------------------------------------------------------------------------------
+            myMeteor = new MyMeteor(activity);
+            myMeteor.Connect();
+
+            if (myMeteor.isConnected()) {
+                if (myMeteor.isLoggedIn()) {
+                    list = myMeteor.getAllEvents(location);
+                }
+                else {
+                    Log.i(TAG, "ENTRO A MyNetwork:getAllEvents:NO_LOGGED_IN");
+                }
+
+                myMeteor.Disconnect();
+            }
+            else {
+                Log.i(TAG, "ENTRO A MyNetwork:getAllEvents:NO_CONNECT");
+            }
+            // ------------------------------------------------------------------------------------
+        }
+
+        return list;
+    }
+
+    //
+    // Obtiene todos los eventos de una localizacion de un dia concreto
+    //
+    public static ArrayList<Event> getAllEvents(Activity activity, String location, String date){
+
+        ArrayList<Event> list = null;
+
+        if (location != null) {
+
+            // TODO: Accede al servidor y obtiene todos los eventos de la localizacion y fecha pasados como parametros.
+            // ------------------------------------------------------------------------------------
+            myMeteor = new MyMeteor(activity);
+            myMeteor.Connect();
+
+            if (myMeteor.isConnected()) {
+                if (myMeteor.isLoggedIn()) {
+                    list = myMeteor.getAllEvents(location, date);
+                }
+                else {
+                    Log.i(TAG, "ENTRO A MyNetwork:getAllEvents:NO_LOGGED_IN");
+                }
+
+                myMeteor.Disconnect();
+            }
+            else {
+                Log.i(TAG, "ENTRO A MyNetwork:getAllEvents:NO_CONNECT");
+            }
+            // ------------------------------------------------------------------------------------
+        }
+
+        return list;
+    }
+
+    //
+    // Obtiene todos los eventos a los que el usuario se ha registrado
     //
     public static ArrayList<Event> getRegisteredEvents(Fragment fragment, String userID) {
 
@@ -135,6 +205,8 @@ public abstract class MyNetwork {
     }
 
     //
+    // Obtiene todos los eventos que el usuario a publicado
+    //
     public static ArrayList<Event> getPublishedEvents(Fragment fragment, String userID) {
 
         ArrayList<Event> list = null;
@@ -164,6 +236,5 @@ public abstract class MyNetwork {
 
         return list;
     }
-
     // ********************************************************************************************
 }

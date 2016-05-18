@@ -41,7 +41,6 @@ public class TabEvents extends Fragment {
         // TEMPORAL
         // ----------------------------------------------------------------------------------------
 
-        /*
         Event event_1 = new Event();
         event_1.setName("Evento numero 1");
         event_1.setPlace("Vitoria");
@@ -60,15 +59,38 @@ public class TabEvents extends Fragment {
         event_3.setFirstDay("01/01/1990");
         event_3.setLastDay("31/12/2016");
 
+        Event event_4 = new Event();
+        event_4.setName("Evento numero 4");
+        event_4.setPlace("Madrid");
+        event_4.setFirstDay("01/01/1990");
+        event_4.setLastDay("31/12/2016");
+
+        Event event_5 = new Event();
+        event_5.setName("Evento numero 5");
+        event_5.setPlace("Barcelona");
+        event_5.setFirstDay("01/01/1990");
+        event_5.setLastDay("31/12/2016");
+
+        Event event_6 = new Event();
+        event_6.setName("Evento numero 6");
+        event_6.setPlace("Sevilla");
+        event_6.setFirstDay("01/01/1990");
+        event_6.setLastDay("31/12/2016");
+
+        listViewValues = new ArrayList<>();
         listViewValues.add(event_1);
         listViewValues.add(event_2);
         listViewValues.add(event_3);
-        */
+        listViewValues.add(event_4);
+        listViewValues.add(event_5);
+        listViewValues.add(event_6);
 
+        /*
         listViewValues = MyNetwork.getAllEvents(tabEvents, MyState.getUser().getLocation());
         if (listViewValues == null) {
             listViewValues = new ArrayList<>();
         }
+        */
         // ----------------------------------------------------------------------------------------
 
         TextView no_events = (TextView) view.findViewById(R.id.tabEvents_text_no_events);

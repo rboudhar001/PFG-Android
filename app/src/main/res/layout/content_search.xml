@@ -24,7 +24,97 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
+        <ScrollView
+            android:id="@+id/search_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
 
+            <LinearLayout
+                android:id="@+id/search_linear_1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:id="@+id/search_relative_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:id="@+id/search_text_title"
+                        android:text="@string/search_text_title"
+                        android:textSize="32sp"
+                        android:textColor="@color/AZUL_CLARO_APP"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="20dp"
+                        android:editable="false" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/search_linear_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/search_place"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="@string/prompt_place"
+                            android:imeOptions="actionNext"
+                            android:inputType="textAutoComplete"
+                            android:maxLines="1"
+                            android:singleLine="true"/>
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp">
+
+                        <EditText
+                            android:id="@+id/search_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/prompt_date"
+                            android:imeActionId="@+id/search_button_keyboard_search"
+                            android:imeActionLabel="@string/action_search_short"
+                            android:imeOptions="actionUnspecified"
+                            android:inputType="date"
+                            android:maxLines="1"
+                            android:singleLine="true"/>
+                    </android.support.design.widget.TextInputLayout>
+
+                    <Button
+                        android:id="@+id/search_button_search"
+                        style="?android:textAppearanceSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/search_button_search"
+                        android:textColor="@color/BLANCO"
+                        android:textStyle="bold"
+                        android:background="@color/AZUL_CLARO_APP"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="15dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
 
     </FrameLayout>
 
