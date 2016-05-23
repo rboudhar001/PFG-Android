@@ -1,9 +1,12 @@
 package com.example.rachid.myapplication;
 
+import java.io.Serializable;
+
 /**
  * Created by Rachid on 06/04/2016.
  */
-public class User {
+@SuppressWarnings("serial")
+public class User implements Serializable {
 
     // **************
     // Variables

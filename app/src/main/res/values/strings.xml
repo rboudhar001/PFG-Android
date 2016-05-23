@@ -1,9 +1,10 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">SocialMusFest</string>
 
     <!-- WINDOWS -->
     <string name="title_activity_main">SocialMusFest</string>
     <string name="title_activity_events">Eventos</string>
+    <string name="title_activity_show_event">Ver evento</string>
     <string name="title_activity_registered">Registrados</string>
     <string name="title_activity_published">Publicados</string>
     <string name="title_activity_account">Cuenta</string>
@@ -54,6 +55,7 @@
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_password_not_same">The password not same</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <!-- *************************************************************************************** -->
@@ -104,12 +106,25 @@
 
     <string name="error_could_not_update_username">Error, no se ha podido actualizar el nombre de usuario</string>
     <string name="error_could_not_update_email">Error, no se ha podido actualizar el email</string>
+    <string name="error_could_not_update_password">Error, no se ha podido actualizar la contraseña</string>
     <string name="error_could_not_update_name">Error, no se ha podido actualizar el nombre</string>
     <string name="error_could_not_update_gender">Error, no se ha podido actualizar el genero</string>
     <string name="error_could_not_update_birthday">Error, no se ha podido actualizar el cumpleaños</string>
     <string name="error_could_not_update_place">Error, no se ha podido actualizar el lugar</string>
     <string name="error_could_not_update_musicstyle">Error, no se ha podido actualizar el estilo de musica</string>
+
+    <string name="error_could_not_view_events">Error, no se ha podido visualizar los eventos</string>
     <!-- *************************************************************************************** -->
+
+    <!-- SETTINGS -->
+    <string name="settings_button_changePassword">Cambiar la contraseña</string>
+    <string name="settings_button_changeLanguage">Cambiar el idioma</string>
+    <string name="settings_changePassowrd">Cambiar contraseña</string>
+    <string name="settings_changeLanguage">Cambiar idioma</string>
+    <string name="prompt_old_password">Contraseña actual</string>
+    <string name="prompt_new_password">Nueva contraseña</string>
+    <string name="prompt_repeat_new_password">Repetir nueva contraseña</string>
+
 
     <!-- TOOLBAR TabLayout -->
     <string name="text_events">Eventos</string>
@@ -151,6 +166,18 @@
     <string name="tabEvents_text_no_events">No hay eventos</string>
     <string name="tabPublished_text_no_events">No has publicado ningun evento</string>
     <string name="tabRegistered_text_no_events">No te has registrado en ningun evento</string>
+    <!-- *************************************************************************************** -->
+
+    <!-- SHOW EVENT -->
+    <!-- *************************************************************************************** -->
+    <string name="showEvent_text_place">LUGAR:</string>
+    <string name="showEvent_text_dates">FECHAS:</string>
+    <string name="showEvent_text_sales">ENTRADAS:</string>
+    <string name="showEvent_text_contact_number">CONTACTO:</string>
+    <string name="showEvent_text_webpage">ENLACE DEL SITIO:</string>
+    <string name="showEvent_text_creator">CREADO POR:</string>
+    <string name="showEvent_text_assistants_capacity">ASISTENTES / CAPACIDAD</string>
+    <string name="showEvent_button_register">REGISTRARSE</string>
     <!-- *************************************************************************************** -->
 
     <!-- SEARCH -->

@@ -22,6 +22,12 @@
     <dimen name="know_the_events">20sp</dimen>
     <dimen name="button_use_location">18sp</dimen>
 
+    <!-- AÑADIDO : Events -->
+    <dimen name="listViewEvent_image_event">300px</dimen>
+
+    <!-- AÑADIDO : Show Event -->
+    <dimen name="showEvent_image_event">600px</dimen>
+
     <!-- AÑADIDO : Profile -->
     <dimen name="circle_image_profile">120dp</dimen>
     <dimen name="text_about_me">20sp</dimen>
@@ -30,5 +36,9 @@
     <!-- AÑADIDO : Info -->
     <dimen name="info_button_padding">16dp</dimen>
     <dimen name="info_button_size">18sp</dimen>
+
+    <!-- AÑADIDO : Info -->
+    <dimen name="settings_button_padding">16dp</dimen>
+    <dimen name="settings_button_size">18sp</dimen>
 
 </resources>

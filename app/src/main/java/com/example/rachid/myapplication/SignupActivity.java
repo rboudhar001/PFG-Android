@@ -357,7 +357,8 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
             user.setEmail(mEmail);
             user.setPassword(mPassword);
 
-            String id = MyNetwork.signupUser(activity, user); //Insert MyNetwork
+            MyNetwork myNetwork = new MyNetwork(TAG, activity);
+            String id = myNetwork.signupUser(user); //Insert MyNetwork
             if (id != null) { // Guarda en la DB del servidor al usuario mandado como parametro y devuelve el id del usuario o null si no se ha registrado
 
                 Log.i(TAG, "ENTRO A Signup:UserLoginTask:doInBackground:mUserName: " + mUserName);

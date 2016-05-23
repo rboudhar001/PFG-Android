@@ -3,6 +3,7 @@ package com.example.rachid.myapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -98,7 +101,19 @@ public class EventsAdapter extends BaseAdapter implements View.OnClickListener {
             tempValues = ( Event ) data.get( position );
 
             /************  Set Model values in Holder elements ***********/
-            holder.image.setImageResource(res.getIdentifier("com.androidexample.customlistview:drawable/" + tempValues.getImage(), null, null));
+            //holder.image.setImageResource(res.getIdentifier("com.androidexample.customlistview:drawable/" + tempValues.getPhoto(), null, null));
+            DisplayMetrics metrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            int heightPixels = 300; //metrics.heightPixels / 4;
+            int widthPixels = metrics.widthPixels - 24;
+
+            Log.i("EventsAdapter", "ENTRO A Events:getView: WIDTH-PIXELS: " + metrics.widthPixels);
+            Log.i("EventsAdapter", "ENTRO A Events:getView: HEIGHT-PIXELS: " + metrics.heightPixels);
+
+            if ( (tempValues.getPhoto() != null) && (!tempValues.getPhoto().isEmpty()) ) {
+                Picasso.with(activity).load(tempValues.getPhoto()).resize(widthPixels, heightPixels).into(holder.image);
+            }
+
             holder.name.setText(tempValues.getName());
             holder.place.setText(tempValues.getPlace());
             holder.firstDate.setText(tempValues.getFirstDay());

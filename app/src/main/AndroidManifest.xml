@@ -65,6 +65,12 @@
         </activity>
 
         <activity
+            android:name=".ShowEventActivity"
+            android:label="@string/title_activity_show_event"
+            android:launchMode="singleTask" >
+        </activity>
+
+        <activity
             android:name=".AccountActivity"
             android:label="@string/title_activity_account"
             android:launchMode="singleTask"
@@ -104,14 +110,18 @@
             android:name=".PublishActivity"
             android:label="@string/title_activity_publish"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:parentActivityName=".Inicializate">
+
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.Inicializate" />
         </activity>
 
         <activity
             android:name=".SearchActivity"
             android:label="@string/title_activity_search"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:parentActivityName=".Inicializate">
+
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.Inicializate" />
         </activity>
 
         <activity

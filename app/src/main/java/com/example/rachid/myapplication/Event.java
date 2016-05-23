@@ -1,16 +1,19 @@
 package com.example.rachid.myapplication;
 
+import java.io.Serializable;
+
 /**
  * Created by Rachid on 05/05/2016.
  */
-public class Event {
+@SuppressWarnings("serial")
+public class Event implements Serializable {
 
     // ******************
     // Variables
     // ******************
     private String id; // ID del evento and Primary Key
 
-    private String image; //URL de la imagen
+    private String photo; //URL de la imagen
     private String name; // Titulo del evento and Primary Key
     private String description;
 
@@ -18,15 +21,14 @@ public class Event {
     private String firstDay; // Fecha del dia de inicio del evento
     private String lastDay; // Fecha del dia final del evento
 
-    private String capacity;
-    private String assistants;
+    private int capacity;
+    private int assistants;
 
     private String sales; // URL de la pagina para la venta de entradas
     private String webpage; // URL de la pagina
-    private String contact_number; // Numero de telefono de la empresa
+    private int contact_number; // Numero de telefono de la empresa
 
     private String creator; // Creador
-    private String created_on; // Fecha del dia en el que se creo este evento
 
     // ******************
     // Constructor
@@ -34,11 +36,10 @@ public class Event {
     public Event() {
     }
 
-    public Event(String id, String image, String name, String description, String place, String firstDay,
-                 String lastDay, String capacity, String assistants, String sales, String webpage,
-                 String contact_number, String creator, String created_on) {
+    public Event(String id, String photo, String name, String description, String place, String firstDay,
+                 String lastDay, int capacity, int assistants, String sales, String webpage, int contact_number, String creator) {
         this.id = id;
-        this.image = image;
+        this.photo = photo;
         this.name = name;
         this.description = description;
         this.place = place;
@@ -50,7 +51,6 @@ public class Event {
         this.webpage = webpage;
         this.contact_number = contact_number;
         this.creator = creator;
-        this.created_on = created_on;
     }
 
     // ******************
@@ -67,39 +67,30 @@ public class Event {
     }
 
     // Assistants
-    public String getAssistants() {
+    public int getAssistants() {
         return assistants;
     }
 
-    public void setAssistants(String assistants) {
+    public void setAssistants(int assistants) {
         this.assistants = assistants;
     }
 
     // Capacity
-    public String getCapacity() {
+    public int getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(String capacity) {
+    public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
 
     // Contact_number
-    public String getContact_number() {
+    public int getContact_number() {
         return contact_number;
     }
 
-    public void setContact_number(String contact_number) {
+    public void setContact_number(int contact_number) {
         this.contact_number = contact_number;
-    }
-
-    // Created_on
-    public String getCreated_on() {
-        return created_on;
-    }
-
-    public void setCreated_on(String created_on) {
-        this.created_on = created_on;
     }
 
     // Creator
@@ -130,12 +121,12 @@ public class Event {
     }
 
     // Image
-    public String getImage() {
-        return image;
+    public String getPhoto() {
+        return photo;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     // LastDay

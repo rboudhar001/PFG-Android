@@ -355,7 +355,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
             Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground:0");
 
-            User user = MyNetwork.loginUser(activity, mEmail, mPassword); // Obtiene de la DB del servidor el usuario con el email y password dados
+            MyNetwork myNetwork = new MyNetwork(TAG, activity);
+            User user = myNetwork.loginUser(mEmail, mPassword); // Obtiene de la DB del servidor el usuario con el email y password dados
             if ( user != null) {
 
                 Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground:1");
@@ -415,6 +416,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     // **********
     // FUNTIONS
     // **********
+    // ----------------------------------------------------------------------------------------
     private void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);

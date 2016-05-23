@@ -1,13 +1,17 @@
 package com.example.rachid.myapplication;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,22 +25,35 @@ public class TabRegistered extends Fragment {
     private static final String TAG = "TabRegistered";
     public static TabRegistered tabRegistered;
 
-    private ListView list;
+    private ListView mListView;
     private EventsAdapter adapter;
     private ArrayList<Event> listViewValues;
 
+    private TextView mNoEventsView;
+    //private ProgressDialog mProgressDialog;
+    private ProgressBar mProgressBar;
+
+    private MyNetwork myNetwork;
+
+    private Handler handler;
+    private Runnable runnable;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tab_registered, container, false);
+        final View view = inflater.inflate(R.layout.tab_registered, container, false);
 
         tabRegistered = this;
 
+        Log.i(TAG, "ENTRO A TabRegistered:onCreateView: CREATE_NEW_INSTANCE");
+
         // ----------------------------------------------------------------------------------------
-        list = (ListView) view.findViewById(R.id.tabRegistered_listView_events);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.tabRegistered_progress);
+        mNoEventsView = (TextView) view.findViewById(R.id.tabRegistered_text_no_events);
+        mListView = (ListView) view.findViewById(R.id.tabRegistered_listView_events);
+
+        final Resources res = getResources();
 
         //TODO: Recoger de la DB del servidor de Junguitu los eventos.
-        Resources res = getResources();
-
         // TEMPORAL
         // ----------------------------------------------------------------------------------------
         /*
@@ -48,25 +65,99 @@ public class TabRegistered extends Fragment {
 
         listViewValues.add(event_3);
         */
+        // ----------------------------------------------------------------------------------------
 
-        listViewValues = MyNetwork.getRegisteredEvents(tabRegistered, MyState.getUser().getID());
+        // Connect and Get data from Server
+        // ----------------------------------------------------------------------------------------
+        showProgressDialog();
+        myNetwork = new MyNetwork(TAG, tabRegistered);
+        myNetwork.Connect();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if ( myNetwork.isConnected() ) {
+
+                    if ( myNetwork.isLoggedIn() ) {
+
+                        listViewValues = myNetwork.getRegisteredEvents(MyState.getUser().getID());
+                        Log.i(TAG, "ENTRO A TabRegistered:onCreateView: GET_EVENTS_SUCCESFULL");
+
+                        myNetwork.Disconnect();
+                        Log.i(TAG, "ENTRO A TabRegistered:onCreateView: DISCONNECT");
+
+                        hideProgressDialog();
+                        // ----------------------------------------------------------------------------------------
+
+                        if (listViewValues == null) {
+                            Log.i(TAG, "ENTRO A TabRegistered:onCreateView:listViewValues: NULL");
+                            listViewValues = new ArrayList<>();
+                        }
+
+                        if (!listViewValues.isEmpty()) {
+
+                            Log.i(TAG, "ENTRO A TabRegistered:onCreateView:listViewValues: NO_EMPTY");
+
+                            mNoEventsView.setVisibility(View.INVISIBLE);
+                            mListView.setVisibility(View.VISIBLE);
+                        } else {
+
+                            Log.i(TAG, "ENTRO A TabRegistered:onCreateView:listViewValues: EMPTY");
+
+                            mNoEventsView.setVisibility(View.VISIBLE);
+                            mListView.setVisibility(View.INVISIBLE);
+                        }
+
+                        adapter = new EventsAdapter(EventsActivity.activity, listViewValues, res);
+                        mListView.setAdapter(adapter);
+
+                    }
+                    else {
+                        Log.i(TAG, "ENTRO A TabRegistered:onCreateView: NO_LOGGIN_IN");
+                        Toast.makeText(tabRegistered.getContext(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
+                        hideProgressDialog();
+                    }
+
+                } else {
+                    Log.i(TAG, "ENTRO A TabRegistered:onCreateView: NO_CONNECT");
+                    Toast.makeText(tabRegistered.getContext(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
+                    hideProgressDialog();
+                }
+
+            }
+        }, 3000);
+        // ----------------------------------------------------------------------------------------
+
+        /*
+        startTime(10); //10 seg
+        while ( (!myNetwork.isConnected()) || (!myNetwork.isLoggedIn()) ) { // durante 10 seg
+            SystemClock.sleep(1000);
+        }
+        endTime();
+
+        listViewValues = myNetwork.getRegisteredEvents(MyState.getUser().getLocation());
+        myNetwork.Disconnect();
+        hideProgressDialog();
+        // ----------------------------------------------------------------------------------------
+
         if (listViewValues == null) {
             listViewValues = new ArrayList<>();
         }
-        // ----------------------------------------------------------------------------------------
 
-        TextView no_events = (TextView) view.findViewById(R.id.tabRegistered_text_no_events);
+        TextView mNoEventsView = (TextView) view.findViewById(R.id.tabRegistered_text_no_events);
         if (!listViewValues.isEmpty()) {
-            no_events.setVisibility(View.INVISIBLE);
-            list.setVisibility(View.VISIBLE);
+            mNoEventsView.setVisibility(View.INVISIBLE);
+            mListView.setVisibility(View.VISIBLE);
         }
         else {
-            no_events.setVisibility(View.VISIBLE);
-            list.setVisibility(View.INVISIBLE);
+            mNoEventsView.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.INVISIBLE);
         }
 
         adapter = new EventsAdapter(EventsActivity.activity, listViewValues, res);
-        list.setAdapter(adapter);
+        mListView.setAdapter(adapter);
+        */
 
         return view;
     }
@@ -74,10 +165,52 @@ public class TabRegistered extends Fragment {
     /*****************  This function used by adapter ****************/
     public void onItemClick(int mPosition) {
         Event tempValues = listViewValues.get(mPosition);
+        //Toast.makeText(EventsActivity.activity, "Event Name: " + tempValues.getName(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(EventsActivity.activity, "Event ID: " + tempValues.getID(), Toast.LENGTH_LONG).show();
 
-        // SHOW ALERT
-        Toast.makeText(EventsActivity.activity, "Event Name: " + tempValues.getName(), Toast.LENGTH_LONG).show();
-
-        //TODO: Redireccionar a la pagina para visualizar el evento seleccionado de la lista.
+        // TODO: Al clickear un evento, mostrarlo en la ventana de ShowEventActivity
+        Intent intent = new Intent(tabRegistered.getContext(), ShowEventActivity.class);
+        intent.putExtra("event", tempValues); // tempValues es el evento seleccionado por el usuario
+        startActivity(intent);
     }
+
+
+    // *****************
+    // *** FUNCIONES ***
+    // *****************
+    // --------------------------------------------------------------------------------------------
+    //
+    private void startTime(int seconds) {
+        // ---------------------------------------------------------------------------------------
+        handler = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                endTime();
+                //Toast.makeText(activity, "Impossible connect to server", Toast.LENGTH_SHORT).show();
+                // ... Aqui lo que quieres ejecutar una vez pasados los 10 segundos ...
+            }
+        };
+
+        handler.postDelayed(runnable, seconds); // 10 seg
+        // ---------------------------------------------------------------------------------------
+    }
+
+    //
+    private void endTime() {
+        handler.removeCallbacks(runnable);
+    }
+
+    //
+    private void showProgressDialog() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mNoEventsView.setVisibility(View.INVISIBLE);
+        mListView.setVisibility(View.INVISIBLE);
+    }
+
+    //
+    private void hideProgressDialog() {
+        mProgressBar.setVisibility(View.INVISIBLE);
+    }
+    // --------------------------------------------------------------------------------------------
 }
