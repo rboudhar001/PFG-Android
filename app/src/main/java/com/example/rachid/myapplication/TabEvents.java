@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class TabEvents extends Fragment {
 
     private static final String TAG = "TabEvents";
-    public static TabEvents tabEvents;
+    public static Fragment fragment;
 
     private ListView mListView;
     private EventsAdapter adapter;
@@ -43,7 +43,7 @@ public class TabEvents extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.tab_events, container, false);
 
-        tabEvents = this;
+        fragment = this;
 
         Log.i(TAG, "ENTRO A TabEvents:onCreateView: CREATE_NEW_INSTANCE");
 
@@ -107,7 +107,7 @@ public class TabEvents extends Fragment {
         // Connect and Get data from Server
         // ----------------------------------------------------------------------------------------
         showProgressDialog();
-        myNetwork = new MyNetwork(TAG, tabEvents);
+        myNetwork = new MyNetwork(TAG, fragment);
         myNetwork.Connect();
 
         new Handler().postDelayed(new Runnable() {
@@ -146,24 +146,24 @@ public class TabEvents extends Fragment {
                             mListView.setVisibility(View.INVISIBLE);
                         }
 
-                        adapter = new EventsAdapter(EventsActivity.activity, listViewValues, res);
+                        adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
                         mListView.setAdapter(adapter);
 
                     }
                     else {
                         Log.i(TAG, "ENTRO A TabEvents:onCreateView: NO_LOGGIN_IN");
-                        Toast.makeText(tabEvents.getContext(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
                         hideProgressDialog();
                     }
 
                 } else {
                     Log.i(TAG, "ENTRO A TabEvents:onCreateView: NO_CONNECT");
-                    Toast.makeText(tabEvents.getContext(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
                     hideProgressDialog();
                 }
 
             }
-        }, 3000);
+        }, 2000);
         // ----------------------------------------------------------------------------------------
 
 
@@ -193,7 +193,7 @@ public class TabEvents extends Fragment {
             mListView.setVisibility(View.INVISIBLE);
         }
 
-        adapter = new EventsAdapter(EventsActivity.activity, listViewValues, res);
+        adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
         mListView.setAdapter(adapter);
         */
 
@@ -207,7 +207,7 @@ public class TabEvents extends Fragment {
         //Toast.makeText(EventsActivity.activity, "Event ID: " + tempValues.getID(), Toast.LENGTH_LONG).show();
 
         // TODO: Al clickear un evento, mostrarlo en la ventana de ShowEventActivity
-        Intent intent = new Intent(tabEvents.getContext(), ShowEventActivity.class);
+        Intent intent = new Intent(fragment.getActivity(), ShowEventActivity.class);
         intent.putExtra("event", tempValues); // tempValues es el evento seleccionado por el usuario
         startActivity(intent);
     }

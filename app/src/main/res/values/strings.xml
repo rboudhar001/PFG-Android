@@ -33,6 +33,7 @@
     <string name="prompt_birthday">Cumpleaños</string>
     <string name="prompt_place">Lugar</string>
     <string name="prompt_musicstyle">Estilos de musica</string>
+    <string name="error_could_not_connect_with_this_service">No se ha podido iniciar sesion con este servicio</string>
 
     <string name="account_button_login_email">INICIA SESIÓN</string>
     <string name="account_button_signup_email">REGISTRATE</string>
@@ -42,11 +43,20 @@
     <string name="login_button_login">Iniciar sesión</string>
     <string name="login_button_forgotten_password">¿Has olvidado tu contraseña?</string>
     <string name="login_button_no_account">¿No tienes un cuenta? Registrate</string>
+    <string name="error_could_not_connect_to_server">No se ha podido conectar al servidor</string>
+    <string name="error_could_not_logged_to_server">No se ha podido logear al servidor</string>
+    <string name="error_could_not_logout_to_server">No se ha podido des-logear al servidor</string>
+    <string name="error_this_account_not_exists">Esta cuenta no existe</string>
+    <string name="error_user_not_exists">El usuario no existe</string>
+    <string name="error_password_is_incorrect">La contraseña es incorrecta</string>
 
     <!-- SIGNUP -->
     <string name="signup_text_title">Registrate</string>
     <string name="signup_button_signup">Registrarse</string>
     <string name="signup_button_have_account">¿Ya tienes una cuenta? Inicia sesión</string>
+    <string name="error_could_not_sign_up_the_user">No se ha podido registrar al usuario</string>
+    <string name="error_username_already_exists">Ya existe una cuenta con este Username</string>
+    <string name="error_email_already_exists">Ya existe una cuenta con este Email</string>
 
     <string name="action_login_short">Login</string>
     <string name="action_sign_up_short">Sign up</string>
@@ -177,7 +187,11 @@
     <string name="showEvent_text_webpage">ENLACE DEL SITIO:</string>
     <string name="showEvent_text_creator">CREADO POR:</string>
     <string name="showEvent_text_assistants_capacity">ASISTENTES / CAPACIDAD</string>
+    <string name="showEvent_text_user_not_logged">Inicia sesion para poder registrarte</string>
     <string name="showEvent_button_register">REGISTRARSE</string>
+
+    <string name="showEvent_text_register">REGISTRARSE</string>
+    <string name="showEvent_text_unregister">DES-REGISTRARSE</string>
     <!-- *************************************************************************************** -->
 
     <!-- SEARCH -->

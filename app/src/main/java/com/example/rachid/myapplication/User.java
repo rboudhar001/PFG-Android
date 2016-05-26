@@ -25,6 +25,9 @@ public class User implements Serializable {
 
     private String location;
 
+    private String google_id;
+    private String facebook_id;
+
     // **************
     // Constructores
     // **************
@@ -162,5 +165,23 @@ public class User implements Serializable {
 
     public String getLocation() {
         return location;
+    }
+
+    // Google_id
+    public void setGoogle_id(String google_id) {
+        this.google_id = google_id;
+    }
+
+    public String getGoogle_id() {
+        return google_id;
+    }
+
+    // Facebook_id
+    public void setFacebook_id(String facebook_id) {
+        this.facebook_id = facebook_id;
+    }
+
+    public String getFacebook_id() {
+        return facebook_id;
     }
 }

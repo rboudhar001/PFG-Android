@@ -338,10 +338,4 @@ public abstract class MyDatabase {
             }
         }
     }
-
-    //
-    public static void getID() {
-
-        //* TODO: Obtener el ID de la DB y guardarlo en MyState.getUser()
-    }
 }

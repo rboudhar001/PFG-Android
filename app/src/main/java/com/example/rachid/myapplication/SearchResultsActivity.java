@@ -2,6 +2,7 @@ package com.example.rachid.myapplication;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -135,7 +136,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                             mListView.setVisibility(View.INVISIBLE);
                         }
 
-                        adapter = new EventsAdapter(EventsActivity.activity, listViewValues, res);
+                        adapter = new EventsAdapter(SearchResultsActivity.this, listViewValues, res);
                         mListView.setAdapter(adapter);
 
                     }
@@ -150,7 +151,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                 }
 
             }
-        }, 3000);
+        }, 2000);
         // ----------------------------------------------------------------------------------------
 
         /*
@@ -191,6 +192,17 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     //AÑADIDO : SEARCH RESULTS
     // ********************************************************************************************
+    /*****************  This function used by adapter ****************/
+    public void onItemClick(int mPosition) {
+        Event tempValues = listViewValues.get(mPosition);
+        //Toast.makeText(EventsActivity.activity, "Event Name: " + tempValues.getName(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(EventsActivity.activity, "Event ID: " + tempValues.getID(), Toast.LENGTH_LONG).show();
+
+        // TODO: Al clickear un evento, mostrarlo en la ventana de ShowEventActivity
+        Intent intent = new Intent(SearchResultsActivity.this, ShowEventActivity.class);
+        intent.putExtra("event", tempValues); // tempValues es el evento seleccionado por el usuario
+        startActivity(intent);
+    }
 
     // *****************
     // *** FUNCIONES ***

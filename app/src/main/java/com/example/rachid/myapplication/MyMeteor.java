@@ -2,20 +2,27 @@ package com.example.rachid.myapplication;
 
 import android.app.Activity;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import im.delight.android.ddp.Meteor;
 import im.delight.android.ddp.MeteorCallback;
 import im.delight.android.ddp.ResultListener;
+import im.delight.android.ddp.SubscribeListener;
 import im.delight.android.ddp.db.Collection;
+import im.delight.android.ddp.db.DataStore;
 import im.delight.android.ddp.db.Database;
 import im.delight.android.ddp.db.Document;
 import im.delight.android.ddp.db.Query;
@@ -42,7 +49,7 @@ public class MyMeteor implements MeteorCallback {
 
     // Añadido: Collection Names
     // -------------------------------------------------------------------------------------------
-    private String Users = "Accounts";
+    private String Users = "users";
     private String Events = "festivals";
     // -------------------------------------------------------------------------------------------
 
@@ -57,7 +64,8 @@ public class MyMeteor implements MeteorCallback {
         Meteor.setLoggingEnabled(true);
 
         // create a new instance
-        mMeteor = new Meteor(activity, "ws://example.meteor.com/websocket");
+        //mMeteor = new Meteor(activity, "ws://example.meteor.com/websocket");
+        mMeteor = new Meteor(activity, "ws://socialmusfest.scalingo.io/websocket", new InMemoryDatabase());
 
         // register the callback that will handle events and receive messages
         mMeteor.addCallback(this);
@@ -71,7 +79,8 @@ public class MyMeteor implements MeteorCallback {
         Meteor.setLoggingEnabled(true);
 
         // create a new instance
-        mMeteor = new Meteor(fragment.getContext(), "ws://example.meteor.com/websocket");
+        //mMeteor = new Meteor(fragment.getContext(), "ws://example.meteor.com/websocket");
+        mMeteor = new Meteor(fragment.getContext(), "ws://socialmusfest.scalingo.io/websocket", new InMemoryDatabase());
 
         // register the callback that will handle events and receive messages
         mMeteor.addCallback(this);
@@ -80,6 +89,9 @@ public class MyMeteor implements MeteorCallback {
     // *****************
     // *** FUNCIONES ***
     // *****************
+
+    // METEOR : CONNECT
+    // ********************************************************************************************
     public void Connect(){
         // establish the connection
         mMeteor.connect();
@@ -106,11 +118,13 @@ public class MyMeteor implements MeteorCallback {
         if (signedInAutomatically) {
             Log.i(TAG, "ENTRO A MyMeteor:onConnect: Successfully logged in automatically");
         }
+        /*
         else {
             Log.i(TAG, "ENTRO A MyMeteor:onConnect: NOT Successfully logged in automatically");
 
             // sign in to the server
-            mMeteor.loginWithUsername("USER", "PASSWORD", new ResultListener() {
+            mMeteor.loginWithUsername("sozial", "Sozial_PFG_2016", new ResultListener() {
+            //mMeteor.loginWithUsername("USER", "PASSWORD", new ResultListener() {
 
                 @Override
                 public void onSuccess(String result) {
@@ -125,7 +139,8 @@ public class MyMeteor implements MeteorCallback {
                     Log.i(TAG, "ENTRO A MyMeteor:onConnect:loginWithUsername: Could not log in: " + error + " / " + reason + " / " + details);
 
                     // sign up for a new account
-                    mMeteor.registerAndLogin("USER", "EMAIL", "PASSWORD", new ResultListener() {
+                    mMeteor.registerAndLogin("sozial", "sozial.mus.fest@gmail.com", "Sozial_PFG_2016", new ResultListener() {
+                    //mMeteor.registerAndLogin("USER", "EMAIL", "PASSWORD", new ResultListener() {
 
                         @Override
                         public void onSuccess(String result) {
@@ -142,6 +157,7 @@ public class MyMeteor implements MeteorCallback {
 
             });
         }
+        */
 
         /*
         // subscribe to data from the server
@@ -200,18 +216,72 @@ public class MyMeteor implements MeteorCallback {
 
     public void onException(Exception e) {
     }
+    // ********************************************************************************************
 
-    // AÑADIDO: USERS
+    // USUARIOS : Llamada a funciones de la API de Meteor
     // ********************************************************************************************
     //
-    public String addUser(User user) {
+    public void signupUser(String mUserName, String mEmail, String mPassword, ResultListener listener) {
+        // sign up for a new account
+        mMeteor.registerAndLogin(mUserName, mEmail, mPassword, listener);
+    }
+
+    //
+    public String subscribe(final String subscriptionName) {
+        return mMeteor.subscribe(subscriptionName);
+    }
+
+    //
+    public String subscribe(final String subscriptionName, final Object[] params, final SubscribeListener listener) {
+        return mMeteor.subscribe(subscriptionName, params, listener);
+    }
+
+    //
+    public void loginUser(String email, String password, ResultListener listener) {
+
+        if ( ((email == null) || (TextUtils.isEmpty(email))) || ((password == null) || (TextUtils.isEmpty(password))) ) {
+            throw new IllegalArgumentException("MyMeteor:loginUser: You must provide either a email and password");
+        }
+
+        mMeteor.loginWithEmail(email, password, listener);
+    }
+
+    //
+    public void Logout(ResultListener listener) {
+        mMeteor.logout(listener);
+    }
+
+    //
+    public void Logout() {
+        mMeteor.logout();
+    }
+
+    //
+    public void setUsername(final String userId, final String newUsername) {
+        if ( (userId == null) || (newUsername == null) ) {
+            throw new IllegalArgumentException("MyMeteor:setUsername: You must provide either a userId and newUsername");
+        }
+
+        final Map<String, Object> data = new HashMap<String, Object>();
+        data.put("userId", userId);
+        data.put("newUsername", newUsername);
+
+        mMeteor.call("setUsername", new Object[]{data});
+    }
+    // ********************************************************************************************
+
+
+    // USUARIOS : Acceso a la DB de usuarios
+    // ********************************************************************************************
+    //
+    public void addUser(User user) {
 
         // Inserting new user into a collection "Users"
         // ----------------------------------------------------------------------------------------
         Map<String, Object> values = new HashMap<String, Object>();
-        //values.put("_id", "my-id");
+        //values.put("id", "id"); //No añadimos la ID, se genera en el server
         values.put("email", user.getEmail());
-        values.put("user_name", user.getUsername());
+        values.put("username", user.getUsername());
         values.put("password", user.getPassword());
         values.put("name", user.getName());
         values.put("surname", user.getSurname());
@@ -223,86 +293,17 @@ public class MyMeteor implements MeteorCallback {
 
         mMeteor.insert(Users, values);
         // ----------------------------------------------------------------------------------------
-
-        // Get ID user of the new user
-        // ----------------------------------------------------------------------------------------
-        // Get Database
-        Database database = mMeteor.getDatabase();
-
-        // Get Collection name is "Users"
-        Collection collection = database.getCollection(Users);
-
-        // Get of Collection "Users" where Age of all users is equal to 30
-        Query query = collection.whereEqual("email", user.getEmail());
-        Document document = query.findOne();
-
-        return document.getId();
-        // ----------------------------------------------------------------------------------------
     }
 
     //
-    public void updateUser(User user) {
-
-        // Get ID of user that update
-        Map<String, Object> query = new HashMap<String, Object>();
-        query.put("_id", user.getID());
-
-        // Updating user into a collection "Users"
-        Map<String, Object> values = new HashMap<String, Object>();
-        values.put("email", user.getEmail());
-        values.put("user_name", user.getUsername());
-        values.put("password", user.getPassword());
-        values.put("name", user.getName());
-        values.put("surname", user.getSurname());
-        values.put("gender", user.getGender());
-        values.put("birthday", user.getBirthday());
-        values.put("place", user.getPlace());
-        values.put("music_style", user.getMusicStyle());
-        values.put("image", user.getImage());
-
-        mMeteor.update(Users, query, values);
-    }
-
-    //
-    public void changePassword(String _id, String oldPassword, String newPassword) {
-
-        // Actualizamos la Pass
-        // ---------------------------------------------------------------------------------------
-        // Get Database
-        Database database = mMeteor.getDatabase();
-
-        // Get Collection name is "Users"
-        Collection collection = database.getCollection(Users);
-
-        // Get of Collection "Users" where Age of all users is equal to 30
-        Query query = collection.whereEqual("_id", _id);
-        Document document = query.findOne();
-
-        String password = (String) document.getField("password");
-        if ( (oldPassword != null) & (oldPassword.equals(password)) ) { // La verificacion a sido superada
-
-            // TODO: Actualizamos la password de este usuario.
-            // Get ID of user that update
-            Map<String, Object> query_2 = new HashMap<String, Object>();
-            query_2.put("_id", _id);
-
-            // Updating user into a collection "Users"
-            Map<String, Object> values = new HashMap<String, Object>();
-            values.put("password", newPassword);
-
-            mMeteor.update(Users, query_2, values);
-        }
-        // ---------------------------------------------------------------------------------------
-    }
-
-    //
-    public User getUser(String _id) {
+    public User getUserWithId(String id) {
 
         // Get Database
         Database database = mMeteor.getDatabase();
 
         // Get Collection name is "Users"
         Collection collection = database.getCollection(Users);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:Collection: " + collection);
 
         // Get Document ID is "wjQvNQ6sGjzLMDyiJ"
         //Document document = collection.getDocument("001");
@@ -314,13 +315,60 @@ public class MyMeteor implements MeteorCallback {
         //Object field = document.getField("name");
 
         // Get of Collection "Users" where Age of all users is equal to 30
-        Query query = collection.whereEqual("_id", _id);
-        Document document = query.findOne();
+        Document document = collection.getDocument(id);
 
-        String id = document.getId();
-        String email = (String) document.getField("email");
-        String user_name = (String) document.getField("user_name");
-        String password = (String) document.getField("password");
+        //Query query = collection.whereEqual("_id", id);
+        //Document document = query.findOne();
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:Document: " + document);
+
+
+        // VER TODOS LOS CAMPOS DEL ODCUMENT
+        // ----------------------------------------------------------------------------------------
+        /*
+        String[] fields = document.getFieldNames();
+        for (String field : fields) {
+
+            Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:FIELD: " + field);
+        }
+        */
+        // ----------------------------------------------------------------------------------------
+
+        // COMO SE GUARDAN LOS DATOS EN LA DB DEL SERVIDOR
+        // ----------------------------------------------------------------------------------------
+        /*
+        emails=
+        [
+        {address=mim@gmail.com, verified=false}
+        ]
+        username=mim,
+        name=,
+        surname=,
+        gender=,
+        birthday=,
+        place=,
+        music_style=,
+        image=,
+
+        createdAt={$date=1464178903761},
+
+        followers=[],
+        following=[],
+
+        festivals_created=[],
+        festivals_assisted=[],
+        */
+        // ----------------------------------------------------------------------------------------
+
+
+        //String id = document.getId();
+
+        //String email = (String) document.getField("email");
+        ArrayList emails = (ArrayList) document.getField("emails");; //ArrayList de {LinkedHashMap}
+        LinkedHashMap email_complete = (LinkedHashMap) emails.get(0); // email_complete = LinkedHashMap = {(String)address (boolean)verified}
+        String email = (String) email_complete.get("address");
+
+        String user_name = (String) document.getField("username");
+        String password = null; //(String) document.getField("password");
         String name = (String) document.getField("name");
         String surname = (String) document.getField("surname");
         String gender = (String) document.getField("gender");
@@ -330,47 +378,139 @@ public class MyMeteor implements MeteorCallback {
         String image = (String) document.getField("image");
         String location = MyState.getUser().getLocation();
 
+        // IMPRIMIR LOS VALORES RECOGIDOS DE LA DB DEL SERVIDOR
+        // ----------------------------------------------------------------------------------------
+        /*
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:ID: " + id);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:EMAIL: " + email);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:USER_NAME: " + user_name);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:PASSWORD: " + password);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:NAME: " + name);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:SURNAME: " + surname);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:GENDER: " + gender);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:BIRTHDAY: " + birthday);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:PLACE: " + place);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:MUSIC_STYLE: " + music_style);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:IMAGE: " + image);
+        */
+        // ----------------------------------------------------------------------------------------
+
         User user = new User(id, email, user_name, password, name, surname, gender, birthday, place, music_style, image, location);
 
         return user;
     }
 
     //
-    public User getUser(String _email, String _password) {
+    public User getUserWithFacebook(String facebook_id ) {
 
         // Get Database
         Database database = mMeteor.getDatabase();
 
         // Get Collection name is "Users"
         Collection collection = database.getCollection(Users);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithFacebook:Collection: " + collection);
 
         // Get of Collection "Users" where Age of all users is equal to 30
-        Query query = collection.whereEqual("email", _email);
+        Query query = collection.whereEqual("facebook_id", facebook_id);
         Document document = query.findOne();
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithFacebook:Document: " + document);
 
-        String password = (String) document.getField("password");
-        if (_password != null) {
-            if (_password.equals(password)) {
+        // ----------------------------------------------------------------------------------------
+        String id = document.getId();
 
-                String id = document.getId();
-                String email = (String) document.getField("email");
-                String user_name = (String) document.getField("user_name");
-                //String password = (String) document.getField("password");
-                String name = (String) document.getField("name");
-                String surname = (String) document.getField("surname");
-                String gender = (String) document.getField("gender");
-                String birthday= (String) document.getField("birthday");
-                String place = (String) document.getField("place");
-                String music_style= (String) document.getField("music_style");
-                String image = (String) document.getField("image");
-                String location = MyState.getUser().getLocation();
+        ArrayList emails = (ArrayList) document.getField("emails");; //ArrayList de {LinkedHashMap}
+        LinkedHashMap email_complete = (LinkedHashMap) emails.get(0); // email_complete = LinkedHashMap = {(String)address (boolean)verified}
+        String email = (String) email_complete.get("address");
 
-                User user = new User(id, email, user_name, password, name, surname, gender, birthday, place, music_style, image, location);
-                return user;
-            }
-        }
+        String user_name = (String) document.getField("username");
+        String password = null; //(String) document.getField("password");
+        String name = (String) document.getField("name");
+        String surname = (String) document.getField("surname");
+        String gender = (String) document.getField("gender");
+        String birthday= (String) document.getField("birthday");
+        String place = (String) document.getField("place");
+        String music_style= (String) document.getField("music_style");
+        String image = (String) document.getField("image");
+        String location = MyState.getUser().getLocation();
+        // ----------------------------------------------------------------------------------------
 
-        return null;
+        User user = new User(id, email, user_name, password, name, surname, gender, birthday, place, music_style, image, location);
+
+        return user;
+    }
+
+    //
+    public User getUserWithGoogle(String google_id) {
+
+        // Get Database
+        Database database = mMeteor.getDatabase();
+
+        // Get Collection name is "Users"
+        Collection collection = database.getCollection(Users);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithGoogle:Collection: " + collection);
+
+        // Get of Collection "Users" where Age of all users is equal to 30
+        Query query = collection.whereEqual("google_id", google_id);
+        Document document = query.findOne();
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithGoogle:Document: " + document);
+
+        // ----------------------------------------------------------------------------------------
+        String id = document.getId();
+
+        ArrayList emails = (ArrayList) document.getField("emails");; //ArrayList de {LinkedHashMap}
+        LinkedHashMap email_complete = (LinkedHashMap) emails.get(0); // email_complete = LinkedHashMap = {(String)address (boolean)verified}
+        String email = (String) email_complete.get("address");
+
+        String user_name = (String) document.getField("username");
+        String password = null; //(String) document.getField("password");
+        String name = (String) document.getField("name");
+        String surname = (String) document.getField("surname");
+        String gender = (String) document.getField("gender");
+        String birthday= (String) document.getField("birthday");
+        String place = (String) document.getField("place");
+        String music_style= (String) document.getField("music_style");
+        String image = (String) document.getField("image");
+        String location = MyState.getUser().getLocation();
+        // ----------------------------------------------------------------------------------------
+
+        User user = new User(id, email, user_name, password, name, surname, gender, birthday, place, music_style, image, location);
+
+        return user;
+    }
+
+    //
+    public void updateUser(User user) {
+
+        // Get ID of user that update
+        Map<String, Object> query = new HashMap<String, Object>();
+        query.put("_id", user.getID());
+
+        // Updating user into a collection "Users"
+        Map<String, Object> values = new HashMap<String, Object>();
+
+        // Crear el objeto email
+        // ---------------------------------------------------
+        LinkedHashMap email_complete = new LinkedHashMap();
+        email_complete.put("address", user.getEmail());
+        email_complete.put("verified", false);
+
+        ArrayList emails = new ArrayList();
+        emails.add(email_complete);
+        // ---------------------------------------------------
+
+        //values.put("_id", user.getID());
+        values.put("emails", emails);
+        values.put("username", user.getUsername());
+        //values.put("password", user.getPassword());
+        values.put("name", user.getName());
+        values.put("surname", user.getSurname());
+        values.put("gender", user.getGender());
+        values.put("birthday", user.getBirthday());
+        values.put("place", user.getPlace());
+        values.put("music_style", user.getMusicStyle());
+        values.put("image", user.getImage());
+
+        mMeteor.update(Users, query, values);
     }
     // ********************************************************************************************
 
@@ -413,6 +553,25 @@ public class MyMeteor implements MeteorCallback {
 
         // Get of Collection "Users" where Age of all users is equal to 30
         Query query = collection.whereEqual("name", event.getName());
+        Document document = query.findOne();
+
+        return document.getId();
+        // ----------------------------------------------------------------------------------------
+    }
+
+    //
+    public String getEventID(String nameEvent) {
+
+        // Get ID user of the new user
+        // ----------------------------------------------------------------------------------------
+        // Get Database
+        Database database = mMeteor.getDatabase();
+
+        // Get Collection name is "Users"
+        Collection collection = database.getCollection(Events);
+
+        // Get of Collection "Users" where Age of all users is equal to 30
+        Query query = collection.whereEqual("name", nameEvent);
         Document document = query.findOne();
 
         return document.getId();
@@ -552,7 +711,24 @@ public class MyMeteor implements MeteorCallback {
 
                     sales = (String) doc.getField("sales");
                     webpage = (String) doc.getField("webpage");
-                    contact_number = (int) doc.getField("contact_number");
+
+                    //
+                    // Esto es asi, porque en la DB del server, a veces este valor se guarda como "int" y otras como "string"
+                    //
+                    Object object = doc.getField("contact_number");
+                    //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
+                    if (object instanceof String) {
+                        if ( (object != null) && (!TextUtils.isEmpty((String)object)) ) {
+                            contact_number = Integer.parseInt( (String) object );
+                        } else {
+                            contact_number = 0;
+                        }
+                    } else if(object instanceof Integer) {
+                        contact_number = (int) object;
+                    } else {
+                        contact_number = -1; //ERROR ...
+                    }
+                    //
 
                     creator = (String) doc.getField("creator");
 

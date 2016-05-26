@@ -38,8 +38,11 @@ public class ShowEventActivity extends AppCompatActivity {
     private TextView mAssistantsView;
     private TextView mCapacityView;
 
+    private TextView mUserNotLoggedView;
     private Button mButtonRegister;
     // --------------------------------------------------------------------------------------------
+
+    private MyNetwork myNetwork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,12 +97,42 @@ public class ShowEventActivity extends AppCompatActivity {
 
         // AÑADIDO: BUTTON LISTENER
         // ----------------------------------------------------------------------------------------
+        mUserNotLoggedView = (TextView) findViewById(R.id.showEvent_text_user_not_logged);
         mButtonRegister = (Button) findViewById(R.id.showEvent_button_register);
+
+        if (MyState.getLoged()) { // Si el usuario esta logeado
+
+            myNetwork = new MyNetwork(TAG, activity);
+
+            /*
+            if ( !myNetwork.thisUserRegisteredInThisEvent() ) { //Si el usuario NO esta registrado en este evento
+
+                mButtonRegister.setBackgroundColor( getResources().getColor(R.color.VERDE) );
+                mButtonRegister.setText(getString(R.string.showEvent_text_register));
+
+            } else {
+
+                mButtonRegister.setBackgroundColor( getResources().getColor(R.color.ROJO) );
+                mButtonRegister.setText(getString(R.string.showEvent_text_unregister));
+
+            }
+            */
+
+            mUserNotLoggedView.setVisibility(View.INVISIBLE);
+            mButtonRegister.setActivated(true);
+            mButtonRegister.setEnabled(true);
+
+        } else {
+            mUserNotLoggedView.setVisibility(View.VISIBLE);
+            mButtonRegister.setActivated(false);
+            mButtonRegister.setEnabled(false);
+        }
+
         mButtonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Implement your edit user name
-                registerOnEvent();
+                registerOrUnregisterOnEvent();
             }
         });
         // ----------------------------------------------------------------------------------------
@@ -107,11 +140,28 @@ public class ShowEventActivity extends AppCompatActivity {
 
     // AÑADIDO: EVENT
     // --------------------------------------------------------------------------------------------
-    public void registerOnEvent() {
+    public void registerOrUnregisterOnEvent() {
 
-        // TODO: Registrar a este usuario en este evento
-        // ...
+        if (MyState.getLoged()) {
 
+            /*
+            if ( !myNetwork.thisUserRegisteredInThisEvent() ) { //Si el usuario NO esta registrado en este evento
+
+                // TODO: Registrar a este usuario en este evento
+                myNetwork.
+                mButtonRegister.setBackgroundColor( getResources().getColor(R.color.VERDE) );
+                mButtonRegister.setText(getString(R.string.showEvent_text_register));
+
+            } else {
+
+                // TODO: Des-Registrar a este usuario en este evento
+                mButtonRegister.setBackgroundColor( getResources().getColor(R.color.ROJO) );
+                mButtonRegister.setText(getString(R.string.showEvent_text_unregister));
+
+            }
+            */
+
+        }
     }
     // --------------------------------------------------------------------------------------------
 

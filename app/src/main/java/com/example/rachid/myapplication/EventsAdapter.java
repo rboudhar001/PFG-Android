@@ -3,6 +3,8 @@ package com.example.rachid.myapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -107,8 +109,8 @@ public class EventsAdapter extends BaseAdapter implements View.OnClickListener {
             int heightPixels = 300; //metrics.heightPixels / 4;
             int widthPixels = metrics.widthPixels - 24;
 
-            Log.i("EventsAdapter", "ENTRO A Events:getView: WIDTH-PIXELS: " + metrics.widthPixels);
-            Log.i("EventsAdapter", "ENTRO A Events:getView: HEIGHT-PIXELS: " + metrics.heightPixels);
+            //Log.i("EventsAdapter", "ENTRO A Events:getView: WIDTH-PIXELS: " + metrics.widthPixels);
+            //Log.i("EventsAdapter", "ENTRO A Events:getView: HEIGHT-PIXELS: " + metrics.heightPixels);
 
             if ( (tempValues.getPhoto() != null) && (!tempValues.getPhoto().isEmpty()) ) {
                 Picasso.with(activity).load(tempValues.getPhoto()).resize(widthPixels, heightPixels).into(holder.image);
@@ -141,7 +143,30 @@ public class EventsAdapter extends BaseAdapter implements View.OnClickListener {
         @Override
         public void onClick(View arg0) {
             /****  Call  onItemClick Method inside CustomListViewAndroidExample Class ( See Below )****/
-            TabEvents.tabEvents.onItemClick(mPosition);
+
+            if (SearchResultsActivity.activity != null) {
+                if (activity == SearchResultsActivity.activity) {
+                    ((SearchResultsActivity) SearchResultsActivity.activity).onItemClick(mPosition);
+                    return;
+                }
+            }
+
+            if ( (TabEvents.fragment != null) && (TabRegistered.fragment != null) && (TabPublished.fragment != null) ) {
+                if (activity == TabEvents.fragment.getActivity()) {
+                    ((TabEvents) TabEvents.fragment).onItemClick(mPosition);
+                    return;
+
+                } else if (activity == TabRegistered.fragment.getActivity()) {
+                    ((TabRegistered) TabRegistered.fragment).onItemClick(mPosition);
+                    return;
+
+                } else if (activity == TabPublished.fragment.getActivity()) {
+                    ((TabPublished) TabPublished.fragment).onItemClick(mPosition);
+                    return;
+                }
+            }
+
+            throw new IllegalArgumentException("EventsAdapter:onClick: Error, not detect what activity call");
         }
     }
 }

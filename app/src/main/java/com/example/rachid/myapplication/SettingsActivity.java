@@ -101,7 +101,7 @@ public class SettingsActivity extends AppCompatActivity {
                 mNewPasswordView.setError(null);
                 mRepeatNewPasswordView.setError(null);
 
-                // Store values at the time of the login attempt.
+                // get values
                 final String mOldPassword = mOldPasswordView.getText().toString();
                 final String mNewPassword = mNewPasswordView.getText().toString();
                 final String mRepeatNewPassword = mRepeatNewPasswordView.getText().toString();
@@ -110,19 +110,19 @@ public class SettingsActivity extends AppCompatActivity {
                 View focusView = null;
 
                 // Check for a valid Old Password
-                if ((!TextUtils.isEmpty(mOldPassword)) && (mOldPassword.length() > 4)) {
+                if ( TextUtils.isEmpty(mOldPassword) ) {
                     mOldPasswordView.setError(getString(R.string.error_invalid_password));
                     focusView = mOldPasswordView;
                     cancel = true;
                 }
                 // Check for a valid New Password
-                if ((!TextUtils.isEmpty(mNewPassword)) && (mNewPassword.length() > 4)) {
+                if ( (TextUtils.isEmpty(mNewPassword)) || (mNewPassword.length() <= 4) ) {
                     mNewPasswordView.setError(getString(R.string.error_invalid_password));
                     focusView = mNewPasswordView;
                     cancel = true;
                 }
                 // Check for a valid Repeat New Password and is same New Password
-                if ((!TextUtils.isEmpty(mRepeatNewPassword)) && (mRepeatNewPassword.length() > 4)) {
+                if ( (TextUtils.isEmpty(mRepeatNewPassword)) || (mRepeatNewPassword.length() <= 4) ) {
                     mRepeatNewPasswordView.setError(getString(R.string.error_invalid_password));
                     focusView = mRepeatNewPasswordView;
                     cancel = true;
@@ -135,49 +135,59 @@ public class SettingsActivity extends AppCompatActivity {
                 if (cancel) {
                     Log.i(TAG, "ENTRO A Settings:DialogChangePassword: ERROR_PARAMETERS");
 
-                    // There was an error; don't attempt login and focus the first
-                    // form field with an error.
+                    // Show the errors
                     focusView.requestFocus();
                 } else {
-                    // Show a progress spinner and connect for change password
-                    // ----------------------------------------------------------------------------------------
-                    //showProgressDialog();
-                    myNetwork = new MyNetwork(TAG, activity);
-                    myNetwork.Connect();
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+                    if ( !mOldPassword.equals(mNewPassword) ) {
 
-                            if (myNetwork.isConnected()) {
+                        // MyNetwork : Change Password
+                        // ----------------------------------------------------------------------------
+                        showProgressDialog();
+                        myNetwork = new MyNetwork(TAG, activity);
+                        myNetwork.Connect();
 
-                                if (myNetwork.isLoggedIn()) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
 
-                                    // TODO: Actualizar la contraseña en la base de datos del servidor
-                                    myNetwork.changePassword(MyState.getUser().getID(), mOldPassword, mNewPassword);
-                                    Log.i(TAG, "ENTRO A Settings:DialogChangePassword: PASSWORD CHANGED");
+                                if (myNetwork.isConnected()) {
 
-                                    myNetwork.Disconnect();
-                                    Log.i(TAG, "ENTRO A Settings:DialogChangePassword: DISCONNECT");
+                                    if (myNetwork.isLoggedIn()) {
 
-                                    hideProgressDialog();
-                                    // ----------------------------------------------------------------------------------------
+                                        // TODO: Actualizar la contraseña en la base de datos del servidor
+                                        //myNetwork.changePassword(MyState.getUser().getID(), mOldPassword, mNewPassword);
+                                        Log.i(TAG, "ENTRO A Settings:DialogChangePassword: PASSWORD CHANGED");
+
+                                        myNetwork.Disconnect();
+                                        Log.i(TAG, "ENTRO A Settings:DialogChangePassword: DISCONNECT");
+
+                                        hideProgressDialog();
+                                        // ----------------------------------------------------------------------------------------
+
+                                    } else {
+                                        myNetwork.Disconnect();
+                                        Log.i(TAG, "ENTRO A Settings:DialogChangePassword: DISCONNECT");
+
+                                        Log.i(TAG, "ENTRO A Settings:DialogChangePassword: NO_LOGGIN_IN");
+                                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
+                                        hideProgressDialog();
+                                    }
 
                                 } else {
-                                    Log.i(TAG, "ENTRO A Settings:DialogChangePassword: NO_LOGGIN_IN");
-                                    Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_password), Toast.LENGTH_SHORT).show();
+                                    Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT CONNECT");
+                                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                                     hideProgressDialog();
                                 }
 
-                            } else {
-                                Log.i(TAG, "ENTRO A Settings:DialogChangePassword: NO_CONNECT");
-                                Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_password), Toast.LENGTH_SHORT).show();
-                                hideProgressDialog();
                             }
-                        }
-                    },5000);
-                    // ----------------------------------------------------------------------------------------
-                    //dialog.dismiss();
+                        }, 2000);
+
+                    } else {
+
+                        dialog.dismiss();
+                    }
+                    // ----------------------------------------------------------------------------
                 }
             }
         });

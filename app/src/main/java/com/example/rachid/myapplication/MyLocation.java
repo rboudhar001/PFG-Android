@@ -201,7 +201,7 @@ public abstract class MyLocation {
                                             }
                                         }
                                         // --------------------------------------------------------------------------------
-                                        MyState.setExistsLocation(true);
+                                        MyState.setExistsLocation(true); // Esto despues del bloque de arriba ...
                                     }
                                     obtainedLocation = true;
                                 }
@@ -221,6 +221,9 @@ public abstract class MyLocation {
                                 hideProgressDialog();
                                 if (obtainedLocation) {
                                     if (EventsActivity.activity != null) {
+
+                                        EventsActivity.activity.finish();
+                                        activity.startActivity(new Intent(activity, EventsActivity.class));
                                         activity.finish();
                                     }
                                     else {

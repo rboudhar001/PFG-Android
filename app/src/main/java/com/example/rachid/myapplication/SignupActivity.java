@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -31,6 +32,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import im.delight.android.ddp.ResultListener;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -58,6 +61,8 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
     private final Activity activity = this;
 
     private static ProgressDialog mProgressDialog;
+
+    private MyNetwork myNetwork;
 
     //AÑADIDO: BOTONES
     // ----------------------------------------------------------------------------------------
@@ -195,9 +200,9 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String userName = mUserNameView.getText().toString();
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        final String userName = mUserNameView.getText().toString();
+        final String email = mEmailView.getText().toString();
+        final String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -239,9 +244,150 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgressDialog();
-            mAuthTask = new UserLoginTask(userName, email, password);
-            mAuthTask.execute((Void) null);
+            //mAuthTask = new UserLoginTask(userName, email, password);
+            //mAuthTask.execute((Void) null);
+
+            // SIGN UP USER
+            // ------------------------------------------------------------------------------------
+            myNetwork = new MyNetwork(TAG, activity);
+            myNetwork.Connect();
+
+            // Wait 2 second
+            // ----------------------------------------------------------------------------------------
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (myNetwork.isConnected()) {
+
+                        Log.i(TAG, "ENTRO A Signup:attemptSignup:Connect: SUCCESSFULLY CONNECT");
+
+                        //TODO: Registrar al usuario en la DB del servidor
+                        signupUser(userName, email, password);
+
+                    } else {
+                        Log.i(TAG, "ENTRO A Signup:attemptSignup:Connect: COULD NOT CONNECT");
+                        Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                        hideProgressDialog();
+                    }
+
+                }
+            }, 2000);
+            // ----------------------------------------------------------------------------------------
+
+            /*
+            myNetwork.Connect(new ResultListener() {
+
+                @Override
+                public void onSuccess(String result) {
+                    Log.i(TAG, "ENTRO A MyMeteor:Connect: SUCCESSFULLY CONNECT: " + result);
+
+                    //TODO: Registrar al usuario en la DB del servidor
+                    signupUser(userName, email, password);
+                }
+
+                @Override
+                public void onError(String error, String reason, String details) {
+                    Log.i(TAG, "ENTRO A MyMeteor:signupUser: COULD NOT CONNECT: " + error + " / " + reason + " / " + details);
+                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                    hideProgressDialog();
+                }
+
+            });
+            */
+            // ------------------------------------------------------------------------------------
         }
+    }
+
+    //
+    private void signupUser(final String userName, final String email, final String password) {
+
+        // Inicializamos variable error a true
+        MyError.setSignupResponse(false);
+
+        myNetwork.signupUser(userName, email, password, new ResultListener() {
+
+            @Override
+            public void onSuccess(String result) {
+                MyError.setSignupResponse(true);
+
+                Log.i(TAG, "ENTRO A Signup:signupUser: SUCCESSFULLY SIGN UP: " + result);
+
+                //TODO: Registrar al usuario en la DB local
+                // --------------------------------------------------------------------------------
+                String[] pieces = result.split("\"");
+                String id = pieces[3];
+                Log.i(TAG, "ENTRO A Signup:signupUser:ID: " + id);
+
+                User mUser = new User();
+                mUser.setID(id);
+                mUser.setUsername(userName);
+                mUser.setEmail(email);
+                mUser.setPassword(null); //mUser.setPassword(password);
+
+                MyDatabase.insertUser(TAG, activity, mUser);
+                MyState.setUser(mUser);
+                MyState.setLoged(true);
+                // --------------------------------------------------------------------------------
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A SignUp:signupUser: DISCONNECT");
+
+                hideProgressDialog();
+
+                AccountActivity.activity.finish();
+
+                if (MainActivity.activity != null) {
+                    MainActivity.myMenu.loadHeaderLogin();
+                }
+                if (EventsActivity.activity != null) {
+                    EventsActivity.myMenu.loadHeaderLogin();
+                }
+
+                finish();
+            }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+                MyError.setSignupResponse(true);
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Signup:signupUser: DISCONNECT");
+
+                if ( (error.equals("403") && (reason.equals("Username already exists."))) ) {
+                    Toast.makeText(activity, getString(R.string.error_username_already_exists), Toast.LENGTH_LONG).show();
+                } else if ( (error.equals("403") && (reason.equals("Email already exists."))) ) {
+                    Toast.makeText(activity, getString(R.string.error_email_already_exists), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(activity, getString(R.string.error_could_not_sign_up_the_user), Toast.LENGTH_LONG).show();
+                }
+
+                Log.i(TAG, "ENTRO A Signup:signupUser: COULD NOT SIGN UP: " + error + " / " + reason + " / " + details);
+                hideProgressDialog();
+            }
+
+        });
+
+        // Wait 5 seconds, si no responde en este tiempo, cerrar.
+        // ----------------------------------------------------------------------------------------
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (!MyError.getSignupResponse()) {
+                    Log.i(TAG, "ENTRO A Signup:signupUser:getSignupResponse: TIMES_EXPIRED");
+
+                    myNetwork.Disconnect();
+                    Log.i(TAG, "ENTRO A Signup:signupUser:getSignupResponse: DISCONNECT");
+
+                    Log.i(TAG, "ENTRO A Signup:signupUser:getSignupResponse: COULD NOT SIGN UP");
+                    Toast.makeText(activity, getString(R.string.error_could_not_sign_up_the_user), Toast.LENGTH_LONG).show();
+                    hideProgressDialog();
+                }
+
+            }
+        }, 5000);
+        // ----------------------------------------------------------------------------------------
     }
 
     //
@@ -358,14 +504,14 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
             user.setPassword(mPassword);
 
             MyNetwork myNetwork = new MyNetwork(TAG, activity);
-            String id = myNetwork.signupUser(user); //Insert MyNetwork
-            if (id != null) { // Guarda en la DB del servidor al usuario mandado como parametro y devuelve el id del usuario o null si no se ha registrado
+            user  = null; //myNetwork.signupUser(user); //Insert MyNetwork
+            if (user != null) { // Guarda en la DB del servidor al usuario mandado como parametro y devuelve el id del usuario o null si no se ha registrado
 
                 Log.i(TAG, "ENTRO A Signup:UserLoginTask:doInBackground:mUserName: " + mUserName);
                 Log.i(TAG, "ENTRO A Signup:UserLoginTask:doInBackground:mEmail: " + mEmail);
                 Log.i(TAG, "ENTRO A Signup:UserLoginTask:doInBackground:mPassword: " + mPassword);
 
-                user.setID(id);
+                //user.setID(id);
                 MyDatabase.insertUser(TAG, activity, user);
 
                 MyState.setUser(user);

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 public class TabRegistered extends Fragment {
 
     private static final String TAG = "TabRegistered";
-    public static TabRegistered tabRegistered;
+    public static Fragment fragment;
 
     private ListView mListView;
     private EventsAdapter adapter;
@@ -42,7 +43,7 @@ public class TabRegistered extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.tab_registered, container, false);
 
-        tabRegistered = this;
+        fragment = this;
 
         Log.i(TAG, "ENTRO A TabRegistered:onCreateView: CREATE_NEW_INSTANCE");
 
@@ -70,7 +71,7 @@ public class TabRegistered extends Fragment {
         // Connect and Get data from Server
         // ----------------------------------------------------------------------------------------
         showProgressDialog();
-        myNetwork = new MyNetwork(TAG, tabRegistered);
+        myNetwork = new MyNetwork(TAG, fragment.getActivity());
         myNetwork.Connect();
 
         new Handler().postDelayed(new Runnable() {
@@ -109,19 +110,19 @@ public class TabRegistered extends Fragment {
                             mListView.setVisibility(View.INVISIBLE);
                         }
 
-                        adapter = new EventsAdapter(EventsActivity.activity, listViewValues, res);
+                        adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
                         mListView.setAdapter(adapter);
 
                     }
                     else {
                         Log.i(TAG, "ENTRO A TabRegistered:onCreateView: NO_LOGGIN_IN");
-                        Toast.makeText(tabRegistered.getContext(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
                         hideProgressDialog();
                     }
 
                 } else {
                     Log.i(TAG, "ENTRO A TabRegistered:onCreateView: NO_CONNECT");
-                    Toast.makeText(tabRegistered.getContext(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
                     hideProgressDialog();
                 }
 
@@ -155,7 +156,7 @@ public class TabRegistered extends Fragment {
             mListView.setVisibility(View.INVISIBLE);
         }
 
-        adapter = new EventsAdapter(EventsActivity.activity, listViewValues, res);
+        adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
         mListView.setAdapter(adapter);
         */
 
@@ -169,7 +170,7 @@ public class TabRegistered extends Fragment {
         //Toast.makeText(EventsActivity.activity, "Event ID: " + tempValues.getID(), Toast.LENGTH_LONG).show();
 
         // TODO: Al clickear un evento, mostrarlo en la ventana de ShowEventActivity
-        Intent intent = new Intent(tabRegistered.getContext(), ShowEventActivity.class);
+        Intent intent = new Intent(fragment.getActivity(), ShowEventActivity.class);
         intent.putExtra("event", tempValues); // tempValues es el evento seleccionado por el usuario
         startActivity(intent);
     }

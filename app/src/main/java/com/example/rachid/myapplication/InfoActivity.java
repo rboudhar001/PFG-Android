@@ -41,8 +41,8 @@ public class InfoActivity extends AppCompatActivity {
         buttonHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Redireccionar a la pagina de Junguitu
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+                //TODO: Redireccionar a la pagina de AYUDA
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://socialmusfest.scalingo.io/"));
                 startActivity(browserIntent);
             }
         });
@@ -51,8 +51,8 @@ public class InfoActivity extends AppCompatActivity {
         buttonTermsOfService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Redireccionar a la pagina de Junguitu
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+                //TODO: Redireccionar a la pagina de TERMINOS DE SERVICIO
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://socialmusfest.scalingo.io/services"));
                 startActivity(browserIntent);
             }
         });
@@ -61,8 +61,8 @@ public class InfoActivity extends AppCompatActivity {
         buttonPrivacyPolicies.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Redireccionar a la pagina de Junguitu
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+                //TODO: Redireccionar a la pagina de POLITICA DE PRIVACIDAD
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://socialmusfest.scalingo.io/privacy"));
                 startActivity(browserIntent);
             }
         });

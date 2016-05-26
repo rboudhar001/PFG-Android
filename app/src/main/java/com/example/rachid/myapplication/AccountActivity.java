@@ -3,9 +3,12 @@ package com.example.rachid.myapplication;
 // AÑADIDOS: ANDROID
 // ----------------------------------------------------------------------------------------
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +45,12 @@ import com.google.android.gms.common.api.Status;
 
 import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.Plus;
+
+import java.math.BigInteger;
+import java.security.SecureRandom;
+
+import im.delight.android.ddp.ResultListener;
+import im.delight.android.ddp.SubscribeListener;
 // ----------------------------------------------------------------------------------------
 
 /**
@@ -77,6 +86,9 @@ public class AccountActivity extends AppCompatActivity implements
     private Button buttonLoginEmail;
     private Button buttonSignupEmail;
     // ----------------------------------------------------------------------------------------
+
+    private ProgressDialog mProgressDialog;
+    private MyNetwork myNetwork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +153,9 @@ public class AccountActivity extends AppCompatActivity implements
 
                         // Get profile of facebook
                         //-------------------------------------------------------------------------
+                        // Save the Facebook-ID
+                        user.setFacebook_id(object.optString("id"));
+
                         // Save the ID
                         user.setID(null);
                         // Save the Email
@@ -192,31 +207,33 @@ public class AccountActivity extends AppCompatActivity implements
                         // Save the Location
                         user.setLocation(MyState.getUser().getLocation());
 
-                        MyNetwork myNetwork = new MyNetwork(TAG, activity);
-                        String id = myNetwork.signupUser(user); //Insert MyNetwork
-                        if (id != null) {
 
-                            Log.i(TAG, "ENTRO A Account:loginGoogle:2");
-                            user.setID(id);
+                        // TODO: Try to Connect server ...
+                        showProgressDialog();
+                        myNetwork = new MyNetwork(TAG, activity);
+                        myNetwork.Connect();
 
-                            //Insert or Update DataBase
-                            MyDatabase.insertUser(TAG, activity, user);
+                        // Wait 2 second to Connect
+                        // ----------------------------------------------------------------------------------------
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
 
-                            //Update local data
-                            MyState.setUser(user);
-                            MyState.setLoged(true);
+                                if (myNetwork.isConnected()) {
 
-                            if (MainActivity.activity != null) {
-                                MainActivity.myMenu.loadHeaderLogin();
+                                    Log.i(TAG, "ENTRO A Account:onCreate: SUCCESSFULLY CONNECT");
+                                    //TODO: Logear o Registrar al usuario en la DB del servidor
+                                    loginOrSignupUser(user);
+
+
+                                } else {
+                                    Log.i(TAG, "ENTRO A Signup:attemptSignup:Connect: COULD NOT CONNECT");
+                                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                                    hideProgressDialog();
+                                }
+
                             }
-                            if (EventsActivity.activity != null) {
-                                EventsActivity.myMenu.loadHeaderLogin();
-                            }
-
-                            finish();
-                        } else {
-                            Toast.makeText(getBaseContext(), "Error, no se ha podido registrar al usuario", Toast.LENGTH_SHORT).show();
-                        }
+                        }, 2000);
                         // ----------------------------------------------------------------------------------------
                     }
                 });
@@ -272,8 +289,211 @@ public class AccountActivity extends AppCompatActivity implements
         // ----------------------------------------------------------------------------------------
     }
 
-    //AÑADIDO : GOOGLE
+    // AÑADIDO: LOGIN OR SIGNUP
     // ----------------------------------------------------------------------------------------
+    private void loginOrSignupUser(final User user) {
+
+        // Inicializamos variable error a true
+        MyError.setSubscribeResponse(false);
+
+        String subscriptionId = myNetwork.subscribe("userData", null, new SubscribeListener() {
+
+            @Override
+            public void onSuccess() {
+                MyError.setSubscribeResponse(true);
+
+                Log.i(TAG, "ENTRO A Account:loginOrSignupUser: SUCCESSFULLY SUBSCRIBE");
+
+                User mUser = null;
+                boolean error = false;
+
+                if ( (user.getGoogle_id() != null) && (!TextUtils.isEmpty(user.getGoogle_id())) ) {
+
+                    // TODO: Intenta obtener de la DB del servidor a este usuario por "google_id"
+                    mUser = myNetwork.getUserWithGoogle(user.getGoogle_id());
+
+                } else if ( (user.getFacebook_id() != null) && (!TextUtils.isEmpty(user.getFacebook_id())) ) {
+
+                    // TODO: Intenta obtener de la DB del servidor a este usuario por "facebook_id"
+                    mUser = myNetwork.getUserWithFacebook(user.getFacebook_id());
+
+                } else {
+                    error = true;
+                }
+
+                if (!error) {
+
+                    if (mUser != null) { // Si el usuario existia ...
+
+                        // TODO: Registrar al usuario en la DB local
+                        // ----------------------------------------------------------------------------
+                        MyDatabase.insertUser(TAG, activity, mUser);
+                        MyState.setUser(mUser);
+                        MyState.setLoged(true);
+                        // ----------------------------------------------------------------------------
+
+                        myNetwork.Disconnect();
+                        Log.i(TAG, "ENTRO A Account:loginOrSignupUser: DISCONNECT");
+
+                        hideProgressDialog();
+
+                        if (MainActivity.activity != null) {
+                            MainActivity.myMenu.loadHeaderLogin();
+                        }
+                        if (EventsActivity.activity != null) {
+                            EventsActivity.myMenu.loadHeaderLogin();
+                        }
+
+                        finish();
+
+                    } else { // Si el usuario no existia, registrarlo
+
+                        // TODO: Registrar al usuario
+                        signupUser(user);
+                    }
+
+                } else {
+                    Log.i(TAG, "ENTRO A Account:loginOrSignupUser: FATAL_ERROR_NOT_SERVICE_DETECT");
+                    Toast.makeText(activity, getString(R.string.error_could_not_connect_with_this_service), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+                MyError.setSubscribeResponse(true);
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Account:loginOrSignupUser: DISCONNECT");
+
+                Log.i(TAG, "ENTRO A Account:loginOrSignupUser: COULD NOT SUBSCRIBE");
+                //Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                hideProgressDialog();
+            }
+
+        });
+
+        // Wait 5 seconds, si no responde en este tiempo, cerrar.
+        // ----------------------------------------------------------------------------------------
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if ( !MyError.getSubscribeResponse() ) {
+                    Log.i(TAG, "ENTRO A Account:loginOrSignupUser:getSubscribeResponse: TIMES_EXPIRED");
+
+                    myNetwork.Disconnect();
+                    Log.i(TAG, "ENTRO A Account:loginOrSignupUser:getSubscribeResponse: DISCONNECT");
+
+                    Log.i(TAG, "ENTRO A Account:loginOrSignupUser:getSubscribeResponse: COULD NOT SUBSCRIBE");
+                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                    hideProgressDialog();
+                }
+
+            }
+        }, 5000);
+        // ----------------------------------------------------------------------------------------
+    }
+    // ----------------------------------------------------------------------------------------
+
+    // AÑADIDO: SIGN_UP USER
+    // --------------------------------------------------------------------------------------------
+    //
+    private void signupUser(final User user) {
+
+        // Inicializamos variable error a true
+        MyError.setSignupResponse(false);
+
+        SecureRandom random = new SecureRandom();
+        final String password = new BigInteger(130, random).toString(32);;
+
+        myNetwork.signupUser(user.getUsername(), user.getEmail(), password, new ResultListener() {
+
+            @Override
+            public void onSuccess(String result) {
+                MyError.setSignupResponse(true);
+
+                Log.i(TAG, "ENTRO A Account:signupUser: SUCCESSFULLY SIGN UP: " + result);
+
+                //TODO: Registrar al usuario en la DB local
+                // --------------------------------------------------------------------------------
+                String[] pieces = result.split("\"");
+                String id = pieces[3];
+                Log.i(TAG, "ENTRO A Account:signupUser:ID: " + id);
+
+                User mUser = user;
+                mUser.setID(id);
+                //mUser.setPassword(password);
+
+                MyDatabase.insertUser(TAG, activity, user);
+                MyState.setUser(user);
+                MyState.setLoged(true);
+                // --------------------------------------------------------------------------------
+
+                //TODO: Actualizamos los datos del usuario
+                // --------------------------------------------------------------------------------
+                myNetwork.updateUser(mUser);
+                // --------------------------------------------------------------------------------
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Account:signupUser: DISCONNECT");
+
+                hideProgressDialog();
+
+                if (MainActivity.activity != null) {
+                    MainActivity.myMenu.loadHeaderLogin();
+                }
+                if (EventsActivity.activity != null) {
+                    EventsActivity.myMenu.loadHeaderLogin();
+                }
+
+                finish();
+            }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+                MyError.setSignupResponse(true);
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Account:signupUser: DISCONNECT");
+
+                if ((error.equals("403") && (reason.equals("Username already exists.")))) {
+                    Toast.makeText(activity, getString(R.string.error_username_already_exists), Toast.LENGTH_LONG).show();
+                } else if ((error.equals("403") && (reason.equals("Email already exists.")))) {
+                    Toast.makeText(activity, getString(R.string.error_email_already_exists), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(activity, getString(R.string.error_could_not_sign_up_the_user), Toast.LENGTH_LONG).show();
+                }
+
+                Log.i(TAG, "ENTRO A Account:signupUser: COULD NOT SIGN UP: " + error + " / " + reason + " / " + details);
+                hideProgressDialog();
+            }
+
+        });
+
+        // Wait 5 seconds, si no responde en este tiempo, cerrar.
+        // ----------------------------------------------------------------------------------------
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (!MyError.getSignupResponse()) {
+                    myNetwork.Disconnect();
+                    Log.i(TAG, "ENTRO A Account:getSignupResponse: DISCONNECT");
+
+                    Log.i(TAG, "ENTRO A Account:getSignupResponse: COULD NOT SIGN UP");
+                    Toast.makeText(activity, getString(R.string.error_could_not_sign_up_the_user), Toast.LENGTH_LONG).show();
+                    hideProgressDialog();
+                }
+
+            }
+        }, 5000);
+        // ----------------------------------------------------------------------------------------
+    }
+    // --------------------------------------------------------------------------------------------
+
+    //AÑADIDO : GOOGLE
+    // --------------------------------------------------------------------------------------------
     // [START signIn]
     private void signIn() {
 
@@ -294,10 +514,10 @@ public class AccountActivity extends AppCompatActivity implements
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(getBaseContext(), "Error, connection failed", Toast.LENGTH_SHORT).show();
     }
-    // ----------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------
 
     //AÑADIDO : FACEBOOK
-    // ----------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -339,6 +559,9 @@ public class AccountActivity extends AppCompatActivity implements
             //-------------------------------------------------------------------------
             Person personProfile = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
             Person.Name name = personProfile.getName();
+
+            // Save the Google-ID
+            user.setGoogle_id( personProfile.getId() );
 
             // Save the ID
             user.setID(null);
@@ -406,32 +629,34 @@ public class AccountActivity extends AppCompatActivity implements
                     });
             // --------------------------------------------------------------------------------
 
-            //Insert MyNetwork
-            MyNetwork myNetwork = new MyNetwork(TAG, activity);
-            String id = myNetwork.signupUser(user);
-            if (id != null) {
 
-                Log.i(TAG, "ENTRO A Account:loginGoogle:2");
-                user.setID(id);
+            // TODO: Try to Connect server ...
+            showProgressDialog();
+            myNetwork = new MyNetwork(TAG, activity);
+            myNetwork.Connect();
 
-                //Insert or Update DataBase
-                MyDatabase.insertUser(TAG, activity, user);
+            // Wait 2 second to Connect
+            // ----------------------------------------------------------------------------------------
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
 
-                //Update local data
-                MyState.setUser(user);
-                MyState.setLoged(true);
+                    if (myNetwork.isConnected()) {
 
-                if (MainActivity.activity != null) {
-                    MainActivity.myMenu.loadHeaderLogin();
+                        Log.i(TAG, "ENTRO A Account:onCreate: SUCCESSFULLY CONNECT");
+                        //TODO: Logear o Registrar al usuario en la DB del servidor
+                        loginOrSignupUser(user);
+
+
+                    } else {
+                        Log.i(TAG, "ENTRO A Signup:attemptSignup:Connect: COULD NOT CONNECT");
+                        Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                        hideProgressDialog();
+                    }
+
                 }
-                if (EventsActivity.activity != null) {
-                    EventsActivity.myMenu.loadHeaderLogin();
-                }
-
-                finish();
-            } else {
-                Toast.makeText(getBaseContext(), "Error, no se ha podido registrar al usuario", Toast.LENGTH_SHORT).show();
-            }
+            }, 2000);
+            // ----------------------------------------------------------------------------------------
         }
     }
 
@@ -445,4 +670,24 @@ public class AccountActivity extends AppCompatActivity implements
         //LogOut Facebook
         LoginManager.getInstance().logOut();
     }
+
+    // **********
+    // FUNTIONS
+    // **********
+    // ----------------------------------------------------------------------------------------
+    private void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage(getString(R.string.loading));
+        }
+        mProgressDialog.show();
+        mProgressDialog.setCancelable(false);
+    }
+
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.hide();
+        }
+    }
+    // ----------------------------------------------------------------------------------------
 }

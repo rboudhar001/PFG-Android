@@ -3,6 +3,7 @@ package com.example.rachid.myapplication;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -83,7 +84,7 @@ public class MyMenu {
         navViewHeader = navHeader.inflateHeaderView(R.layout.nav_header_login);
 
         circleImageProfile = (CircleImageView) navViewHeader.findViewById(R.id.circle_image_profile);
-        if (MyState.getUser().getImage() != null) {
+        if ( (MyState.getUser().getImage() != null) && (!TextUtils.isEmpty(MyState.getUser().getImage())) ) {
             Picasso.with(activity.getApplicationContext()).load(MyState.getUser().getImage()).into(circleImageProfile);
         }
 

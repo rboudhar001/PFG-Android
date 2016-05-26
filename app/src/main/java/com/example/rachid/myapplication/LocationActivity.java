@@ -81,21 +81,26 @@ public class LocationActivity extends AppCompatActivity {
                 //Toast.makeText(getBaseContext(), "Item: " + city, Toast.LENGTH_LONG).show();
 
                 MyDatabase.insertLocation(TAG, activity, city);
-
                 MyState.getUser().setLocation(city);
+
+                // Mostramos el Nav_View O actualizamos el Nav_View
                 // --------------------------------------------------------------------------------
                 if (MyState.getExistsLocation()) { // Si ya existia la localizacion actualizamos el Drawer navigation
-                    if (MainActivity.activity != null) {
-                        MainActivity.myMenu.updateLocation();
-                    }
-                    if (EventsActivity.activity != null){
-                        EventsActivity.myMenu.updateLocation();
-                    }
+                    Log.i(TAG, "ENTRO A Location:onCreate:listViewListener:updateLocation");
+                    //EventsActivity.myMenu.updateLocation();
+
+                    EventsActivity.activity.finish();
+                    activity.startActivity(new Intent(LocationActivity.this, EventsActivity.class));
+                    finish();
+                } else {
+                    Log.i(TAG, "ENTRO A Location:onCreate:listViewListener:OpenEventsActivity");
+                    MyState.setExistsLocation(true);
+
+                    MainActivity.activity.finish();
+                    activity.startActivity(new Intent(LocationActivity.this, EventsActivity.class));
+                    finish();
                 }
                 // --------------------------------------------------------------------------------
-                MyState.setExistsLocation(true);
-
-                finish();
             }
         });
         // ----------------------------------------------------------------------------------------

@@ -12,6 +12,11 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.xml.transform.Result;
+
+import im.delight.android.ddp.ResultListener;
+import im.delight.android.ddp.SubscribeListener;
+
 /**
  * Created by Rachid on 18/04/2016.
  */
@@ -48,7 +53,7 @@ public class MyNetwork {
     // *** FUNCIONES ***
     // *******************
 
-    // CONNECT
+    // METEOR : CONNECT
     // ********************************************************************************************
     //
     public void Connect() {
@@ -71,62 +76,111 @@ public class MyNetwork {
     }
     // ********************************************************************************************
 
-    // USUARIOS
+    // USUARIOS : Llamada a funciones de la API de Meteor
     // ********************************************************************************************
     //
-    public String signupUser(User mUser) {
+    public void signupUser(String mUserName, String mEmail, String mPassword, ResultListener listener) {
 
-        if (mUser != null) {
-
-            // TODO: Guarda en la DB del servidor al usuario, devuelve el ID que se le ha dado en la DB del servidor.
-            // ---------------------------------------------------------------------------------------
-            return myMeteor.addUser(mUser);
-            // ---------------------------------------------------------------------------------------
-        }
-
-        return null;
-    }
-
-    //
-    public User loginUser(String mEmail, String mPassword) {
-
-        if ( (mEmail != null) && (mPassword != null) ) {
-            // TODO: Solicita que se le de el usuario con el email y password pasados como parametros.
-            // ---------------------------------------------------------------------------------------
-            return myMeteor.getUser(mEmail, mPassword);
-            // ---------------------------------------------------------------------------------------
-        }
-
-        return null;
-    }
-
-    //
-    public boolean updateUser(User mUser) {
-
-        if (mUser != null) {
-
-            // TODO: Actualiza en la DB el usuario pasado como parametro
-            // ------------------------------------------------------------------------------------
-            myMeteor.updateUser(mUser);
-            // ------------------------------------------------------------------------------------
-            return true;
-        }
-
-        return false;
-    }
-
-    //
-    public void changePassword(String id, String oldPassword, String newPassword) {
-
-        // TODO: Actualiza en la DB del servidor la nueva contraseña del usuario
+        // TODO: Guarda en la DB del servidor al usuario, devuelve el ID que se le ha dado en la DB del servidor.
         // ---------------------------------------------------------------------------------------
-        myMeteor.changePassword(id, oldPassword, newPassword);
+        myMeteor.signupUser(mUserName, mEmail, mPassword, listener);
         // ---------------------------------------------------------------------------------------
+    }
+
+    public String subscribe(final String subscriptionName) {
+        return myMeteor.subscribe(subscriptionName);
+    }
+
+    //
+    public String subscribe(final String subscriptionName, final Object[] params, final SubscribeListener listener) {
+        return myMeteor.subscribe(subscriptionName, params, listener);
+    }
+
+    //
+    public void loginUser(String mEmail, String mPassword, ResultListener listener) {
+
+        // TODO: Guarda en la DB del servidor al usuario, devuelve el ID que se le ha dado en la DB del servidor.
+        // ---------------------------------------------------------------------------------------
+        myMeteor.loginUser(mEmail, mPassword, listener);
+        // ---------------------------------------------------------------------------------------
+    }
+
+    //
+    public void Logout(ResultListener listener) {
+        myMeteor.Logout(listener);
+    }
+
+    //
+    public void Logout() {
+        myMeteor.Logout();
+    }
+    // ********************************************************************************************
+
+
+    // USUARIOS : Acceso a la DB de usuarios
+    // ********************************************************************************************
+    //
+    public void addUser(User mUser) {
+
+        // TODO: Guarda en la DB del servidor al usuario, devuelve el ID que se le ha dado en la DB del servidor.
+        // ---------------------------------------------------------------------------------------
+        myMeteor.addUser(mUser);
+        // ---------------------------------------------------------------------------------------
+    }
+
+    //
+    public User getUserWithId(String id) {
+
+        // TODO: Obtiene un usuario por id
+        // ---------------------------------------------------------------------------------------
+        return myMeteor.getUserWithId(id);
+        // ---------------------------------------------------------------------------------------
+    }
+
+    //
+    public User getUserWithFacebook(String facebook_id) {
+
+        // TODO: Obtiene un usuario por el facebook_id
+        // ---------------------------------------------------------------------------------------
+        return myMeteor.getUserWithFacebook(facebook_id);
+        // ---------------------------------------------------------------------------------------
+    }
+
+    //
+    public User getUserWithGoogle(String google_id) {
+
+        // TODO: Obtiene un usuario por el google_id
+        // ---------------------------------------------------------------------------------------
+        return myMeteor.getUserWithGoogle(google_id);
+        // ---------------------------------------------------------------------------------------
+    }
+
+    //
+    public void updateUser(User user) {
+
+        // TODO: Actualiza en la DB el usuario pasado como parametro
+        // ------------------------------------------------------------------------------------
+        myMeteor.updateUser(user);
+        // ------------------------------------------------------------------------------------
     }
     // ********************************************************************************************
 
     // EVENTOS
     // ********************************************************************************************
+    //
+    public String getEventID(String nameEvent) {
+
+        if (nameEvent != null) {
+
+            // TODO: Guarda en la DB del servidor al usuario, devuelve el ID que se le ha dado en la DB del servidor.
+            // ---------------------------------------------------------------------------------------
+            return myMeteor.getEventID(nameEvent);
+            // ---------------------------------------------------------------------------------------
+        }
+
+        return null;
+    }
+
     //
     // Obtiene todos los eventos de una localizacion <FRAGMENT>
     //

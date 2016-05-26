@@ -1,5 +1,6 @@
 package com.example.rachid.myapplication;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,11 +12,13 @@ import android.util.Log;
 public class Inicializate extends AppCompatActivity {
 
     private static final String TAG = "Inicializate";
-    //public static Activity activity;
+    public static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        activity = this;
 
         //AÑADIDO: Comprobar para actualizar el estado si no estoy logeado
         // ----------------------------------------------------------------------------------------
@@ -44,6 +47,8 @@ public class Inicializate extends AppCompatActivity {
 
             Log.i(TAG, "ENTRO A Inicializate:4: " + MyState.getLoged());
             startActivity(new Intent(Inicializate.this, MainActivity.class));
+            //overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Cambiar la animacion
+            this.finish();
         }
         // ----------------------------------------------------------------------------------------
     }

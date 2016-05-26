@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -27,9 +28,15 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import im.delight.android.ddp.ResultListener;
+import im.delight.android.ddp.SubscribeListener;
+import im.delight.android.ddp.db.Collection;
+import im.delight.android.ddp.db.Database;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -55,7 +62,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     private static final String TAG = "LoginActivity";
     private final Activity activity = this;
 
-    private static ProgressDialog mProgressDialog;
+    private ProgressDialog mProgressDialog;
+
+    private MyNetwork myNetwork;
 
     //AÑADIDO: BOTONES
     // ----------------------------------------------------------------------------------------
@@ -202,18 +211,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        final String email = mEmailView.getText().toString();
+        final String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
@@ -223,6 +225,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
+            cancel = true;
+        }
+
+        // Check for a valid password, if the user entered one.
+        if ( (!TextUtils.isEmpty(password)) && (!isPasswordValid(password)) ) {
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
             cancel = true;
         }
 
@@ -240,9 +249,204 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgressDialog();
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            ///mAuthTask = new UserLoginTask(email, password);
+            //mAuthTask.execute((Void) null);
+
+            // LOGIN USER
+            // ------------------------------------------------------------------------------------
+            myNetwork = new MyNetwork(TAG, activity);
+            myNetwork.Connect();
+
+            // Wait 2 second to Connect
+            // ----------------------------------------------------------------------------------------
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (myNetwork.isConnected()) {
+
+                        Log.i(TAG, "ENTRO A Login:attemptLogin: SUCCESSFULLY CONNECT");
+                        //TODO: Logear al usuario si es que esta cuenta existe en la DB del servidor
+                        loginUser(email, password);
+
+                    } else {
+                        Log.i(TAG, "ENTRO A Login:attemptLogin: COULD NOT CONNECT");
+                        Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                        hideProgressDialog();
+                    }
+
+                }
+            }, 2000);
+            // ----------------------------------------------------------------------------------------
+
+            /*
+            myNetwork.Connect(new ResultListener() {
+
+                @Override
+                public void onSuccess(String result) {
+                    Log.i(TAG, "ENTRO A MyMeteor:Connect: SUCCESSFULLY CONNECT: " + result);
+
+                    //TODO: Registrar al usuario en la DB del servidor
+                    signupUser(userName, email, password);
+                }
+
+                @Override
+                public void onError(String error, String reason, String details) {
+                    Log.i(TAG, "ENTRO A MyMeteor:signupUser: COULD NOT CONNECT: " + error + " / " + reason + " / " + details);
+                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                    hideProgressDialog();
+                }
+
+            });
+            */
+            // ------------------------------------------------------------------------------------
         }
+    }
+
+    //
+    private void loginUser(final String email, final String password) {
+
+        // Inicializamos variable error a true
+        MyError.setLoginResponse(false);
+
+        myNetwork.loginUser(email, password, new ResultListener() {
+
+            @Override
+            public void onSuccess(String result) {
+                MyError.setLoginResponse(true);
+
+                Log.i(TAG, "ENTRO A Login:loginUser: SUCCESSFULLY LOGIN: " + result);
+
+                //TODO: Obtener los datos del usuario
+                // --------------------------------------------------------------------------------
+                String[] pieces = result.split("\"");
+                String id = pieces[3];
+                Log.i(TAG, "ENTRO A Login:loginUser:ID: " + id);
+
+                getUser(id);
+                // --------------------------------------------------------------------------------
+            }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+                MyError.setLoginResponse(true);
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Login:loginUser: DISCONNECT");
+
+                if ( (error.equals("403") && (reason.equals("User not found"))) ) {
+                    Toast.makeText(activity, getString(R.string.error_user_not_exists), Toast.LENGTH_LONG).show();
+                } else if ( (error.equals("403") && (reason.equals("Incorrect password"))) ) {
+                    Toast.makeText(activity, getString(R.string.error_password_is_incorrect), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(activity, getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_LONG).show();
+                }
+
+                Log.i(TAG, "ENTRO A Login:loginUser: COULD NOT LOGIN: " + error + " / " + reason + " / " + details);
+                hideProgressDialog();
+            }
+
+        });
+
+        // Wait 5 seconds, si no responde en este tiempo, cerrar.
+        // ----------------------------------------------------------------------------------------
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (!MyError.getLoginResponse()) {
+                    Log.i(TAG, "ENTRO A Login:loginUser:getLoginResponse: TIMES_EXPIRED");
+
+                    myNetwork.Disconnect();
+                    Log.i(TAG, "ENTRO A Login:loginUser:getLoginResponse: DISCONNECT");
+
+                    Log.i(TAG, "ENTRO A Login:loginUser:getLoginResponse: COULD NOT LOGIN");
+                    Toast.makeText(activity, getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
+                    hideProgressDialog();
+                }
+
+            }
+        }, 5000);
+        // ----------------------------------------------------------------------------------------
+    }
+
+    //
+    private void getUser(final String id) {
+
+        // Inicializamos variable error a true
+        MyError.setSubscribeResponse(false);
+
+        String subscriptionId = myNetwork.subscribe("userData", null, new SubscribeListener() {
+
+            @Override
+            public void onSuccess() {
+                MyError.setSubscribeResponse(true);
+
+                Log.i(TAG, "ENTRO A Login:getUser: SUCCESSFULLY SUBSCRIBE");
+
+                //TODO: Obtener al usuario de la DB del servidor
+                // --------------------------------------------------------------------------------
+                User user = myNetwork.getUserWithId(id);
+                // --------------------------------------------------------------------------------
+
+                // TODO: Registrar al usuario en la DB local
+                // --------------------------------------------------------------------------------
+                MyDatabase.insertUser(TAG, activity, user);
+                MyState.setUser(user);
+                MyState.setLoged(true);
+                // --------------------------------------------------------------------------------
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Login:getUser: DISCONNECT");
+
+                hideProgressDialog();
+
+                AccountActivity.activity.finish();
+
+                if (MainActivity.activity != null) {
+                    MainActivity.myMenu.loadHeaderLogin();
+                }
+                if (EventsActivity.activity != null) {
+                    EventsActivity.myMenu.loadHeaderLogin();
+                }
+
+                finish();
+            }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+                MyError.setSubscribeResponse(true);
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Login:getUser: DISCONNECT");
+
+                Log.i(TAG, "ENTRO A Login:getUser: COULD NOT SUBSCRIBE");
+                Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                hideProgressDialog();
+            }
+
+        });
+
+        // Wait 5 seconds, si no responde en este tiempo, cerrar.
+        // ----------------------------------------------------------------------------------------
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if ( !MyError.getSubscribeResponse() ) {
+                    Log.i(TAG, "ENTRO A Login:getUser:getSubscribeResponse: TIMES_EXPIRED");
+
+                    myNetwork.Disconnect();
+                    Log.i(TAG, "ENTRO A Login:getUser:getSubscribeResponse: DISCONNECT");
+
+                    Log.i(TAG, "ENTRO A Login:getUser:getSubscribeResponse: COULD NOT SUBSCRIBE");
+                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                    hideProgressDialog();
+                }
+
+            }
+        }, 5000);
+        // ----------------------------------------------------------------------------------------
     }
 
     //
@@ -353,13 +557,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground:0");
+            /*
+            Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground: Try Connect... ");
 
             MyNetwork myNetwork = new MyNetwork(TAG, activity);
             User user = myNetwork.loginUser(mEmail, mPassword); // Obtiene de la DB del servidor el usuario con el email y password dados
+
+            Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground:EMAIL: " + mEmail);
+            Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground:PASSWORD: " + mPassword);
+            Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground:USER: " + user);
+
             if ( user != null) {
 
-                Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground:1");
+                Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground: CONNECT_SUCCESSFULL");
 
                 MyDatabase.insertUser(TAG, activity, user);
 
@@ -369,20 +579,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                 return true; // Account exists, return true
             }
 
+            Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground: THIS ACCOUNT NOT EXISTS");
+            */
             return false;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
 
-            Log.i(TAG, "ENTRO A Login:UserLoginTask:onPostExecute:0");
+            Log.i(TAG, "ENTRO A Login:UserLoginTask:onPostExecute: I AM CONNECTED?");
 
             mAuthTask = null;
             hideProgressDialog();
 
             if (success) {
 
-                Log.i(TAG, "ENTRO A Login:UserLoginTask:onPostExecute:1");
+                Log.i(TAG, "ENTRO A Login:UserLoginTask:onPostExecute: YES");
 
                 AccountActivity.activity.finish();
 
@@ -396,10 +608,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                 finish();
             } else {
 
-                Log.i(TAG, "ENTRO A Login:UserLoginTask:onPostExecute:2");
-
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                Log.i(TAG, "ENTRO A Login:UserLoginTask:onPostExecute: NO");
+                Toast.makeText(LoginActivity.this, "This Account not exists", Toast.LENGTH_LONG).show();
             }
         }
 

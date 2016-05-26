@@ -7,10 +7,13 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,6 +33,8 @@ import com.squareup.picasso.Picasso;
 import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import im.delight.android.ddp.ResultListener;
+import im.delight.android.ddp.SubscribeListener;
 // ----------------------------------------------------------------------------------------
 
 /**
@@ -60,6 +65,9 @@ public class ProfileActivity extends AppCompatActivity {
     private RelativeLayout relativeMusicStyle;
     // -----------------------------------------------------------------------------------------
 
+    private ProgressDialog mProgressDialog;
+    private MyNetwork myNetwork;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +78,7 @@ public class ProfileActivity extends AppCompatActivity {
         // VALUES OF FORM USER
         // ----------------------------------------------------------------------------------------
         circleImageProfile = (CircleImageView) findViewById(R.id.circle_image_profile);
-        if (MyState.getUser().getImage() != null) {
+        if ( (MyState.getUser().getImage() != null) && (!TextUtils.isEmpty(MyState.getUser().getImage())) ) {
             Picasso.with(getApplicationContext()).load(MyState.getUser().getImage()).into(circleImageProfile);
         }
 
@@ -83,7 +91,7 @@ public class ProfileActivity extends AppCompatActivity {
         textEditName = (TextView) findViewById(R.id.profile_text_name);
         String name = MyState.getUser().getName();
         String surname = MyState.getUser().getSurname();
-        if ( (name != null) || (surname != null) ) {
+        if ( ((name != null) || (surname != null)) && ((!TextUtils.isEmpty(name)) || (!TextUtils.isEmpty(surname))) ) {
             textEditName.setText(name + " " + surname);
         } else {
             textEditName.setText(getString(R.string.simbol_next));
@@ -215,39 +223,68 @@ public class ProfileActivity extends AppCompatActivity {
         });
         dialog.setPositiveButton(getString(R.string.text_done), new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(final DialogInterface dialog, int which) {
 
+                // Reset errors.
+                mUserNameView.setError(null);
+
+                // get values
                 String newUserName = mUserNameView.getText().toString();
 
-                if ( ((userName == null) && (newUserName != null)) || ((userName != null) & (!userName.equals(newUserName))) ) {
+                boolean cancel = false;
+                View focusView = null;
 
-                    User user = MyState.getUser();
-                    user.setUsername(newUserName);
-
-                    MyNetwork myNetwork = new MyNetwork(TAG, activity);
-                    if (myNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
-                        MyDatabase.updateUser(TAG, activity, user);
-                        MyState.setUser(user);
-
-                        textEditUserName.setText(user.getUsername());
-
-                        // --------------------------------------------------------------------------------
-                        if (MainActivity.activity != null) {
-                            Log.i(TAG, "ENTRO A Profile:EditName:0");
-                            MainActivity.myMenu.updateUserName();
-                        }
-                        if (EventsActivity.activity != null) {
-                            Log.i(TAG, "ENTRO A Profile:EditName:1");
-                            EventsActivity.myMenu.updateUserName();
-                        }
-                        // --------------------------------------------------------------------------------
-
-                    } else {
-                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_username), Toast.LENGTH_SHORT).show();
-                    }
+                // Check for a valid values
+                if (TextUtils.isEmpty(newUserName)) {
+                    mUserNameView.setError(getString(R.string.error_field_required));
+                    focusView = mUserNameView;
+                    cancel = true;
                 }
 
-                dialog.dismiss();
+                if (cancel) {
+                    Log.i(TAG, "ENTRO A Profile:DialogEditUserName: ERROR_PARAMETERS");
+
+                    // Show the errors
+                    focusView.requestFocus();
+                } else {
+
+                    if (!userName.equals(newUserName)) {
+
+                        final User mUser = MyState.getUser();
+                        mUser.setUsername(newUserName);
+
+                        // MyNetwork : Update User
+                        // ----------------------------------------------------------------------------
+                        showProgressDialog();
+                        myNetwork = new MyNetwork(TAG, activity);
+                        myNetwork.Connect();
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (myNetwork.isConnected()) {
+
+                                    Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY CONNECT");
+                                    //TODO: Actualizar los datos del usuario
+                                    updateUser(dialog, mUser, "userName");
+
+                                } else {
+                                    Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT CONNECT");
+
+                                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                                    hideProgressDialog();
+                                    dialog.dismiss();
+                                }
+
+                            }
+                        }, 2000);
+                        // ----------------------------------------------------------------------------
+
+                    } else {
+                        dialog.dismiss();
+                    }
+                }
             }
         });
         dialog.show();
@@ -280,40 +317,68 @@ public class ProfileActivity extends AppCompatActivity {
         });
         dialog.setPositiveButton(getString(R.string.text_done), new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(final DialogInterface dialog, int which) {
 
+                // Reset errors.
+                mEmailView.setError(null);
+
+                // get values
                 String newEmail = mEmailView.getText().toString();
 
-                if (((email == null) & (newEmail != null))
-                        | (email != null) & (newEmail != null) & (!email.equals(newEmail))) { // Si se editado el email actualizamos, sino nada.
+                boolean cancel = false;
+                View focusView = null;
 
-                    User user = MyState.getUser();
-                    user.setEmail(newEmail);
-
-                    MyNetwork myNetwork = new MyNetwork(TAG, activity);
-                    if (myNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
-                        MyDatabase.updateUser(TAG, activity, user);
-                        MyState.setUser(user);
-
-                        textEditEmail.setText(user.getEmail());
-
-                        // --------------------------------------------------------------------------------
-                        if (MainActivity.activity != null) {
-                            Log.i(TAG, "ENTRO A Profile:EditEmail:0");
-                            MainActivity.myMenu.updateEmail();
-                        }
-                        if (EventsActivity.activity != null) {
-                            Log.i(TAG, "ENTRO A Profile:EditEmail:1");
-                            EventsActivity.myMenu.updateEmail();
-                        }
-                        // --------------------------------------------------------------------------------
-
-                    } else {
-                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_email), Toast.LENGTH_SHORT).show();
-                    }
+                // Check for a valid values
+                if ( TextUtils.isEmpty(newEmail) ) {
+                    mEmailView.setError(getString(R.string.error_field_required));
+                    focusView = mEmailView;
+                    cancel = true;
                 }
 
-                dialog.dismiss();
+                if (cancel) {
+                    Log.i(TAG, "ENTRO A Profile:DialogEditEmail: ERROR_PARAMETERS");
+
+                    // Show the errors
+                    focusView.requestFocus();
+                } else {
+
+                    if ( !email.equals(newEmail) ) { // Si se a editado el email actualizamos, sino nada.
+
+                        final User mUser = MyState.getUser();
+                        mUser.setEmail(newEmail);
+
+                        // MyNetwork : Update User
+                        // ----------------------------------------------------------------------------
+                        showProgressDialog();
+                        myNetwork = new MyNetwork(TAG, activity);
+                        myNetwork.Connect();
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (myNetwork.isConnected()) {
+
+                                    Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY CONNECT");
+                                    //TODO: Actualizar los datos del usuario
+                                    updateUser(dialog, mUser, "email");
+
+                                } else {
+                                    Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT CONNECT");
+                                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                                    hideProgressDialog();
+                                    dialog.dismiss();
+                                }
+
+                            }
+                        }, 2000);
+                        // ----------------------------------------------------------------------------
+
+                    } else {
+                        dialog.dismiss();
+                    }
+
+                }
             }
         });
         dialog.show();
@@ -349,33 +414,78 @@ public class ProfileActivity extends AppCompatActivity {
         });
         dialog.setPositiveButton(getString(R.string.text_done), new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(final DialogInterface dialog, int which) {
 
+                // Reset errors.
+                mFirstNameView.setError(null);
+                mLastNameView.setError(null);
+
+                // get values
                 String newName = mFirstNameView.getText().toString();
                 String newSurname = mLastNameView.getText().toString();
 
-                if ((((name == null) & (newName != null))
-                        | ((name != null) & (newName != null) & (!name.equals(newName))))
-                        |
-                        (((surname == null) & (newSurname != null))
-                                | ((surname != null) & (newSurname != null) & (!surname.equals(newName))))) {
+                boolean cancel = false;
+                View focusView = null;
 
-                    User user = MyState.getUser();
-                    user.setName(newName);
-                    user.setSurname(newSurname);
-
-                    MyNetwork myNetwork = new MyNetwork(TAG, activity);
-                    if (myNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
-                        MyDatabase.updateUser(TAG, activity, user);
-                        MyState.setUser(user);
-
-                        textEditName.setText(user.getName() + " " + user.getSurname());
-                    } else {
-                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_name), Toast.LENGTH_SHORT).show();
-                    }
+                // Check for a valid values
+                if (TextUtils.isEmpty(newName)) {
+                    mFirstNameView.setError(getString(R.string.error_field_required));
+                    focusView = mFirstNameView;
+                    cancel = true;
+                }
+                if (TextUtils.isEmpty(newSurname)) {
+                    mLastNameView.setError(getString(R.string.error_field_required));
+                    focusView = mLastNameView;
+                    cancel = true;
                 }
 
-                dialog.dismiss();
+                if (cancel) {
+                    Log.i(TAG, "ENTRO A Profile:DialogEditName: ERROR_PARAMETERS");
+
+                    // Show the errors
+                    focusView.requestFocus();
+                } else {
+
+                    if (name.equals(newName) && surname.equals(newSurname)) { // Si NO se ha editado nada ...
+
+                        dialog.dismiss();
+
+                    } else {
+
+                        final User mUser = MyState.getUser();
+                        mUser.setName(newName);
+                        mUser.setSurname(newSurname);
+
+                        // MyNetwork : Update User
+                        // ----------------------------------------------------------------------------
+                        showProgressDialog();
+                        myNetwork = new MyNetwork(TAG, activity);
+                        myNetwork.Connect();
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (myNetwork.isConnected()) {
+
+                                    Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY CONNECT");
+                                    //TODO: Actualizar los datos del usuario
+                                    updateUser(dialog, mUser, "name");
+
+                                } else {
+                                    Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT CONNECT");
+                                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                                    hideProgressDialog();
+                                    dialog.dismiss();
+                                }
+
+                            }
+                        }, 2000);
+                        // ----------------------------------------------------------------------------
+
+                    }
+
+                }
             }
         });
         dialog.show();
@@ -410,22 +520,39 @@ public class ProfileActivity extends AppCompatActivity {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle(getString(R.string.profile_text_gender));
         dialog.setSingleChoiceItems(items, itemDefaultSelect, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
+            public void onClick(final DialogInterface dialog, int item) {
 
                 if (itemDefaultSelect != item) { // Si no se ha modificado nada, no actualizamos nada
 
-                    User user = MyState.getUser();
-                    user.setGender(items[item].toString());
+                    final User mUser = MyState.getUser();
+                    mUser.setGender(items[item].toString());
 
-                    MyNetwork myNetwork = new MyNetwork(TAG, activity);
-                    if (myNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
-                        MyDatabase.updateUser(TAG, activity, user);
-                        MyState.setUser(user);
+                    // MyNetwork : Update User
+                    // ----------------------------------------------------------------------------
+                    showProgressDialog();
+                    myNetwork = new MyNetwork(TAG, activity);
+                    myNetwork.Connect();
 
-                        textEditGender.setText(user.getGender());
-                    } else {
-                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_gender), Toast.LENGTH_SHORT).show();
-                    }
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if (myNetwork.isConnected()) {
+
+                                Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY CONNECT");
+                                //TODO: Actualizar los datos del usuario
+                                updateUser(dialog, mUser, "gender");
+
+                            } else {
+                                Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT CONNECT");
+                                Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                                hideProgressDialog();
+                                dialog.dismiss();
+                            }
+
+                        }
+                    }, 2000);
+                    // ----------------------------------------------------------------------------
                 }
 
                 dialog.dismiss();
@@ -436,13 +563,15 @@ public class ProfileActivity extends AppCompatActivity {
 
     //
     private void showAlertDialogEditBirthday() {
-
+        /*
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "datePicker");
+        */
     }
 
+    /*
     // CLASS
-    public static class DatePickerFragment extends DialogFragment
+    public class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
         private int year;
@@ -474,27 +603,45 @@ public class ProfileActivity extends AppCompatActivity {
             return new DatePickerDialog(getActivity(), this, year, month, day);
         }
 
+        @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
 
             month = month + 1; // Currioso esto, el mes los da del 0 al 11 en lugar del 1 al 12 ... informaticos >.<
             if ( (this.day != day) || (this.month != month) || (this.year != year) ) { // Si no se ha cambiado la fecha, no actualizamos nada
 
-                User user = MyState.getUser();
-                user.setBirthday("" + day + "/" + month + "/" + year);
+                final User mUser = MyState.getUser();
+                mUser.setBirthday("" + day + "/" + month + "/" + year);
 
-                MyNetwork myNetwork = new MyNetwork(TAG, activity);
-                if (myNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
-                    MyDatabase.updateUser(TAG, activity, user);
-                    MyState.setUser(user);
+                // MyNetwork : Update User
+                // ----------------------------------------------------------------------------
+                showProgressDialog();
+                myNetwork = new MyNetwork(TAG, activity);
+                myNetwork.Connect();
 
-                    textEditBirthday.setText(user.getBirthday());
-                } else {
-                    Toast.makeText(activity.getBaseContext(), getString(R.string.error_could_not_update_birthday), Toast.LENGTH_SHORT).show();
-                }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (myNetwork.isConnected()) {
+
+                            Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY CONNECT");
+                            //TODO: Actualizar los datos del usuario
+                            updateUser(mUser, "birthday");
+
+                        } else {
+                            Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT CONNECT");
+                            Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                            hideProgressDialog();
+                        }
+
+                    }
+                }, 2000);
+                // ----------------------------------------------------------------------------
             }
         }
     }
+    */
 
     //
     private void showAlertDialogEditPlace() {
@@ -521,27 +668,68 @@ public class ProfileActivity extends AppCompatActivity {
         });
         dialog.setPositiveButton(getString(R.string.text_done), new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(final DialogInterface dialog, int which) {
 
+                // Reset errors.
+                mPlaceView.setError(null);
+
+                // get values
                 String newPlace = mPlaceView.getText().toString();
 
-                if ( ((place == null) && (newPlace != null)) || ((place != null) & (!place.equals(newPlace))) ) {
+                boolean cancel = false;
+                View focusView = null;
 
-                    User user = MyState.getUser();
-                    user.setPlace(newPlace);
-
-                    MyNetwork myNetwork = new MyNetwork(TAG, activity);
-                    if (myNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
-                        MyDatabase.updateUser(TAG, activity, user);
-                        MyState.setUser(user);
-
-                        textEditPlace.setText(user.getPlace());
-                    } else {
-                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_place), Toast.LENGTH_SHORT).show();
-                    }
+                // Check for a valid values
+                if ( TextUtils.isEmpty(newPlace) ) {
+                    mPlaceView.setError(getString(R.string.error_field_required));
+                    focusView = mPlaceView;
+                    cancel = true;
                 }
 
-                dialog.dismiss();
+                if (cancel) {
+                    Log.i(TAG, "ENTRO A Profile:DialogEditPlace: ERROR_PARAMETERS");
+
+                    // Show the errors
+                    focusView.requestFocus();
+                } else {
+
+                    if ( !place.equals(newPlace) ) {
+
+                        final User mUser = MyState.getUser();
+                        mUser.setPlace(newPlace);
+
+                        // MyNetwork : Update User
+                        // ----------------------------------------------------------------------------
+                        showProgressDialog();
+                        myNetwork = new MyNetwork(TAG, activity);
+                        myNetwork.Connect();
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (myNetwork.isConnected()) {
+
+                                    Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY CONNECT");
+                                    //TODO: Actualizar los datos del usuario
+                                    updateUser(dialog, mUser, "place");
+
+                                } else {
+                                    Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT CONNECT");
+                                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                                    hideProgressDialog();
+                                    dialog.dismiss();
+                                }
+
+                            }
+                        }, 2000);
+                        // ----------------------------------------------------------------------------
+                    } else {
+
+                        dialog.dismiss();
+                    }
+
+                }
             }
         });
         dialog.show();
@@ -572,27 +760,67 @@ public class ProfileActivity extends AppCompatActivity {
         });
         dialog.setPositiveButton(getString(R.string.text_done), new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(final DialogInterface dialog, int which) {
 
+                // Reset errors.
+                mMusicStyleView.setError(null);
+
+                // get values
                 String newMusicStyle = mMusicStyleView.getText().toString();
 
-                if ( ((musicStyle == null) && (newMusicStyle != null)) || ((musicStyle != null) & (!musicStyle.equals(newMusicStyle))) ) {
+                boolean cancel = false;
+                View focusView = null;
 
-                    User user = MyState.getUser();
-                    user.setMusicStyle(newMusicStyle);
-
-                    MyNetwork myNetwork = new MyNetwork(TAG, activity);
-                    if (myNetwork.updateUser(user)) { // devuelve true si se logro actualizar con exito
-                        MyDatabase.updateUser(TAG, activity, user);
-                        MyState.setUser(user);
-
-                        textEditMusicStyle.setText(user.getMusicStyle());
-                    } else {
-                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_musicstyle), Toast.LENGTH_SHORT).show();
-                    }
+                // Check for a valid values
+                if ( TextUtils.isEmpty(newMusicStyle) ) {
+                    mMusicStyleView.setError(getString(R.string.error_field_required));
+                    focusView = mMusicStyleView;
+                    cancel = true;
                 }
 
-                dialog.dismiss();
+                if (cancel) {
+                    Log.i(TAG, "ENTRO A Profile:DialogEditMusicStyle: ERROR_PARAMETERS");
+
+                    // Show the errors
+                    focusView.requestFocus();
+                } else {
+
+                    if ( !musicStyle.equals(newMusicStyle) ) {
+
+                        final User mUser = MyState.getUser();
+                        mUser.setMusicStyle(newMusicStyle);
+
+                        // MyNetwork : Update User
+                        // ----------------------------------------------------------------------------
+                        showProgressDialog();
+                        myNetwork = new MyNetwork(TAG, activity);
+                        myNetwork.Connect();
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (myNetwork.isConnected()) {
+
+                                    Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY CONNECT");
+                                    //TODO: Actualizar los datos del usuario
+                                    updateUser(dialog, mUser, "music_style");
+
+                                } else {
+                                    Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT CONNECT");
+                                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                                    hideProgressDialog();
+                                    dialog.dismiss();
+                                }
+
+                            }
+                        }, 2000);
+                        // ----------------------------------------------------------------------------
+                    } else {
+
+                        dialog.dismiss();
+                    }
+                }
             }
         });
         dialog.show();
@@ -645,25 +873,323 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                MyDatabase.deleteUser(TAG, activity, MyState.getUser());
+                // TODO: Deslogear al usuario de Meteor
+                // --------------------------------------------------------------------------------
+                showProgressDialog();
+                myNetwork = new MyNetwork(TAG, activity);
+                myNetwork.Connect();
 
-                MyState.setUser(new User(MyState.getUser().getLocation()));
-                MyState.setLoged(false);
+                // Wait 2 second
+                // --------------------------------------------------------------------------------
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                if (MainActivity.activity != null) {
-                    MainActivity.activity.finish();
-                }
-                if (EventsActivity.activity != null) {
-                    EventsActivity.activity.finish();
-                }
+                        if (myNetwork.isConnected()) {
+                            Log.i(TAG, "ENTRO A Profile:dialogForLogout:Connect: SUCCESSFULLY CONNECT");
 
-                startActivity(new Intent(ProfileActivity.this, Inicializate.class));
+                            if (myNetwork.isLoggedIn()) {
 
-                dialog.dismiss();
-                ProfileActivity.activity.finish();
+                                // TODO: Des-logear al usuario
+                                //logOutListener();
+                                logOut();
+
+                            } else {
+                                myNetwork.Disconnect();
+                                Log.i(TAG, "ENTRO A Profile:dialogForLogout: DISCONNECT");
+
+                                Log.i(TAG, "ENTRO A Profile:dialogForLogout: NO_LOGGIN_IN");
+                                Toast.makeText(activity, getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
+                                hideProgressDialog();
+                            }
+
+                        } else {
+                            Log.i(TAG, "ENTRO A Profile:dialogForLogout:Connect: COULD NOT CONNECT");
+                            Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                            hideProgressDialog();
+                        }
+
+                    }
+                }, 2000);
+                // --------------------------------------------------------------------------------
+
             }
         });
         dialog.show();
     }
+
+    //
+    private void updateUser(final DialogInterface dialog, final User user, final String value) {
+
+        String subscriptionId = myNetwork.subscribe("userData", null, new SubscribeListener() {
+
+            @Override
+            public void onSuccess() {
+                Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY SUBSCRIBE");
+
+                //TODO: Actualizar los datos del usuario
+                myNetwork.updateUser(user);
+                Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY UPDATE");
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Profile:updateUser: DISCONNECT");
+
+                // Actualizar la ventana de Profile Activity y Actualizar la DB local
+                updateWindowsProfile(user, value, false);
+
+                hideProgressDialog();
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Profile:updateUser: DISCONNECT");
+
+                updateWindowsProfile(user, value, true);
+
+                hideProgressDialog();
+
+                Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT SUBSCRIBE");
+            }
+
+        });
+    }
+
+    //
+    private void updateWindowsProfile(User user, String value, boolean error) {
+
+        if ( value.equals("userName") ) {
+
+            if (error) {
+
+                Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_username), Toast.LENGTH_SHORT).show();
+
+            } else {
+
+                // Actualizar el dato en la DB local
+                MyState.getUser().setUsername(user.getUsername());
+
+                // Actualizar el texto del userName de la ventana "ProfileActivity"
+                textEditUserName.setText(user.getUsername());
+
+                // Actualizar el texto del userName del navigation "nav_header_login"
+                // --------------------------------------------------------------------------------
+                if (MainActivity.activity != null) {
+                    Log.i(TAG, "ENTRO A Profile:EditNavHeader: 0");
+                    MainActivity.myMenu.updateUserName();
+                }
+                if (EventsActivity.activity != null) {
+                    Log.i(TAG, "ENTRO A Profile:EditNavHeader: 1");
+                    EventsActivity.myMenu.updateUserName();
+                }
+                // --------------------------------------------------------------------------------
+
+            }
+
+        } else if ( value.equals("email") ) {
+
+            if (error) {
+
+                Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_email), Toast.LENGTH_SHORT).show();
+
+            } else {
+                // Actualizar el dato en la DB local
+                MyState.getUser().setEmail(user.getEmail());
+
+                // Actualizar el texto del email de la ventana "ProfileActivity"
+                textEditEmail.setText(user.getEmail());
+
+                // Actualizar el texto del email del navigation "nav_header_login"
+                // --------------------------------------------------------------------------------
+                if (MainActivity.activity != null) {
+                    Log.i(TAG, "ENTRO A Profile:EditNavHeader: 0");
+                    MainActivity.myMenu.updateEmail();
+                }
+                if (EventsActivity.activity != null) {
+                    Log.i(TAG, "ENTRO A Profile:EditNavHeader: 1");
+                    EventsActivity.myMenu.updateEmail();
+                }
+                // --------------------------------------------------------------------------------
+
+            }
+
+        } else if ( value.equals("name") ) {
+
+            if (error) {
+                Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_name), Toast.LENGTH_SHORT).show();
+            } else {
+                // Actualizar el dato en la DB local
+                MyState.getUser().setName(user.getName());
+                MyState.getUser().setSurname(user.getSurname());
+
+                // Actualizar el texto del nombre de la ventana "ProfileActivity"
+                textEditName.setText(user.getName());
+
+                String name = user.getName();
+                String surname = user.getSurname();
+                if ( ((name != null) || (surname != null)) && ((!TextUtils.isEmpty(name)) || (!TextUtils.isEmpty(surname))) ) {
+                    textEditName.setText(name + " " + surname);
+                } else {
+                    textEditName.setText(getString(R.string.simbol_next));
+                }
+            }
+
+        } else if ( value.equals("gender") ) {
+
+            if (error) {
+                Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_gender), Toast.LENGTH_SHORT).show();
+            } else {
+                // Actualizar el dato en la DB local
+                MyState.getUser().setGender(user.getGender());
+
+                // Actualizar el texto del nombre de la ventana "ProfileActivity"
+                textEditGender.setText(user.getGender());
+            }
+
+        } else if ( value.equals("birthday") ) {
+
+            if (error) {
+                Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_birthday), Toast.LENGTH_SHORT).show();
+            } else {
+                // Actualizar el dato en la DB local
+                MyState.getUser().setBirthday(user.getBirthday());
+
+                // Actualizar el texto del nombre de la ventana "ProfileActivity"
+                textEditBirthday.setText(user.getBirthday());
+            }
+
+        } else if ( value.equals("place") ) {
+
+            if (error) {
+                Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_place), Toast.LENGTH_SHORT).show();
+            } else {
+                // Actualizar el dato en la DB local
+                MyState.getUser().setPlace(user.getPlace());
+
+                // Actualizar el texto del nombre de la ventana "ProfileActivity"
+                textEditPlace.setText(user.getPlace());
+            }
+
+        } else if ( value.equals("music_style") ) {
+
+            if (error) {
+                Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_musicstyle), Toast.LENGTH_SHORT).show();
+            } else {
+                // Actualizar el dato en la DB local
+                MyState.getUser().setMusicStyle(user.getMusicStyle());
+
+                // Actualizar el texto del nombre de la ventana "ProfileActivity"
+                textEditMusicStyle.setText(user.getMusicStyle());
+            }
+
+        } else {
+            // ERROR ..
+            Log.i(TAG, "ENTRO A Profile:updateWindowsProfile: FATAL_ERROR_VALUE: " + value);
+        }
+    }
+
+    //
+    public void logOut() {
+
+        //TODO: Logout al usuario de Meteor
+        myNetwork.Logout();
+        Log.i(TAG, "ENTRO A Profile:dialogForLogout:logOut: SUCCESSFULLY LOGOUT");
+
+        // TODO: Eliminar al usuario de la DB local
+        // --------------------------------------------------------------------------------
+        MyDatabase.deleteUser(TAG, activity, MyState.getUser());
+
+        MyState.setUser(new User(MyState.getUser().getLocation()));
+        MyState.setLoged(false);
+        // --------------------------------------------------------------------------------
+
+        myNetwork.Disconnect();
+        Log.i(TAG, "ENTRO A Profile:dialogForLogout:logOut: DISCONNECT");
+
+        hideProgressDialog();
+
+        if (MainActivity.activity != null) {
+            Log.i(TAG, "ENTRO A Profile:dialogForLogout:logOut: CLOSE MAIN_ACTIVITY");
+            MainActivity.activity.finish();
+        }
+        if (EventsActivity.activity != null) {
+            Log.i(TAG, "ENTRO A Profile:dialogForLogout:logOut: CLOSE EVENTS_ACTIVITY");
+            EventsActivity.activity.finish();
+        }
+
+        Log.i(TAG, "ENTRO A Profile:dialogForLogout:logOut: OPEN INICIALIZATE.CLASS");
+        Inicializate.activity.finish();
+        startActivity(new Intent(ProfileActivity.this, Inicializate.class));
+
+        finish();
+    }
+
+    //
+    public void logOutListener() {
+
+        //TODO: Logout al usuario de Meteor
+        myNetwork.Logout(new ResultListener() {
+
+            @Override
+            public void onSuccess(String result) {
+                Log.i(TAG, "ENTRO A Profile:dialogForLogout:logOutListener: SUCCESSFULLY LOGOUT: " + result);
+
+                // TODO: Eliminar al usuario de la DB local
+                // --------------------------------------------------------------------------------
+                MyDatabase.deleteUser(TAG, activity, MyState.getUser());
+
+                MyState.setUser(new User(MyState.getUser().getLocation()));
+                MyState.setLoged(false);
+                // --------------------------------------------------------------------------------
+
+                hideProgressDialog();
+
+                if (MainActivity.activity != null) {
+                    Log.i(TAG, "ENTRO A Profile:dialogForLogout:logOutListener: CLOSE MAIN_ACTIVITY");
+                    MainActivity.activity.finish();
+                }
+                if (EventsActivity.activity != null) {
+                    Log.i(TAG, "ENTRO A Profile:dialogForLogout:logOutListener: CLOSE EVENTS_ACTIVITY");
+                    EventsActivity.activity.finish();
+                }
+
+                Log.i(TAG, "ENTRO A Profile:dialogForLogout:logOutListener: OPEN INICIALIZATE.CLASS");
+                Inicializate.activity.finish();
+                startActivity(new Intent(ProfileActivity.this, Inicializate.class));
+
+                finish();
+            }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+                Log.i(TAG, "ENTRO A Profile:dialogForLogout:logOutListener:: COULD NOT LOGOUT: " + error + " / " + reason + " / " + details);
+                Toast.makeText(activity, getString(R.string.error_could_not_logout_to_server), Toast.LENGTH_LONG).show();
+                hideProgressDialog();
+            }
+
+        });
+
+    }
     //-----------------------------------------------------------------------------------------
+
+    // **********
+    // FUNTIONS
+    // **********
+    // ----------------------------------------------------------------------------------------
+    private void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage(getString(R.string.loading));
+        }
+        mProgressDialog.show();
+        mProgressDialog.setCancelable(false);
+    }
+
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.hide();
+        }
+    }
+    // ----------------------------------------------------------------------------------------
 }

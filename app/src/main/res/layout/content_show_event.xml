@@ -332,6 +332,19 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/showEvent_text_user_not_logged"
+                    android:id="@+id/showEvent_text_user_not_logged"
+                    android:gravity="center"
+                    android:textSize="16dp"
+                    android:textColor="@color/ROJO"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp" />
+
                 <Button
                     android:id="@+id/showEvent_button_register"
                     style="?android:textAppearanceSmall"
@@ -340,11 +353,10 @@
                     android:text="@string/showEvent_button_register"
                     android:textColor="@color/BLANCO"
                     android:textStyle="bold"
-                    android:background="@color/AZUL_CLARO_APP"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginRight="6dp"
                     android:layout_marginLeft="6dp"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="20dp"/>
 
             </LinearLayout>
         </ScrollView>
