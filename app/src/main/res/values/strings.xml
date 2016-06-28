@@ -105,6 +105,10 @@
     <string name="text_female">Mujer</string>
     <string name="text_other">Otro</string>
 
+    <string name="text_spain">Español</string>
+    <string name="text_english">Ingles</string>
+    <string name="text_basque">Euskera</string>
+
     <string name="simbol_next">></string>
     <string name="profile_text_complete_name">Nombre completo</string>
 
@@ -123,6 +127,7 @@
     <string name="error_could_not_update_place">Error, no se ha podido actualizar el lugar</string>
     <string name="error_could_not_update_musicstyle">Error, no se ha podido actualizar el estilo de musica</string>
 
+    <string name="error_could_not_view_event">Error, no se ha podido visualizar el evento</string>
     <string name="error_could_not_view_events">Error, no se ha podido visualizar los eventos</string>
     <!-- *************************************************************************************** -->
 
@@ -160,6 +165,11 @@
     <string name="info_button_privacy_policy">Políticas de Privacidad</string>
     <string name="info_button_version">Versión</string>
 
+    <!-- MENU_INFO -->
+    <string name="version_text_version">Versión 1.0.0</string>
+    <string name="version_text_autor">Rachid Boudhar Tannaoui</string>
+    <string name="version_text_info">Proyecto TFG</string>
+
     <!-- LOCATION -->
     <string name="button_use_my_current_location">Usar mi propia localización</string>
     <string name="text_popular_location">Localizaciónes mas populares</string>
@@ -190,8 +200,10 @@
     <string name="showEvent_text_user_not_logged">Inicia sesion para poder registrarte</string>
     <string name="showEvent_button_register">REGISTRARSE</string>
 
-    <string name="showEvent_text_register">REGISTRARSE</string>
-    <string name="showEvent_text_unregister">DES-REGISTRARSE</string>
+    <string name="showEvent_text_register">Apuntarse</string>
+    <string name="showEvent_text_unregister">Desapuntarse</string>
+
+    <string name="error_event_complete">El evento esta completo, no tiene mas plazas</string>
     <!-- *************************************************************************************** -->
 
     <!-- SEARCH -->
@@ -204,6 +216,13 @@
     <string name="prompt_first_day">Fecha de inicio</string>
     <string name="prompt_last_day">Fecha final</string>
     <string name="search_button_search">Buscar</string>
+    <!-- *************************************************************************************** -->
+
+    <!-- SEARCH -->
+    <!-- *************************************************************************************** -->
+    <string name="publish_text_publishEvent">Publicar Evento</string>
+    <string name="publish_text_publishWithWeb">"Si desea publicar un evento realicelo desde nuestra pagina web"</string>
+    <string name="publish_button_publish">Publicar</string>
     <!-- *************************************************************************************** -->
 
 

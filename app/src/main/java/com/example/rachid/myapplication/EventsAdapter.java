@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 public class EventsAdapter extends BaseAdapter implements View.OnClickListener {
 
     /*********** Declare Used Variables *********/
+    private String TAG;
     private Activity activity;
 
     private ArrayList data;
@@ -34,9 +36,10 @@ public class EventsAdapter extends BaseAdapter implements View.OnClickListener {
     int i = 0;
 
     /*************  CustomAdapter Constructor *****************/
-    public EventsAdapter(Activity a, ArrayList d, Resources resLocal) {
+    public EventsAdapter(String T, Activity a, ArrayList d, Resources resLocal) {
 
         /********** Take passed values **********/
+        TAG = T;
         activity = a;
         data = d;
         res = resLocal;
@@ -133,7 +136,7 @@ public class EventsAdapter extends BaseAdapter implements View.OnClickListener {
     }
 
     /********* Called when Item click in ListView ************/
-    private class OnItemClickListener  implements View.OnClickListener {
+    private class OnItemClickListener implements View.OnClickListener {
         private int mPosition;
 
         OnItemClickListener(int position){
@@ -142,31 +145,24 @@ public class EventsAdapter extends BaseAdapter implements View.OnClickListener {
 
         @Override
         public void onClick(View arg0) {
-            /****  Call  onItemClick Method inside CustomListViewAndroidExample Class ( See Below )****/
+            /****  Call onItemClick Method inside CustomListViewAndroidExample Class ( See Below )****/
 
-            if (SearchResultsActivity.activity != null) {
-                if (activity == SearchResultsActivity.activity) {
-                    ((SearchResultsActivity) SearchResultsActivity.activity).onItemClick(mPosition);
-                    return;
-                }
+            if (TAG.equals("SearchResultsActivity")) {
+                ((SearchResultsActivity) SearchResultsActivity.activity).onItemClick(mPosition);
+
+            } else if (TAG.equals("TabEvents")) {
+                ((TabEvents) TabEvents.fragment).onItemClick(mPosition);
+
+            } else if (TAG.equals("TabPublished")) {
+                ((TabPublished) TabPublished.fragment).onItemClick(mPosition);
+
+            } else if (TAG.equals("TabRegistered")) {
+                ((TabRegistered) TabRegistered.fragment).onItemClick(mPosition);
+
+            } else {
+                Toast.makeText(activity, activity.getString(R.string.error_could_not_view_event), Toast.LENGTH_SHORT).show();
+                throw new IllegalArgumentException("EventsAdapter:onClick: Error, not detect what activity call");
             }
-
-            if ( (TabEvents.fragment != null) && (TabRegistered.fragment != null) && (TabPublished.fragment != null) ) {
-                if (activity == TabEvents.fragment.getActivity()) {
-                    ((TabEvents) TabEvents.fragment).onItemClick(mPosition);
-                    return;
-
-                } else if (activity == TabRegistered.fragment.getActivity()) {
-                    ((TabRegistered) TabRegistered.fragment).onItemClick(mPosition);
-                    return;
-
-                } else if (activity == TabPublished.fragment.getActivity()) {
-                    ((TabPublished) TabPublished.fragment).onItemClick(mPosition);
-                    return;
-                }
-            }
-
-            throw new IllegalArgumentException("EventsAdapter:onClick: Error, not detect what activity call");
         }
     }
 }

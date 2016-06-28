@@ -10,23 +10,81 @@
     <FrameLayout
         android:id="@+id/login_content_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:background="@color/AZUL_CLARO_10">
 
-        <ScrollView
-            android:id="@+id/login_scroll"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
 
-            <LinearLayout
-                android:id="@+id/login_linear_1"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/version_text_appName"
+                android:text="@string/app_name"
+                android:textSize="24sp"
+                android:textColor="@color/AZUL_CLARO_APP"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:layout_marginTop="80dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/version_text_version"
+                android:text="@string/version_text_version"
+                android:textSize="18sp"
+                android:textColor="@color/GRIS_1"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp" />
+
+            <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical" >
+                android:layout_height="@dimen/listViewEvent_image_event"
+                android:id="@+id/listViewEvent_imageView_image"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/imagen_corporativa"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/version_text_autor"
+                android:text="@string/version_text_autor"
+                android:textSize="18sp"
+                android:textColor="@color/GRIS_1"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/version_text_info"
+                android:text="@string/version_text_info"
+                android:textSize="18sp"
+                android:textColor="@color/GRIS_1"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp" />
 
-            </LinearLayout>
-        </ScrollView>
+        </LinearLayout>
+
     </FrameLayout>
 </LinearLayout>

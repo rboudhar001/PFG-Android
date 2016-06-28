@@ -15,10 +15,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import im.delight.android.ddp.ResultListener;
 
 /**
  * Created by Rachid on 25/03/2016.
@@ -82,9 +85,9 @@ public class SettingsActivity extends AppCompatActivity {
         View dialogView = inflater.inflate(R.layout.dialog_settings_change_password, null);
         dialog.setView(dialogView);
 
-        final AutoCompleteTextView mOldPasswordView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_old_password);
-        final AutoCompleteTextView mNewPasswordView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_new_password);
-        final AutoCompleteTextView mRepeatNewPasswordView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_repeat_new_password);
+        final EditText mOldPasswordView = (EditText) dialogView.findViewById(R.id.dialog_old_password);
+        final EditText mNewPasswordView = (EditText) dialogView.findViewById(R.id.dialog_new_password);
+        final EditText mRepeatNewPasswordView = (EditText) dialogView.findViewById(R.id.dialog_repeat_new_password);
 
         dialog.setNegativeButton(getString(R.string.text_cancel), new DialogInterface.OnClickListener() {
             @Override
@@ -110,19 +113,19 @@ public class SettingsActivity extends AppCompatActivity {
                 View focusView = null;
 
                 // Check for a valid Old Password
-                if ( TextUtils.isEmpty(mOldPassword) ) {
+                if (TextUtils.isEmpty(mOldPassword)) {
                     mOldPasswordView.setError(getString(R.string.error_invalid_password));
                     focusView = mOldPasswordView;
                     cancel = true;
                 }
                 // Check for a valid New Password
-                if ( (TextUtils.isEmpty(mNewPassword)) || (mNewPassword.length() <= 4) ) {
+                if ((TextUtils.isEmpty(mNewPassword)) || (mNewPassword.length() <= 4)) {
                     mNewPasswordView.setError(getString(R.string.error_invalid_password));
                     focusView = mNewPasswordView;
                     cancel = true;
                 }
                 // Check for a valid Repeat New Password and is same New Password
-                if ( (TextUtils.isEmpty(mRepeatNewPassword)) || (mRepeatNewPassword.length() <= 4) ) {
+                if ((TextUtils.isEmpty(mRepeatNewPassword)) || (mRepeatNewPassword.length() <= 4)) {
                     mRepeatNewPasswordView.setError(getString(R.string.error_invalid_password));
                     focusView = mRepeatNewPasswordView;
                     cancel = true;
@@ -139,7 +142,7 @@ public class SettingsActivity extends AppCompatActivity {
                     focusView.requestFocus();
                 } else {
 
-                    if ( !mOldPassword.equals(mNewPassword) ) {
+                    if (!mOldPassword.equals(mNewPassword)) {
 
                         // MyNetwork : Change Password
                         // ----------------------------------------------------------------------------
@@ -147,6 +150,7 @@ public class SettingsActivity extends AppCompatActivity {
                         myNetwork = new MyNetwork(TAG, activity);
                         myNetwork.Connect();
 
+                        // Wait 1 sec to Connect
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -156,32 +160,25 @@ public class SettingsActivity extends AppCompatActivity {
                                     if (myNetwork.isLoggedIn()) {
 
                                         // TODO: Actualizar la contraseña en la base de datos del servidor
-                                        //myNetwork.changePassword(MyState.getUser().getID(), mOldPassword, mNewPassword);
-                                        Log.i(TAG, "ENTRO A Settings:DialogChangePassword: PASSWORD CHANGED");
-
-                                        myNetwork.Disconnect();
-                                        Log.i(TAG, "ENTRO A Settings:DialogChangePassword: DISCONNECT");
-
-                                        hideProgressDialog();
-                                        // ----------------------------------------------------------------------------------------
+                                        changePassword(mOldPassword, mNewPassword);
 
                                     } else {
                                         myNetwork.Disconnect();
                                         Log.i(TAG, "ENTRO A Settings:DialogChangePassword: DISCONNECT");
 
                                         Log.i(TAG, "ENTRO A Settings:DialogChangePassword: NO_LOGGIN_IN");
-                                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
                                         hideProgressDialog();
+                                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
                                     }
 
                                 } else {
                                     Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT CONNECT");
-                                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                                     hideProgressDialog();
+                                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                                 }
 
                             }
-                        }, 2000);
+                        }, 1000);
 
                     } else {
 
@@ -195,9 +192,132 @@ public class SettingsActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    // AÑADIDO: Cambiar Contraseña
+    // -------------------------------------------------------------------------------------------------------
+    private void changePassword(final String oldPassword, final String newPassword) {
+
+        // Inicializamos variable error a true
+        MyError.setChangePasswordResponse(false);
+
+        myNetwork.changePassword(oldPassword, newPassword, new ResultListener() {
+
+            @Override
+            public void onSuccess(String result) {
+                MyError.setChangePasswordResponse(true);
+
+                Log.i(TAG, "ENTRO A Settings:changePassword: SUCCESSFULLY: " + result);
+
+                //TODO: Obtener los datos del usuario
+                /*
+                // --------------------------------------------------------------------------------
+                String[] pieces = result.split("\"");
+                String id = pieces[3];
+                Log.i(TAG, "ENTRO A Login:loginUser:ID: " + id);
+
+                getUser(id);
+                // --------------------------------------------------------------------------------
+                */
+
+                Log.i(TAG, "ENTRO A Settings:changePassword: PASSWORD CHANGED");
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Settings:changePassword: DISCONNECT");
+
+                hideProgressDialog();
+            }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+                MyError.setChangePasswordResponse(true);
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Settings:changePassword: DISCONNECT");
+
+                /*
+                if ((error.equals("403") && (reason.equals("User not found")))) {
+                    Toast.makeText(activity, getString(R.string.error_user_not_exists), Toast.LENGTH_LONG).show();
+                } else if ((error.equals("403") && (reason.equals("Incorrect password")))) {
+                    Toast.makeText(activity, getString(R.string.error_password_is_incorrect), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(activity, getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_LONG).show();
+                }
+                */
+
+                Log.i(TAG, "ENTRO A Settings:changePassword: COULD NOT LOGIN: " + error + " / " + reason + " / " + details);
+                hideProgressDialog();
+            }
+
+        });
+
+        // Wait 5 seconds, si no responde en este tiempo, cerrar.
+        // ----------------------------------------------------------------------------------------
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (!MyError.getLoginResponse()) {
+                    Log.i(TAG, "ENTRO A Settings:changePassword:getChangePasswordResponse: TIMES_EXPIRED");
+
+                    myNetwork.Disconnect();
+                    Log.i(TAG, "ENTRO A Settings:changePassword:getChangePasswordResponse: DISCONNECT");
+
+                    Log.i(TAG, "ENTRO A Settings:changePassword:getChangePasswordResponse: COULD NOT LOGIN");
+                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                    hideProgressDialog();
+                }
+
+            }
+        }, 5000);
+        // ----------------------------------------------------------------------------------------
+    }
+    // -------------------------------------------------------------------------------------------------------
+
     //
     private void showAlertDialogChangeLanguage() {
 
+        String spain = getString(R.string.text_spain);
+        String english = getString(R.string.text_english);
+        String basque = getString(R.string.text_basque);
+
+        final CharSequence[] items = {spain, english, basque};
+        final int itemDefaultSelect;
+
+        // TODO: Obtener idioma del sistema y poner opcion preseleccionada
+        itemDefaultSelect = 0;
+
+        /*
+        String gender = MyState.getUser().getGender();
+        if (gender != null) {
+            if (gender.equals(male)) {
+                itemDefaultSelect = 0;
+            } else if (gender.equals(female)) {
+                itemDefaultSelect = 1;
+            } else if (gender.equals(other)) {
+                itemDefaultSelect = 2;
+            } else {
+                itemDefaultSelect = -1; // no tiene ninguna opcion seleccionada
+            }
+        }
+        else {
+            itemDefaultSelect = -1; // no tiene ninguna opcion seleccionada
+        }
+        */
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(getString(R.string.profile_text_gender));
+        dialog.setSingleChoiceItems(items, itemDefaultSelect, new DialogInterface.OnClickListener() {
+            public void onClick(final DialogInterface dialog, int item) {
+
+                if (itemDefaultSelect != item) { // Si no se ha modificado nada, no actualizamos nada
+
+                    //TODO: Cambiar el idioma del sistema al seleccionado por el usuario
+                    //items[item].toString(); //Idioma seleccionado por el usuario
+                }
+
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
     //-----------------------------------------------------------------------------------------
 

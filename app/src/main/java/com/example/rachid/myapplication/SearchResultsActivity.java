@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -32,9 +33,6 @@ public class SearchResultsActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
 
     private MyNetwork myNetwork;
-
-    private Handler handler;
-    private Runnable runnable;
 
     private String sPlace;
     private String sDate;
@@ -94,104 +92,74 @@ public class SearchResultsActivity extends AppCompatActivity {
         myNetwork = new MyNetwork(TAG, activity);
         myNetwork.Connect();
 
+        // Wait 1 sec to Connect
+        // ----------------------------------------------------------------------------------------
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
                 if ( myNetwork.isConnected() ) {
 
-                    if ( myNetwork.isLoggedIn() ) {
-
-                        if ( (sDate != null ) & (!sDate.isEmpty()) ) { // Buscamos por "Lugar" y "Fecha"
-                            listViewValues = myNetwork.getAllEvents(sPlace, sDate);
-                        } else { // Sino, buscamos solo por lugar
-                            listViewValues = myNetwork.getAllEvents(sPlace);
-                        }
-
-                        Log.i(TAG, "ENTRO A SearchResults:onCreate: GET_EVENTS_SUCCESFULL");
-
-                        myNetwork.Disconnect();
-                        Log.i(TAG, "ENTRO A SearchResults:onCreate: DISCONNECT");
-
-                        hideProgressDialog();
-                        // ----------------------------------------------------------------------------------------
-
-                        if (listViewValues == null) {
-                            Log.i(TAG, "ENTRO A SearchResults:onCreate: NULL");
-                            listViewValues = new ArrayList<>();
-                        }
-
-                        if (!listViewValues.isEmpty()) {
-
-                            Log.i(TAG, "ENTRO A SearchResults:onCreate: NO_EMPTY");
-
-                            mNoEventsView.setVisibility(View.INVISIBLE);
-                            mListView.setVisibility(View.VISIBLE);
-                        }
-                        else {
-
-                            Log.i(TAG, "ENTRO A SearchResults:onCreate: EMPTY");
-
-                            mNoEventsView.setVisibility(View.VISIBLE);
-                            mListView.setVisibility(View.INVISIBLE);
-                        }
-
-                        adapter = new EventsAdapter(SearchResultsActivity.this, listViewValues, res);
-                        mListView.setAdapter(adapter);
-
+                    if ( (sDate != null ) & (!sDate.isEmpty()) ) { // Buscamos por "Lugar" y "Fecha"
+                        listViewValues = myNetwork.getAllEvents(sPlace, sDate);
+                    } else { // Sino, buscamos solo por lugar
+                        listViewValues = myNetwork.getAllEvents(sPlace);
                     }
-                    else {
-                        Log.i(TAG, "ENTRO A SearchResults:onCreate: NO_LOGGIN_IN");
-                        hideProgressDialog();
-                    }
+                    Log.i(TAG, "ENTRO A SearchResults:onCreate: GET_EVENTS_SUCCESFULL");
+
+                    // Wait 1 second
+                    // ----------------------------------------------------------------------------------------
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            // --------------------------------------------------------------------
+                            myNetwork.Disconnect();
+                            Log.i(TAG, "ENTRO A SearchResults:onCreate: DISCONNECT");
+
+                            hideProgressDialog();
+                            // --------------------------------------------------------------------
+
+                            if (listViewValues == null) {
+                                Log.i(TAG, "ENTRO A SearchResults:onCreate: NULL");
+                                listViewValues = new ArrayList<>();
+                            }
+
+                            if (!listViewValues.isEmpty()) {
+
+                                Log.i(TAG, "ENTRO A SearchResults:onCreate: NO_EMPTY");
+
+                                mNoEventsView.setVisibility(View.INVISIBLE);
+                                mListView.setVisibility(View.VISIBLE);
+                            } else {
+
+                                Log.i(TAG, "ENTRO A SearchResults:onCreate: EMPTY");
+
+                                mNoEventsView.setVisibility(View.VISIBLE);
+                                mListView.setVisibility(View.INVISIBLE);
+                            }
+
+                            adapter = new EventsAdapter(TAG, SearchResultsActivity.this, listViewValues, res);
+                            mListView.setAdapter(adapter);
+
+                        }
+
+                    }, 1000);
+                    // ----------------------------------------------------------------------------------------
 
                 } else {
                     hideProgressDialog();
+                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                     Log.i(TAG, "ENTRO A SearchResults:onCreate: NO_CONNECT");
                 }
 
             }
-        }, 2000);
+        }, 1000);
         // ----------------------------------------------------------------------------------------
-
-        /*
-        // Connect and Get data from Server
-        // ----------------------------------------------------------------------------------------
-        showProgressDialog();
-        myNetwork = new MyNetwork(TAG, activity);
-        myNetwork.Connect();
-
-        if (sDate == null) { // Si el "date" es null, realizamos una busqueda solo por la localizacion
-            listViewValues = myNetwork.getAllEvents(sPlace);
-        } else {
-            listViewValues = myNetwork.getAllEvents(sPlace, sDate);
-        }
-        myNetwork.Disconnect();
-        hideProgressDialog();
-        // ----------------------------------------------------------------------------------------
-
-        if (listViewValues == null) {
-            listViewValues = new ArrayList<>();
-        }
-
-        TextView mNoEventsView = (TextView) findViewById(R.id.searchResult_text_no_events);
-        if (!listViewValues.isEmpty()) {
-            mNoEventsView.setVisibility(View.INVISIBLE);
-            mListView.setVisibility(View.VISIBLE);
-        }
-        else {
-            mNoEventsView.setVisibility(View.VISIBLE);
-            mListView.setVisibility(View.INVISIBLE);
-        }
-
-        adapter = new EventsAdapter(EventsActivity.activity, listViewValues, res);
-        mListView.setAdapter(adapter);
-        */
-        // --------------------------------------------------------------------------------------------
     }
 
     //AÑADIDO : SEARCH RESULTS
-    // ********************************************************************************************
+    // --------------------------------------------------------------------------------------------
     /*****************  This function used by adapter ****************/
     public void onItemClick(int mPosition) {
         Event tempValues = listViewValues.get(mPosition);
@@ -201,35 +169,24 @@ public class SearchResultsActivity extends AppCompatActivity {
         // TODO: Al clickear un evento, mostrarlo en la ventana de ShowEventActivity
         Intent intent = new Intent(SearchResultsActivity.this, ShowEventActivity.class);
         intent.putExtra("event", tempValues); // tempValues es el evento seleccionado por el usuario
+        intent.putExtra("place", sPlace);
+        intent.putExtra("date", sDate);
         startActivity(intent);
     }
+    // --------------------------------------------------------------------------------------------
+
+    //AÑADIDO: BOTON ATRAS
+    // --------------------------------------------------------------------------------------------
+    @Override
+    public void onBackPressed() {
+        this.finish();
+    }
+    //---------------------------------------------------------------------------------------------
 
     // *****************
     // *** FUNCIONES ***
     // *****************
     // --------------------------------------------------------------------------------------------
-    //
-    private void startTime(int seconds) {
-        // ---------------------------------------------------------------------------------------
-        handler = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                endTime();
-                //Toast.makeText(activity, "Impossible connect to server", Toast.LENGTH_SHORT).show();
-                // ... Aqui lo que quieres ejecutar una vez pasados los 10 segundos ...
-            }
-        };
-
-        handler.postDelayed(runnable, seconds); // 10 seg
-        // ---------------------------------------------------------------------------------------
-    }
-
-    //
-    private void endTime() {
-        handler.removeCallbacks(runnable);
-    }
-
     //
     private void showProgressDialog() {
         mProgressBar.setVisibility(View.VISIBLE);

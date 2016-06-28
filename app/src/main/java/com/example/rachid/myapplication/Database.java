@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by Rachid on 26/03/2016.
  */
-public class DBActivity extends SQLiteOpenHelper {
+public class Database extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "Socialfest.db";
     public static final int DATABASE_VERSION = 1;
@@ -17,10 +17,11 @@ public class DBActivity extends SQLiteOpenHelper {
     //String sqlCreate = "CREATE TABLE Users (codigo INTEGER, nombre TEXT)";
     String sqlCreate = "CREATE TABLE Users " +
             "(id TEXT, email TEXT PRIMART KEY, user_name TEXT, password TEXT, name TEXT, surname TEXT, " +
-            "gender TEXT, birthday TEXT, place TEXT, music_style TEXT, image TEXT, location TEXT)";
+            "gender TEXT, birthday TEXT, place TEXT, music_style TEXT, image TEXT, " +
+            "google_id TEXT, facebook_id TEXT, festivals_created TEXT, festivals_assisted TEXT, location TEXT)";
     //DATETIME = YYYY-MM-DD
 
-    public DBActivity(Context contexto, CursorFactory factory) {
+    public Database(Context contexto, CursorFactory factory) {
         super(contexto, DATABASE_NAME, factory, DATABASE_VERSION);
     }
 

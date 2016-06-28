@@ -35,9 +35,6 @@ public class TabPublished extends Fragment {
 
     private MyNetwork myNetwork;
 
-    private Handler handler;
-    private Runnable runnable;
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.tab_published ,container, false);
@@ -73,6 +70,7 @@ public class TabPublished extends Fragment {
         myNetwork = new MyNetwork(TAG, fragment.getActivity());
         myNetwork.Connect();
 
+        // Wait 1 sec to Connect
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -81,7 +79,7 @@ public class TabPublished extends Fragment {
 
                     if ( myNetwork.isLoggedIn() ) {
 
-                        listViewValues = myNetwork.getPublishedEvents(MyState.getUser().getID());
+                        listViewValues = myNetwork.getAllEvents(MyState.getUser().getFestivalsCreated());
                         Log.i(TAG, "ENTRO A TabPublished:onCreateView: GET_EVENTS_SUCCESFULL");
 
                         myNetwork.Disconnect();
@@ -109,7 +107,10 @@ public class TabPublished extends Fragment {
                             mListView.setVisibility(View.INVISIBLE);
                         }
 
-                        adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
+                        //Log.i(TAG, "ENTRO A TabPublished:onCreateView:FRAGMENT.ACTIVITY: " + fragment.getActivity());
+                        //Log.i(TAG, "ENTRO A TabPublished:onCreateView:ACTIVITY: " + EventsActivity.activity);
+                        //adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
+                        adapter = new EventsAdapter(TAG, EventsActivity.activity, listViewValues, res);
                         mListView.setAdapter(adapter);
 
                     }
@@ -127,7 +128,7 @@ public class TabPublished extends Fragment {
                 }
 
             }
-        }, 3000);
+        }, 1000);
         // ----------------------------------------------------------------------------------------
 
         /*
@@ -169,6 +170,9 @@ public class TabPublished extends Fragment {
         //Toast.makeText(EventsActivity.activity, "Event Name: " + tempValues.getName(), Toast.LENGTH_LONG).show();
         //Toast.makeText(EventsActivity.activity, "Event ID: " + tempValues.getID(), Toast.LENGTH_LONG).show();
 
+        Log.i(TAG, "ENTRO A TabPublished:onItemClick:POSITION: " + mPosition);
+        Log.i(TAG, "ENTRO A TabPublished:onItemClick:EVENT: " + tempValues);
+
         // TODO: Al clickear un evento, mostrarlo en la ventana de ShowEventActivity
         Intent intent = new Intent(fragment.getActivity(), ShowEventActivity.class);
         intent.putExtra("event", tempValues); // tempValues es el evento seleccionado por el usuario
@@ -180,28 +184,6 @@ public class TabPublished extends Fragment {
     // *** FUNCIONES ***
     // *****************
     // --------------------------------------------------------------------------------------------
-    //
-    private void startTime(int seconds) {
-        // ---------------------------------------------------------------------------------------
-        handler = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                endTime();
-                //Toast.makeText(activity, "Impossible connect to server", Toast.LENGTH_SHORT).show();
-                // ... Aqui lo que quieres ejecutar una vez pasados los 10 segundos ...
-            }
-        };
-
-        handler.postDelayed(runnable, seconds); // 10 seg
-        // ---------------------------------------------------------------------------------------
-    }
-
-    //
-    private void endTime() {
-        handler.removeCallbacks(runnable);
-    }
-
     //
     private void showProgressDialog() {
         mProgressBar.setVisibility(View.VISIBLE);

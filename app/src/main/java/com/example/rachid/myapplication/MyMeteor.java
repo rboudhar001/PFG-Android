@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
@@ -65,7 +67,7 @@ public class MyMeteor implements MeteorCallback {
 
         // create a new instance
         //mMeteor = new Meteor(activity, "ws://example.meteor.com/websocket");
-        mMeteor = new Meteor(activity, "ws://socialmusfest.scalingo.io/websocket", new InMemoryDatabase());
+        mMeteor = new Meteor(activity, "ws://sozialmusfest.scalingo.io/websocket", new InMemoryDatabase());
 
         // register the callback that will handle events and receive messages
         mMeteor.addCallback(this);
@@ -80,7 +82,7 @@ public class MyMeteor implements MeteorCallback {
 
         // create a new instance
         //mMeteor = new Meteor(fragment.getContext(), "ws://example.meteor.com/websocket");
-        mMeteor = new Meteor(fragment.getContext(), "ws://socialmusfest.scalingo.io/websocket", new InMemoryDatabase());
+        mMeteor = new Meteor(fragment.getContext(), "ws://sozialmusfest.scalingo.io/websocket", new InMemoryDatabase());
 
         // register the callback that will handle events and receive messages
         mMeteor.addCallback(this);
@@ -246,6 +248,32 @@ public class MyMeteor implements MeteorCallback {
         mMeteor.loginWithEmail(email, password, listener);
     }
 
+    // -------------------------------------------------------------------------------------------------------
+    public void loginUserWithGoogle(String google_id, ResultListener listener) {
+        if ( (google_id == null) || (TextUtils.isEmpty(google_id)) ) {
+            throw new IllegalArgumentException("MyMeteor:loginUserWithGoogle: You must provide either a Google ID");
+        }
+
+        final Map<String, Object> authData = new HashMap<String, Object>();
+        authData.put("loginHint", google_id);
+
+        mMeteor.call("login", new Object[]{authData}, listener);
+    }
+    // ------------------------------------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------------------------------------
+    public void loginUserWithFacebook(String facebook_id, ResultListener listener) {
+        if ( (facebook_id == null) || (TextUtils.isEmpty(facebook_id)) ) {
+            throw new IllegalArgumentException("MyMeteor:loginUserWithGoogle: You must provide either a Facebook ID");
+        }
+
+        final Map<String, Object> authData = new HashMap<String, Object>();
+        authData.put("loginHint", facebook_id);
+
+        mMeteor.call("login", new Object[]{authData}, listener);
+    }
+    // ------------------------------------------------------------------------------------------------------
+
     //
     public void Logout(ResultListener listener) {
         mMeteor.logout(listener);
@@ -268,12 +296,26 @@ public class MyMeteor implements MeteorCallback {
 
         mMeteor.call("setUsername", new Object[]{data});
     }
+
+    //
+    public void changePassword(final String oldPassword, final String newPassword, ResultListener listener) {
+        if ( (oldPassword == null) || (newPassword == null) ) {
+            throw new IllegalArgumentException("You must provide either a Passwords");
+        }
+
+        final Map<String, Object> authData = new HashMap<String, Object>();
+        authData.put("oldPassword", oldPassword);
+        authData.put("newPassword", newPassword);
+
+        mMeteor.call("changePassword", new Object[]{authData}, listener);
+    }
     // ********************************************************************************************
 
 
     // USUARIOS : Acceso a la DB de usuarios
     // ********************************************************************************************
     //
+    /*
     public void addUser(User user) {
 
         // Inserting new user into a collection "Users"
@@ -282,7 +324,7 @@ public class MyMeteor implements MeteorCallback {
         //values.put("id", "id"); //No añadimos la ID, se genera en el server
         values.put("email", user.getEmail());
         values.put("username", user.getUsername());
-        values.put("password", user.getPassword());
+        //values.put("password", user.getPassword());
         values.put("name", user.getName());
         values.put("surname", user.getSurname());
         values.put("gender", user.getGender());
@@ -294,6 +336,7 @@ public class MyMeteor implements MeteorCallback {
         mMeteor.insert(Users, values);
         // ----------------------------------------------------------------------------------------
     }
+    */
 
     //
     public User getUserWithId(String id) {
@@ -359,7 +402,6 @@ public class MyMeteor implements MeteorCallback {
         */
         // ----------------------------------------------------------------------------------------
 
-
         //String id = document.getId();
 
         //String email = (String) document.getField("email");
@@ -376,6 +418,13 @@ public class MyMeteor implements MeteorCallback {
         String place = (String) document.getField("place");
         String music_style= (String) document.getField("music_style");
         String image = (String) document.getField("image");
+
+        String google_id = null; //(String) document.getField("google_id");
+        String facebook_id = null; //(String) document.getField("facebook_id");
+
+        ArrayList festivals_created = (ArrayList) document.getField("festivals_created");
+        ArrayList festivals_assisted = (ArrayList) document.getField("festivals_assisted");
+
         String location = MyState.getUser().getLocation();
 
         // IMPRIMIR LOS VALORES RECOGIDOS DE LA DB DEL SERVIDOR
@@ -392,10 +441,15 @@ public class MyMeteor implements MeteorCallback {
         Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:PLACE: " + place);
         Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:MUSIC_STYLE: " + music_style);
         Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:IMAGE: " + image);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:GOOGLE_ID: " + google_id);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:FACEBOOK_ID: " + facebook_id);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:FESTIVALS_CREATED: " + festivals_created);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:FESTIVALS_ASSISTED: " + festivals_assisted);
         */
         // ----------------------------------------------------------------------------------------
 
-        User user = new User(id, email, user_name, password, name, surname, gender, birthday, place, music_style, image, location);
+        User user = new User(id, email, user_name, password, name, surname, gender, birthday, place,
+                music_style, image, google_id, facebook_id, festivals_created, festivals_assisted, location);
 
         return user;
     }
@@ -431,10 +485,18 @@ public class MyMeteor implements MeteorCallback {
         String place = (String) document.getField("place");
         String music_style= (String) document.getField("music_style");
         String image = (String) document.getField("image");
+
+        String google_id = null; //(String) document.getField("google_id");
+        //String facebook_id = null; //(String) document.getField("facebook_id");
+
+        ArrayList festivals_created = (ArrayList) document.getField("festivals_created");
+        ArrayList festivals_assisted = (ArrayList) document.getField("festivals_assisted");
+
         String location = MyState.getUser().getLocation();
         // ----------------------------------------------------------------------------------------
 
-        User user = new User(id, email, user_name, password, name, surname, gender, birthday, place, music_style, image, location);
+        User user = new User(id, email, user_name, password, name, surname, gender, birthday, place,
+                music_style, image, google_id, facebook_id, festivals_created, festivals_assisted, location);
 
         return user;
     }
@@ -470,10 +532,18 @@ public class MyMeteor implements MeteorCallback {
         String place = (String) document.getField("place");
         String music_style= (String) document.getField("music_style");
         String image = (String) document.getField("image");
+
+        //String google_id = null; //(String) document.getField("google_id");
+        String facebook_id = null; //(String) document.getField("facebook_id");
+
+        ArrayList festivals_created = (ArrayList) document.getField("festivals_created");
+        ArrayList festivals_assisted = (ArrayList) document.getField("festivals_assisted");
+
         String location = MyState.getUser().getLocation();
         // ----------------------------------------------------------------------------------------
 
-        User user = new User(id, email, user_name, password, name, surname, gender, birthday, place, music_style, image, location);
+        User user = new User(id, email, user_name, password, name, surname, gender, birthday, place,
+                music_style, image, google_id, facebook_id, festivals_created, festivals_assisted, location);
 
         return user;
     }
@@ -509,6 +579,42 @@ public class MyMeteor implements MeteorCallback {
         values.put("place", user.getPlace());
         values.put("music_style", user.getMusicStyle());
         values.put("image", user.getImage());
+        values.put("google_id", user.getGoogle_id());
+        values.put("facebook_id", user.getFacebook_id());
+        values.put("festivals_created", user.getFestivalsCreated());
+        values.put("festivals_assisted", user.getfestivalsAssisted());
+
+        mMeteor.update(Users, query, values);
+    }
+
+    //
+    public void registerUserEvent(User user, String nameEvent) {
+
+        // Get ID of user that update
+        Map<String, Object> query = new HashMap<String, Object>();
+        query.put("_id", user.getID());
+
+        // Updating user into a collection "Users"
+        Map<String, Object> values = new HashMap<String, Object>();
+        ArrayList festivales_asistidos = user.getfestivalsAssisted();
+        festivales_asistidos.add(nameEvent);
+        values.put("festivals_assisted", festivales_asistidos);
+
+        mMeteor.update(Users, query, values);
+    }
+
+    //
+    public void unregisterUserEvent(User user, String nameEvent) {
+
+        // Get ID of user that update
+        Map<String, Object> query = new HashMap<String, Object>();
+        query.put("_id", user.getID());
+
+        // Updating user into a collection "Users"
+        Map<String, Object> values = new HashMap<String, Object>();
+        ArrayList festivales_asistidos = user.getfestivalsAssisted();
+        festivales_asistidos.remove(nameEvent);
+        values.put("festivals_assisted", festivales_asistidos);
 
         mMeteor.update(Users, query, values);
     }
@@ -560,74 +666,21 @@ public class MyMeteor implements MeteorCallback {
     }
 
     //
-    public String getEventID(String nameEvent) {
+    public Event getEventWithID(String id) {
 
-        // Get ID user of the new user
         // ----------------------------------------------------------------------------------------
-        // Get Database
-        Database database = mMeteor.getDatabase();
-
-        // Get Collection name is "Users"
-        Collection collection = database.getCollection(Events);
-
-        // Get of Collection "Users" where Age of all users is equal to 30
-        Query query = collection.whereEqual("name", nameEvent);
-        Document document = query.findOne();
-
-        return document.getId();
-        // ----------------------------------------------------------------------------------------
-    }
-
-    //
-    public void removeEvent(Event event) {
-        mMeteor.remove(Events, event.getID());
-        //mMeteor.remove(Events, event.getName());
-    }
-
-    //
-    public void updateEvent(Event event) {
-        // Get NAME of event that update
-        Map<String, Object> query = new HashMap<String, Object>();
-        query.put("_id", event.getID());
-
-        // Updating user into a collection "Users"
-        Map<String, Object> values = new HashMap<String, Object>();
-        values.put("photo", event.getPhoto());
-        values.put("name", event.getName());
-        values.put("description", event.getDescription());
-
-        values.put("place", event.getPlace());
-        values.put("firstDay", event.getFirstDay());
-        values.put("lastDay", event.getLastDay());
-
-        values.put("capacity", event.getCapacity());
-        values.put("assistants", event.getAssistants());
-
-        values.put("sales", event.getSales());
-        values.put("webpage", event.getWebpage());
-        values.put("contact_number", event.getContact_number());
-
-        values.put("creator", event.getCreator());
-
-        mMeteor.update(Users, query, values);
-    }
-
-    //
-    public Event getEvent(String _id) {
-
         // Get Database
         Database database = mMeteor.getDatabase();
 
         // Get Collection name is "Events"
         Collection collection = database.getCollection(Events);
+        Log.i(TAG, "ENTRO A MyMeteor:getEventWithID:Collection: " + collection);
 
-        // Get of Collection "Events" where "place" of all events is equal to "location"
-        Query query = collection.whereEqual("_id", _id);
+        // Get of Collection "Events" where id is "id"
+        Document document = collection.getDocument(id);
+        Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:Document: " + document);
 
-        Document document = query.findOne();
-
-        String id = document.getId();
-
+        //String id = document.getId();
         String photo = (String) document.getField("photo");
         String name = (String) document.getField("name");
         String description = (String) document.getField("descripton");
@@ -649,6 +702,84 @@ public class MyMeteor implements MeteorCallback {
                 assistants, sales, webpage, contact_number, creator);
 
         return event;
+        // ----------------------------------------------------------------------------------------
+    }
+
+    //
+    public ArrayList<Event> getAllEvents(ArrayList<String> nameEvents /*Las ids son los nombres de los eventos*/) {
+
+        int capacity, assistants, contact_number;
+        String id, photo, name, description, place, firstDay, lastDay, sales, webpage, creator;
+
+        Event event;
+        ArrayList<Event> list = new ArrayList<>();
+
+        Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:mMeteor: " + mMeteor);
+
+        try {
+            // Get Database
+            Database database = mMeteor.getDatabase();
+            Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:database: " + database);
+
+            // Get Collection name is "Events"
+            Collection collection = database.getCollection(Events);
+            Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:collection: " + collection);
+
+            Query query;
+            Document document;
+            // Get of Collection all "Events" content in "ids"
+            for (String nameEvent : nameEvents) {
+
+                query = collection.whereEqual("name", nameEvent);
+                document = query.findOne();
+                Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:ID_EVENT: " + nameEvent);
+                Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:DOCUMENT: " + document);
+
+                id = document.getId();
+                photo = (String) document.getField("photo");
+                name = (String) document.getField("name");
+                description = (String) document.getField("description");
+
+                place = (String) document.getField("place");
+                firstDay = (String) document.getField("firstDay");
+                lastDay = (String) document.getField("lastDay");
+
+                capacity = (int) document.getField("capacity");
+                assistants = (int) document.getField("assistants");
+
+                sales = (String) document.getField("sales");
+                webpage = (String) document.getField("webpage");
+
+                // Esto es asi, porque en la DB del server, a veces este valor se guarda como "int" y otras como "string"
+                // -------------------------------------------------------------------------------
+                Object object = document.getField("contact_number");
+                //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
+                if (object instanceof String) {
+                    if ( (object != null) && (!TextUtils.isEmpty((String)object)) ) {
+                        contact_number = Integer.parseInt( (String) object );
+                    } else {
+                        contact_number = 0;
+                    }
+                } else if(object instanceof Integer) {
+                    contact_number = (int) object;
+                } else {
+                    contact_number = -1; //ERROR ...
+                }
+                // -------------------------------------------------------------------------------
+
+                creator = (String) document.getField("creator");
+
+                event = new Event(id, photo, name, description, place, firstDay, lastDay, capacity,
+                        assistants, sales, webpage, contact_number, creator);
+
+                list.add(event);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 
     //
@@ -687,55 +818,54 @@ public class MyMeteor implements MeteorCallback {
                 place = (String) doc.getField("place");
                 //if (place.contains(location)) {
 
-                    id = doc.getId();
+                id = doc.getId();
 
-                    photo = (String) doc.getField("photo");
-                    name = (String) doc.getField("name");
+                photo = (String) doc.getField("photo");
+                name = (String) doc.getField("name");
 
-                    Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:NAME: " + name);
-                    Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:IMAGE: " + photo);
+                Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:NAME: " + name);
+                Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:IMAGE: " + photo);
 
-                    description = (String) doc.getField("description");
+                description = (String) doc.getField("description");
 
-                    //place = (String) doc.getField("place");
-                    firstDay = (String) doc.getField("firstDay");
-                    lastDay = (String) doc.getField("lastDay");
+                //place = (String) doc.getField("place");
+                firstDay = (String) doc.getField("firstDay");
+                lastDay = (String) doc.getField("lastDay");
 
-                    //
-                    //Object o = doc.getField("capacity");
-                    //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Capacity CLASS?: " + o.getClass());
-                    //
+                //
+                //Object o = doc.getField("capacity");
+                //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Capacity CLASS?: " + o.getClass());
+                //
 
-                    capacity = (int) doc.getField("capacity");
-                    assistants = (int) doc.getField("assistants");
+                capacity = (int) doc.getField("capacity");
+                assistants = (int) doc.getField("assistants");
 
-                    sales = (String) doc.getField("sales");
-                    webpage = (String) doc.getField("webpage");
+                sales = (String) doc.getField("sales");
+                webpage = (String) doc.getField("webpage");
 
-                    //
-                    // Esto es asi, porque en la DB del server, a veces este valor se guarda como "int" y otras como "string"
-                    //
-                    Object object = doc.getField("contact_number");
-                    //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
-                    if (object instanceof String) {
-                        if ( (object != null) && (!TextUtils.isEmpty((String)object)) ) {
-                            contact_number = Integer.parseInt( (String) object );
-                        } else {
-                            contact_number = 0;
-                        }
-                    } else if(object instanceof Integer) {
-                        contact_number = (int) object;
+                // Esto es asi, porque en la DB del server, a veces este valor se guarda como "int" y otras como "string"
+                // -------------------------------------------------------------------------------
+                Object object = doc.getField("contact_number");
+                //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
+                if (object instanceof String) {
+                    if ( (object != null) && (!TextUtils.isEmpty((String)object)) ) {
+                        contact_number = Integer.parseInt( (String) object );
                     } else {
-                        contact_number = -1; //ERROR ...
+                        contact_number = 0;
                     }
-                    //
+                } else if(object instanceof Integer) {
+                    contact_number = (int) object;
+                } else {
+                    contact_number = -1; //ERROR ...
+                }
+                // -------------------------------------------------------------------------------
 
-                    creator = (String) doc.getField("creator");
+                creator = (String) doc.getField("creator");
 
-                    event = new Event(id, photo, name, description, place, firstDay, lastDay, capacity,
-                            assistants, sales, webpage, contact_number, creator);
+                event = new Event(id, photo, name, description, place, firstDay, lastDay, capacity,
+                        assistants, sales, webpage, contact_number, creator);
 
-                    list.add(event);
+                list.add(event);
                 //}
             }
 
@@ -785,53 +915,69 @@ public class MyMeteor implements MeteorCallback {
                 place = (String) doc.getField("place");
                 //if (place.contains(location)) {
 
-                    firstDay = (String) doc.getField("firstDay");
-                    try {
-                        mFirstDay = format.parse(firstDay);
-                    } catch (Exception e) {
-                        mFirstDay = null;
-                        e.printStackTrace();
-                    }
+                firstDay = (String) doc.getField("firstDay");
+                try {
+                    mFirstDay = format.parse(firstDay);
+                } catch (Exception e) {
+                    mFirstDay = null;
+                    e.printStackTrace();
+                }
 
-                    lastDay = (String) doc.getField("lastDay");
-                    try {
-                        mLastDate = format.parse(lastDay);
-                    } catch (Exception e) {
-                        mLastDate = null;
-                        e.printStackTrace();
-                    }
+                lastDay = (String) doc.getField("lastDay");
+                try {
+                    mLastDate = format.parse(lastDay);
+                } catch (Exception e) {
+                    mLastDate = null;
+                    e.printStackTrace();
+                }
 
-                    if ((mDate != null) && (mFirstDay != null) && (mLastDate != null)) {
+                if ((mDate != null) && (mFirstDay != null) && (mLastDate != null)) {
 
-                        //(firstDay <= dia) && (dia <= lastDay)
-                        if ((mDate.after(mFirstDay)) && (mDate.before(mLastDate))) {
+                    //(firstDay <= dia) && (dia <= lastDay)
+                    if ((mDate.after(mFirstDay)) && (mDate.before(mLastDate))) {
 
-                            //Añadimos este evento al ArrayList
-                            id = doc.getId();
+                        //Añadimos este evento al ArrayList
+                        id = doc.getId();
 
-                            photo = (String) doc.getField("photo");
-                            name = (String) doc.getField("name");
-                            description = (String) doc.getField("descripton");
+                        photo = (String) doc.getField("photo");
+                        name = (String) doc.getField("name");
+                        description = (String) doc.getField("descripton");
 
-                            //place = (String) doc.getField("place");
-                            //firstDay = (String) doc.getField("firstDay");
-                            //lastDay = (String) doc.getField("lastDay");
+                        //place = (String) doc.getField("place");
+                        //firstDay = (String) doc.getField("firstDay");
+                        //lastDay = (String) doc.getField("lastDay");
 
-                            capacity = (int) doc.getField("capacity");
-                            assistants = (int) doc.getField("assistants");
+                        capacity = (int) doc.getField("capacity");
+                        assistants = (int) doc.getField("assistants");
 
-                            sales = (String) doc.getField("sales");
-                            webpage = (String) doc.getField("webpage");
-                            contact_number = (int) doc.getField("contact_number");
+                        sales = (String) doc.getField("sales");
+                        webpage = (String) doc.getField("webpage");
 
-                            creator = (String) doc.getField("creator");
-
-                            event = new Event(id, photo, name, description, place, firstDay, lastDay, capacity,
-                                    assistants, sales, webpage, contact_number, creator);
-
-                            list.add(event);
+                        // Esto es asi, porque en la DB del server, a veces este valor se guarda como "int" y otras como "string"
+                        // -------------------------------------------------------------------------------
+                        Object object = doc.getField("contact_number");
+                        //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
+                        if (object instanceof String) {
+                            if ( (object != null) && (!TextUtils.isEmpty((String)object)) ) {
+                                contact_number = Integer.parseInt( (String) object );
+                            } else {
+                                contact_number = 0;
+                            }
+                        } else if(object instanceof Integer) {
+                            contact_number = (int) object;
+                        } else {
+                            contact_number = -1; //ERROR ...
                         }
+                        // -------------------------------------------------------------------------------
+
+                        creator = (String) doc.getField("creator");
+
+                        event = new Event(id, photo, name, description, place, firstDay, lastDay, capacity,
+                                assistants, sales, webpage, contact_number, creator);
+
+                        list.add(event);
                     }
+                }
                 //}
             }
 
@@ -843,32 +989,37 @@ public class MyMeteor implements MeteorCallback {
     }
 
     //
-    public ArrayList<Event> getRegisteredEvents(String userID) {
-
-        ArrayList<Event> list = new ArrayList<>();
-
-        try {
-
-            //TODO: Terminar esto ...
-            // ...
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return list;
+    public void removeEvent(Event event) {
+        mMeteor.remove(Events, event.getID());
+        //mMeteor.remove(Events, event.getName());
     }
 
-
     //
-    public ArrayList<Event> getPublishedEvents(String userID) {
+    public void updateEvent(Event event) {
+        // Get NAME of event that update
+        Map<String, Object> query = new HashMap<String, Object>();
+        query.put("_id", event.getID());
 
-        ArrayList<Event> list = new ArrayList<>();
+        // Updating user into a collection "Users"
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put("photo", event.getPhoto());
+        values.put("name", event.getName());
+        values.put("description", event.getDescription());
 
-        //TODO: Terminar esto ...
-        // ...
+        values.put("place", event.getPlace());
+        values.put("firstDay", event.getFirstDay());
+        values.put("lastDay", event.getLastDay());
 
-        return list;
+        values.put("capacity", event.getCapacity());
+        values.put("assistants", event.getAssistants());
+
+        values.put("sales", event.getSales());
+        values.put("webpage", event.getWebpage());
+        values.put("contact_number", event.getContact_number());
+
+        values.put("creator", event.getCreator());
+
+        mMeteor.update(Users, query, values);
     }
     // ********************************************************************************************
 }

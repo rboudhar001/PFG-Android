@@ -1,6 +1,7 @@
 package com.example.rachid.myapplication;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by Rachid on 06/04/2016.
@@ -22,11 +23,13 @@ public class User implements Serializable {
     private String place;
     private String music_style;
     private String image;
-
-    private String location;
-
     private String google_id;
     private String facebook_id;
+
+    private ArrayList festivalsCreated;
+    private ArrayList festivalsAssisted;
+
+    private String location;
 
     // **************
     // Constructores
@@ -39,11 +42,13 @@ public class User implements Serializable {
     }
 
     public User(String id, String email, String username, String password, String name,
-                String surname, String gender, String birthday, String place, String music_style, String image, String location) {
+                String surname, String gender, String birthday, String place, String music_style,
+                String image, String google_id, String facebook_id, ArrayList festivalsCreated,
+                ArrayList festivalsAssisted, String location) {
         this.id = id;
         this.email = email;
         this.username = username;
-        this.password = password;
+        this.password = null; //password;
         this.name = name;
         this.surname = surname;
         this.gender = gender;
@@ -51,6 +56,8 @@ public class User implements Serializable {
         this.place = place;
         this.music_style = music_style;
         this.image = image;
+        this.festivalsCreated = festivalsCreated;
+        this.festivalsAssisted = festivalsAssisted;
 
         this.location = location;
     }
@@ -158,15 +165,6 @@ public class User implements Serializable {
         return music_style;
     }
 
-    // Location
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
     // Google_id
     public void setGoogle_id(String google_id) {
         this.google_id = google_id;
@@ -183,5 +181,32 @@ public class User implements Serializable {
 
     public String getFacebook_id() {
         return facebook_id;
+    }
+
+    // Festivales Publicados
+    public void setFestivalsCreated(ArrayList festivalsCreated) {
+        this.festivalsCreated = festivalsCreated;
+    }
+
+    public ArrayList getFestivalsCreated() {
+        return festivalsCreated;
+    }
+
+    // Festivales Apuntados
+    public void setfestivalsAssisted(ArrayList festivalsAssisted) {
+        this.festivalsAssisted = festivalsAssisted;
+    }
+
+    public ArrayList getfestivalsAssisted() {
+        return festivalsAssisted;
+    }
+
+    // Location
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getLocation() {
+        return location;
     }
 }

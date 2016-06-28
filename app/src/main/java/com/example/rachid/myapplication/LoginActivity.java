@@ -43,17 +43,17 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * Created by Rachid on 17/04/2016.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity { //implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
      */
-    private static final int REQUEST_READ_CONTACTS = 0;
+    //private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+    //private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         // ----------------------------------------------------------------------------------------
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.login_email);
-        populateAutoComplete();
+        //populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.login_password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -135,6 +135,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
     //AÑADIDO : LOGIN EMAIL
     // ----------------------------------------------------------------------------------------
+    /*
     private void populateAutoComplete() {
 
         Log.i(TAG, "ENTRO A Login:populateAutoComplete:0");
@@ -146,7 +147,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         }
         getLoaderManager().initLoader(0, null, this);
     }
+    */
 
+    /*
     //
     private boolean mayRequestContacts() {
 
@@ -173,10 +176,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         }
         return false;
     }
+    *7
 
     /**
      * Callback received when a permissions request has been completed.
      */
+    /*
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
@@ -188,6 +193,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             }
         }
     }
+    */
 
 
     /**
@@ -199,10 +205,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
         Log.i(TAG, "ENTRO A Login:attemptLogin:0");
 
-        if (mAuthTask != null) { // Si ya esta logeado
+        //if (mAuthTask != null) { // Si ya esta logeado
+        if (MyState.getLoged()) {
 
             Log.i(TAG, "ENTRO A Login:attemptLogin:1");
-
             return;
         }
 
@@ -257,7 +263,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             myNetwork = new MyNetwork(TAG, activity);
             myNetwork.Connect();
 
-            // Wait 2 second to Connect
+            // Wait 1 second to Connect
             // ----------------------------------------------------------------------------------------
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -276,7 +282,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                     }
 
                 }
-            }, 2000);
+            }, 1000);
             // ----------------------------------------------------------------------------------------
 
             /*
@@ -303,7 +309,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         }
     }
 
-    //
+    // AÑADIDO: FUNCIONES
+    // --------------------------------------------------------------------------------------------
     private void loginUser(final String email, final String password) {
 
         // Inicializamos variable error a true
@@ -386,31 +393,41 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
                 //TODO: Obtener al usuario de la DB del servidor
                 // --------------------------------------------------------------------------------
-                User user = myNetwork.getUserWithId(id);
+                final User user = myNetwork.getUserWithId(id);
                 // --------------------------------------------------------------------------------
 
-                // TODO: Registrar al usuario en la DB local
-                // --------------------------------------------------------------------------------
-                MyDatabase.insertUser(TAG, activity, user);
-                MyState.setUser(user);
-                MyState.setLoged(true);
-                // --------------------------------------------------------------------------------
+                // Wait 1 second
+                // ----------------------------------------------------------------------------------------
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                myNetwork.Disconnect();
-                Log.i(TAG, "ENTRO A Login:getUser: DISCONNECT");
+                        // TODO: Registrar al usuario en la DB local
+                        // --------------------------------------------------------------------------------
+                        MyDatabase.insertUser(TAG, activity, user);
+                        MyState.setUser(user);
+                        MyState.setLoged(true);
+                        // --------------------------------------------------------------------------------
 
-                hideProgressDialog();
+                        myNetwork.Disconnect();
+                        Log.i(TAG, "ENTRO A Login:getUser: DISCONNECT");
 
-                AccountActivity.activity.finish();
+                        hideProgressDialog();
 
-                if (MainActivity.activity != null) {
-                    MainActivity.myMenu.loadHeaderLogin();
-                }
-                if (EventsActivity.activity != null) {
-                    EventsActivity.myMenu.loadHeaderLogin();
-                }
+                        AccountActivity.activity.finish();
 
-                finish();
+                        if (MainActivity.activity != null) {
+                            MainActivity.myMenu.loadHeaderLogin();
+                        }
+                        if (EventsActivity.activity != null) {
+                            EventsActivity.myMenu.loadHeaderLogin();
+                        }
+
+                        finish();
+
+                    }
+                }, 1000);
+                // ----------------------------------------------------------------------------------------
             }
 
             @Override
@@ -427,7 +444,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
         });
 
-        // Wait 5 seconds, si no responde en este tiempo, cerrar.
+        // Wait 6 seconds, si no responde en este tiempo, cerrar.
         // ----------------------------------------------------------------------------------------
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -445,9 +462,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                 }
 
             }
-        }, 5000);
+        }, 6000);
         // ----------------------------------------------------------------------------------------
     }
+    // --------------------------------------------------------------------------------------------
 
     //
     private boolean isEmailValid(String email) {
@@ -462,6 +480,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     }
 
     //---------------------------------------------------------------------------------------------
+    /*
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
 
@@ -501,12 +520,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         Log.i(TAG, "ENTRO A Login:onLoaderReset:0");
     }
+    */
     //---------------------------------------------------------------------------------------------
 
     // **********
     // INTERFACE
     // **********
     // -------------------------------------------------------------------------------------------
+    /*
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -516,12 +537,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
     }
+    */
     // -------------------------------------------------------------------------------------------
 
     // **********
     // FUNCTION
     // **********
     //
+    /*
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
 
         Log.i(TAG, "ENTRO A Login:addEmailsToAutoComplete:0");
@@ -532,6 +555,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
         mEmailView.setAdapter(adapter);
     }
+    */
 
     // **********
     // CLASS
@@ -540,6 +564,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
+    /*
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
@@ -557,7 +582,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            /*
             Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground: Try Connect... ");
 
             MyNetwork myNetwork = new MyNetwork(TAG, activity);
@@ -580,7 +604,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             }
 
             Log.i(TAG, "ENTRO A Login:UserLoginTask:doInBackground: THIS ACCOUNT NOT EXISTS");
-            */
+
             return false;
         }
 
@@ -622,6 +646,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             hideProgressDialog();
         }
     }
+    */
 
     // **********
     // FUNTIONS

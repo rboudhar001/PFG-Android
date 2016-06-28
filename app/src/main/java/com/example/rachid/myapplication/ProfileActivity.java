@@ -99,7 +99,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         textEditGender = (TextView) findViewById(R.id.profile_text_gender);
         String gender = MyState.getUser().getGender();
-        if (gender != null) {
+        if ( (gender != null) && (!TextUtils.isEmpty(gender)) ) {
             textEditGender.setText(gender);
         } else {
             textEditGender.setText(getString(R.string.simbol_next));
@@ -107,7 +107,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         textEditBirthday = (TextView) findViewById(R.id.profile_text_birthday);
         String birthday = MyState.getUser().getBirthday();
-        if (birthday != null) {
+        if ( (birthday != null) && (!TextUtils.isEmpty(birthday)) ) {
             textEditBirthday.setText(birthday);
         } else {
             textEditBirthday.setText(getString(R.string.simbol_next));
@@ -115,7 +115,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         textEditPlace = (TextView) findViewById(R.id.profile_text_place);
         String place = MyState.getUser().getPlace();
-        if (place != null) {
+        if ( (place != null) && (!TextUtils.isEmpty(place)) ) {
             textEditPlace.setText(place);
         } else {
             textEditPlace.setText(getString(R.string.simbol_next));
@@ -123,7 +123,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         textEditMusicStyle = (TextView) findViewById(R.id.profile_text_musicStyle);
         String musicStyle = MyState.getUser().getMusicStyle();
-        if (musicStyle != null) {
+        if ( (musicStyle != null) && (!TextUtils.isEmpty(musicStyle)) ) {
             textEditMusicStyle.setText(musicStyle);
         } else {
             textEditMusicStyle.setText(getString(R.string.simbol_next));
@@ -229,13 +229,13 @@ public class ProfileActivity extends AppCompatActivity {
                 mUserNameView.setError(null);
 
                 // get values
-                String newUserName = mUserNameView.getText().toString();
+                String newUsername = mUserNameView.getText().toString();
 
                 boolean cancel = false;
                 View focusView = null;
 
                 // Check for a valid values
-                if (TextUtils.isEmpty(newUserName)) {
+                if (TextUtils.isEmpty(newUsername)) {
                     mUserNameView.setError(getString(R.string.error_field_required));
                     focusView = mUserNameView;
                     cancel = true;
@@ -248,10 +248,10 @@ public class ProfileActivity extends AppCompatActivity {
                     focusView.requestFocus();
                 } else {
 
-                    if (!userName.equals(newUserName)) {
+                    if (!userName.equals(newUsername)) {
 
                         final User mUser = MyState.getUser();
-                        mUser.setUsername(newUserName);
+                        mUser.setUsername(newUsername);
 
                         // MyNetwork : Update User
                         // ----------------------------------------------------------------------------
@@ -267,7 +267,8 @@ public class ProfileActivity extends AppCompatActivity {
 
                                     Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY CONNECT");
                                     //TODO: Actualizar los datos del usuario
-                                    updateUser(dialog, mUser, "userName");
+                                    //updateUser(dialog, mUser, "userName");
+                                    setUsername(mUser.getUsername());
 
                                 } else {
                                     Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT CONNECT");
@@ -288,6 +289,85 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         dialog.show();
+    }
+
+    //
+    public void setUsername(String newUsername) {
+
+        // Inicializamos variable error a true
+        MyError.setUsernameResponse(false);
+
+        myNetwork.setUsername(MyState.getUser().getID(), newUsername, new ResultListener() {
+
+            @Override
+            public void onSuccess(String result) {
+                MyError.setUsernameResponse(true);
+
+                Log.i(TAG, "ENTRO A Profile:setUsername: SUCCESSFULLY: " + result);
+
+                //TODO: Obtener los datos del usuario
+                /*
+                // --------------------------------------------------------------------------------
+                String[] pieces = result.split("\"");
+                String id = pieces[3];
+                Log.i(TAG, "ENTRO A Login:loginUser:ID: " + id);
+
+                getUser(id);
+                // --------------------------------------------------------------------------------
+                */
+
+                Log.i(TAG, "ENTRO A Profile:setUsername: PASSWORD CHANGED");
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Profile:setUsername: DISCONNECT");
+
+                hideProgressDialog();
+            }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+                MyError.setUsernameResponse(true);
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Profile:setUsername: DISCONNECT");
+
+                /*
+                if ((error.equals("403") && (reason.equals("User not found")))) {
+                    Toast.makeText(activity, getString(R.string.error_user_not_exists), Toast.LENGTH_LONG).show();
+                } else if ((error.equals("403") && (reason.equals("Incorrect password")))) {
+                    Toast.makeText(activity, getString(R.string.error_password_is_incorrect), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(activity, getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_LONG).show();
+                }
+                */
+
+                Log.i(TAG, "ENTRO A Profile:setUsername: COULD NOT LOGIN: " + error + " / " + reason + " / " + details);
+                hideProgressDialog();
+            }
+
+        });
+
+        // Wait 5 seconds, si no responde en este tiempo, cerrar.
+        // ----------------------------------------------------------------------------------------
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (!MyError.getLoginResponse()) {
+                    Log.i(TAG, "ENTRO A Profile:setUsername:getChangePasswordResponse: TIMES_EXPIRED");
+
+                    myNetwork.Disconnect();
+                    Log.i(TAG, "ENTRO A Profile:setUsername:getChangePasswordResponse: DISCONNECT");
+
+                    Log.i(TAG, "ENTRO A Profile:setUsername:getChangePasswordResponse: COULD NOT LOGIN");
+                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                    hideProgressDialog();
+                }
+
+            }
+        }, 5000);
+        // ----------------------------------------------------------------------------------------
+
     }
 
     //

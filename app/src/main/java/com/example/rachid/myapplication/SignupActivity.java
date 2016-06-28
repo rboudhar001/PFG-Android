@@ -252,7 +252,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
             myNetwork = new MyNetwork(TAG, activity);
             myNetwork.Connect();
 
-            // Wait 2 second
+            // Wait 1 second
             // ----------------------------------------------------------------------------------------
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -272,7 +272,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
                     }
 
                 }
-            }, 2000);
+            }, 1000);
             // ----------------------------------------------------------------------------------------
 
             /*
