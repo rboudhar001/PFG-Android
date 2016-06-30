@@ -19,4 +19,12 @@ public class VersionActivity extends AppCompatActivity {
 
         activity = this;
     }
+
+    //AÑADIDO: BOTON ATRAS
+    // ----------------------------------------------------------------------------------------
+    @Override
+    public void onBackPressed() {
+        this.finish();
+    }
+    //-----------------------------------------------------------------------------------------
 }

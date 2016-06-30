@@ -2,37 +2,28 @@ package com.example.rachid.myapplication;
 
 // AÑADIDOS: ANDROID
 // ----------------------------------------------------------------------------------------
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-// ----------------------------------------------------------------------------------------
 
-// AÑADIDOS FACEBOOK
-// ----------------------------------------------------------------------------------------
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
-import com.facebook.login.LoginManager;
-
-import org.json.JSONObject;
-
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-// ----------------------------------------------------------------------------------------
-
-// AÑADIDOS GOOGLE
-// ----------------------------------------------------------------------------------------
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -42,15 +33,23 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-
-import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
+
+import org.json.JSONObject;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
 import im.delight.android.ddp.ResultListener;
 import im.delight.android.ddp.SubscribeListener;
+
+// ----------------------------------------------------------------------------------------
+// AÑADIDOS FACEBOOK
+// ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+// AÑADIDOS GOOGLE
+// ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
 /**
@@ -583,7 +582,7 @@ public class AccountActivity extends AppCompatActivity implements
         MyError.setSignupResponse(false);
 
         SecureRandom random = new SecureRandom();
-        final String password = new BigInteger(130, random).toString(32);;
+        final String password = new BigInteger(130, random).toString(32);
 
         myNetwork.signupUser(user.getUsername(), user.getEmail(), password, new ResultListener() {
 
@@ -593,14 +592,13 @@ public class AccountActivity extends AppCompatActivity implements
 
                 Log.i(TAG, "ENTRO A Account:signupUser: SUCCESSFULLY SIGN UP: " + result);
 
-                //TODO: Registrar al usuario en la DB local
+                //TODO: Registrar al usuario en la DB local y en el Sistema
                 // --------------------------------------------------------------------------------
                 String[] pieces = result.split("\"");
                 String id = pieces[3];
                 Log.i(TAG, "ENTRO A Account:signupUser:ID: " + id);
 
-                User mUser = user;
-                mUser.setID(id);
+                user.setID(id);
                 //mUser.setPassword(password);
 
                 MyDatabase.insertUser(TAG, activity, user);
@@ -608,9 +606,9 @@ public class AccountActivity extends AppCompatActivity implements
                 MyState.setLoged(true);
                 // --------------------------------------------------------------------------------
 
-                //TODO: Actualizamos los datos del usuario
+                //TODO: Actualizamos los datos del usuario en el servidor
                 // --------------------------------------------------------------------------------
-                myNetwork.updateUser(mUser);
+                myNetwork.updateUser(user);
                 // --------------------------------------------------------------------------------
 
                 myNetwork.Disconnect();
@@ -848,6 +846,14 @@ public class AccountActivity extends AppCompatActivity implements
         //LogOut Facebook
         LoginManager.getInstance().logOut();
     }
+
+    //AÑADIDO: BOTON ATRAS
+    // ----------------------------------------------------------------------------------------
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+    // ----------------------------------------------------------------------------------------
 
     // **********
     // FUNTIONS

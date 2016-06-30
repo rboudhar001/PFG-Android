@@ -3,40 +3,40 @@
 
     <!-- WINDOWS -->
     <string name="title_activity_main">SocialMusFest</string>
-    <string name="title_activity_events">Events</string>
-    <string name="title_activity_show_event">View Event</string>
-    <string name="title_activity_registered">Registered</string>
-    <string name="title_activity_published">Published</string>
-    <string name="title_activity_account">Account</string>
+    <string name="title_activity_events">Ekitaldiak</string>
+    <string name="title_activity_show_event">Ikusi Gertaera</string>
+    <string name="title_activity_registered">Erregistratu</string>
+    <string name="title_activity_published">Mezuak</string>
+    <string name="title_activity_account">Kontu</string>
     <string name="title_activity_login">Login</string>
-    <string name="title_activity_signup">Sign up</string>
-    <string name="title_activity_forgotten_password">Forgotten Password</string>
-    <string name="title_activity_publish">Publish</string>
-    <string name="title_activity_search">Search</string>
-    <string name="title_activity_search_results">Results</string>
-    <string name="title_activity_info">Information</string>
-    <string name="title_activity_version">Version</string>
-    <string name="title_activity_profile">Profile</string>
-    <string name="title_activity_location">Location</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_signup">Izena Eman</string>
+    <string name="title_activity_forgotten_password">Galdutako Pasahitza</string>
+    <string name="title_activity_publish">Agitaratzeko</string>
+    <string name="title_activity_search">Bilaketa</string>
+    <string name="title_activity_search_results">Emaitzak</string>
+    <string name="title_activity_info">Informazio</string>
+    <string name="title_activity_version">Bertsio</string>
+    <string name="title_activity_profile">Profila</string>
+    <string name="title_activity_location">Kokapena</string>
+    <string name="title_activity_settings">Aukera</string>
 
     <!-- *************************************************************************************** -->
     <!-- ACCOUNT -->
-    <string name="account_text_account">Login</string>
-    <string name="or">Or</string>
-    <string name="prompt_username">User</string>
+    <string name="account_text_account">Inicia sesión</string>
+    <string name="or">O</string>
+    <string name="prompt_username">Usuario</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="prompt_name">Name</string>
-    <string name="prompt_surname">Surname</string>
-    <string name="prompt_gender">Gender</string>
-    <string name="prompt_birthday">Birthday</string>
-    <string name="prompt_place">Place</string>
-    <string name="prompt_musicstyle">Music Styles</string>
+    <string name="prompt_name">Nombre</string>
+    <string name="prompt_surname">Apellido</string>
+    <string name="prompt_gender">Genero</string>
+    <string name="prompt_birthday">Cumpleaños</string>
+    <string name="prompt_place">Lugar</string>
+    <string name="prompt_musicstyle">Estilos de musica</string>
     <string name="error_could_not_connect_with_this_service">No se ha podido iniciar sesion con este servicio</string>
 
-    <string name="account_button_login_email">LOGIN</string>
-    <string name="account_button_signup_email">SIGN UP</string>
+    <string name="account_button_login_email">INICIA SESIÓN</string>
+    <string name="account_button_signup_email">REGISTRATE</string>
 
     <!-- LOGIN -->
     <string name="login_text_title">Inicia sesión</string>
@@ -130,11 +130,11 @@
 
     <!-- SETTINGS -->
     <!-- *************************************************************************************** -->
-    <string name="settings_button_changePassword">Change the Password</string>
-    <string name="settings_button_changeLanguage">Change the Language</string>
-    <string name="settings_changePassowrd">Change Password</string>
-    <string name="settings_changeLanguage">Change Language</string>
-    <string name="settings_text_language">Language</string>
+    <string name="settings_button_changePassword">Aldatu Pasahitza</string>
+    <string name="settings_button_changeLanguage">Aldatu Hizkuntza</string>
+    <string name="settings_changePassowrd">Pasahitz Aldaketa</string>
+    <string name="settings_changeLanguage">Aldaketaren Hizkuntza</string>
+    <string name="settings_text_language">Hizkuntza</string>
 
     <string name="prompt_old_password">Contraseña actual</string>
     <string name="prompt_new_password">Nueva contraseña</string>

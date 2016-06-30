@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -160,4 +159,12 @@ public class LocationActivity extends AppCompatActivity {
         //MyLocation.disconnectGoogleApiClient();
     }
     // ----------------------------------------------------------------------------------------
+
+    //AÑADIDO: BOTON ATRAS
+    // ----------------------------------------------------------------------------------------
+    @Override
+    public void onBackPressed() {
+        this.finish();
+    }
+    //-----------------------------------------------------------------------------------------
 }

@@ -1,56 +1,38 @@
 package com.example.rachid.myapplication;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.LoaderManager;
 import android.app.ProgressDialog;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import im.delight.android.ddp.ResultListener;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * Created by Rachid on 17/04/2016.
  */
-public class SignupActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class SignupActivity extends AppCompatActivity { //implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
      */
-    private static final int REQUEST_READ_CONTACTS = 0;
+    //private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+    //private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mUserNameView;
@@ -80,7 +62,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
         mUserNameView = (AutoCompleteTextView) findViewById(R.id.signup_user_name);
 
         mEmailView = (AutoCompleteTextView) findViewById(R.id.signup_email);
-        populateAutoComplete();
+        //populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.signup_password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -123,6 +105,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
 
     //AÑADIDO : LOGIN EMAIL
     // ----------------------------------------------------------------------------------------
+    /*
     private void populateAutoComplete() {
 
         Log.i(TAG, "ENTRO A Signup:populateAutoComplete:0");
@@ -134,7 +117,9 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
         }
         getLoaderManager().initLoader(0, null, this);
     }
+    */
 
+    /*
     //
     private boolean mayRequestContacts() {
 
@@ -161,10 +146,12 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
         }
         return false;
     }
+    */
 
     /**
      * Callback received when a permissions request has been completed.
      */
+    /*
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
@@ -176,6 +163,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
             }
         }
     }
+    */
 
 
     /**
@@ -187,10 +175,14 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
 
         Log.i(TAG, "ENTRO A Signup:attemptSignup:0");
 
+        /*
         if (mAuthTask != null) { // Si ya esta logeado
-
             Log.i(TAG, "ENTRO A Signup:attemptSignup:1");
-
+            return;
+        }
+        */
+        if (MyState.getLoged()) {
+            Log.i(TAG, "ENTRO A Login:attemptLogin:1");
             return;
         }
 
@@ -231,9 +223,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-
+            // There was an error; don't attempt login and focus the first form field with an error.
             Log.i(TAG, "ENTRO A Signup:attemptSignup:2");
 
             focusView.requestFocus();
@@ -402,6 +392,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
         return (password.length() > 4);
     }
 
+    /*
     //---------------------------------------------------------------------------------------------
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -458,7 +449,9 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
         int IS_PRIMARY = 1;
     }
     // -------------------------------------------------------------------------------------------
+    */
 
+    /*
     //
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
 
@@ -470,11 +463,13 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
 
         mEmailView.setAdapter(adapter);
     }
+    */
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
+    /*
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mUserName;
@@ -504,7 +499,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
             user.setPassword(mPassword);
 
             MyNetwork myNetwork = new MyNetwork(TAG, activity);
-            user  = null; //myNetwork.signupUser(user); //Insert MyNetwork
+            user  = myNetwork.signupUser(user); //Insert MyNetwork
             if (user != null) { // Guarda en la DB del servidor al usuario mandado como parametro y devuelve el id del usuario o null si no se ha registrado
 
                 Log.i(TAG, "ENTRO A Signup:UserLoginTask:doInBackground:mUserName: " + mUserName);
@@ -560,7 +555,20 @@ public class SignupActivity extends AppCompatActivity implements LoaderManager.L
             hideProgressDialog();
         }
     }
+    */
 
+    //AÑADIDO: BOTON ATRAS
+    // ----------------------------------------------------------------------------------------
+    @Override
+    public void onBackPressed() {
+        this.finish();
+    }
+    //-----------------------------------------------------------------------------------------
+
+    // **********
+    // FUNTIONS
+    // **********
+    // ----------------------------------------------------------------------------------------
     private void showProgressDialog() {
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage(getString(R.string.loading));

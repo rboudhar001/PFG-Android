@@ -5,12 +5,6 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,7 +18,6 @@ import im.delight.android.ddp.MeteorCallback;
 import im.delight.android.ddp.ResultListener;
 import im.delight.android.ddp.SubscribeListener;
 import im.delight.android.ddp.db.Collection;
-import im.delight.android.ddp.db.DataStore;
 import im.delight.android.ddp.db.Database;
 import im.delight.android.ddp.db.Document;
 import im.delight.android.ddp.db.Query;
@@ -405,7 +398,7 @@ public class MyMeteor implements MeteorCallback {
         //String id = document.getId();
 
         //String email = (String) document.getField("email");
-        ArrayList emails = (ArrayList) document.getField("emails");; //ArrayList de {LinkedHashMap}
+        ArrayList emails = (ArrayList) document.getField("emails");//ArrayList de {LinkedHashMap}
         LinkedHashMap email_complete = (LinkedHashMap) emails.get(0); // email_complete = LinkedHashMap = {(String)address (boolean)verified}
         String email = (String) email_complete.get("address");
 
@@ -426,6 +419,7 @@ public class MyMeteor implements MeteorCallback {
         ArrayList festivals_assisted = (ArrayList) document.getField("festivals_assisted");
 
         String location = MyState.getUser().getLocation();
+        String language = MyState.getUser().getLanguage();
 
         // IMPRIMIR LOS VALORES RECOGIDOS DE LA DB DEL SERVIDOR
         // ----------------------------------------------------------------------------------------
@@ -448,10 +442,8 @@ public class MyMeteor implements MeteorCallback {
         */
         // ----------------------------------------------------------------------------------------
 
-        User user = new User(id, email, user_name, password, name, surname, gender, birthday, place,
-                music_style, image, google_id, facebook_id, festivals_created, festivals_assisted, location);
-
-        return user;
+        return new User(id, email, user_name, password, name, surname, gender, birthday, place,
+                music_style, image, google_id, facebook_id, festivals_created, festivals_assisted, location, language);
     }
 
     //
@@ -472,7 +464,7 @@ public class MyMeteor implements MeteorCallback {
         // ----------------------------------------------------------------------------------------
         String id = document.getId();
 
-        ArrayList emails = (ArrayList) document.getField("emails");; //ArrayList de {LinkedHashMap}
+        ArrayList emails = (ArrayList) document.getField("emails");//ArrayList de {LinkedHashMap}
         LinkedHashMap email_complete = (LinkedHashMap) emails.get(0); // email_complete = LinkedHashMap = {(String)address (boolean)verified}
         String email = (String) email_complete.get("address");
 
@@ -493,12 +485,11 @@ public class MyMeteor implements MeteorCallback {
         ArrayList festivals_assisted = (ArrayList) document.getField("festivals_assisted");
 
         String location = MyState.getUser().getLocation();
+        String language = MyState.getUser().getLanguage();
         // ----------------------------------------------------------------------------------------
 
-        User user = new User(id, email, user_name, password, name, surname, gender, birthday, place,
-                music_style, image, google_id, facebook_id, festivals_created, festivals_assisted, location);
-
-        return user;
+        return new User(id, email, user_name, password, name, surname, gender, birthday, place,
+                music_style, image, google_id, facebook_id, festivals_created, festivals_assisted, location, language);
     }
 
     //
@@ -519,7 +510,7 @@ public class MyMeteor implements MeteorCallback {
         // ----------------------------------------------------------------------------------------
         String id = document.getId();
 
-        ArrayList emails = (ArrayList) document.getField("emails");; //ArrayList de {LinkedHashMap}
+        ArrayList emails = (ArrayList) document.getField("emails");//ArrayList de {LinkedHashMap}
         LinkedHashMap email_complete = (LinkedHashMap) emails.get(0); // email_complete = LinkedHashMap = {(String)address (boolean)verified}
         String email = (String) email_complete.get("address");
 
@@ -540,12 +531,11 @@ public class MyMeteor implements MeteorCallback {
         ArrayList festivals_assisted = (ArrayList) document.getField("festivals_assisted");
 
         String location = MyState.getUser().getLocation();
+        String language = MyState.getUser().getLanguage();
         // ----------------------------------------------------------------------------------------
 
-        User user = new User(id, email, user_name, password, name, surname, gender, birthday, place,
-                music_style, image, google_id, facebook_id, festivals_created, festivals_assisted, location);
-
-        return user;
+        return new User(id, email, user_name, password, name, surname, gender, birthday, place,
+                music_style, image, google_id, facebook_id, festivals_created, festivals_assisted, location, language);
     }
 
     //
@@ -560,11 +550,11 @@ public class MyMeteor implements MeteorCallback {
 
         // Crear el objeto email
         // ---------------------------------------------------
-        LinkedHashMap email_complete = new LinkedHashMap();
+        LinkedHashMap<String, java.io.Serializable> email_complete = new LinkedHashMap<String, java.io.Serializable>();
         email_complete.put("address", user.getEmail());
         email_complete.put("verified", false);
 
-        ArrayList emails = new ArrayList();
+        ArrayList<LinkedHashMap<String, java.io.Serializable>> emails = new ArrayList<LinkedHashMap<String, java.io.Serializable>>();
         emails.add(email_complete);
         // ---------------------------------------------------
 
@@ -698,10 +688,8 @@ public class MyMeteor implements MeteorCallback {
 
         String creator = (String) document.getField("creator");
 
-        Event event = new Event(id, photo, name, description, place, firstDay, lastDay, capacity,
+        return new Event(id, photo, name, description, place, firstDay, lastDay, capacity,
                 assistants, sales, webpage, contact_number, creator);
-
-        return event;
         // ----------------------------------------------------------------------------------------
     }
 
@@ -755,7 +743,7 @@ public class MyMeteor implements MeteorCallback {
                 Object object = document.getField("contact_number");
                 //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
                 if (object instanceof String) {
-                    if ( (object != null) && (!TextUtils.isEmpty((String)object)) ) {
+                    if ( (!TextUtils.isEmpty((String)object)) ) {
                         contact_number = Integer.parseInt( (String) object );
                     } else {
                         contact_number = 0;
@@ -848,7 +836,7 @@ public class MyMeteor implements MeteorCallback {
                 Object object = doc.getField("contact_number");
                 //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
                 if (object instanceof String) {
-                    if ( (object != null) && (!TextUtils.isEmpty((String)object)) ) {
+                    if ( (!TextUtils.isEmpty((String)object)) ) {
                         contact_number = Integer.parseInt( (String) object );
                     } else {
                         contact_number = 0;
@@ -892,7 +880,7 @@ public class MyMeteor implements MeteorCallback {
             e.printStackTrace();
         }
 
-        Event event = null;
+        Event event;
         ArrayList<Event> list = new ArrayList<>();
 
         try {
@@ -958,7 +946,7 @@ public class MyMeteor implements MeteorCallback {
                         Object object = doc.getField("contact_number");
                         //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
                         if (object instanceof String) {
-                            if ( (object != null) && (!TextUtils.isEmpty((String)object)) ) {
+                            if ( (!TextUtils.isEmpty((String)object)) ) {
                                 contact_number = Integer.parseInt( (String) object );
                             } else {
                                 contact_number = 0;

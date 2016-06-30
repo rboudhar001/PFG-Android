@@ -125,6 +125,15 @@ public class MyNetwork {
     }
 
     //
+    public void setUsername(String userID, String newUsername) {
+
+        // TODO: Cambia en la DB del servidor la contraseña del usuario.
+        // ---------------------------------------------------------------------------------------
+        myMeteor.setUsername(userID, newUsername);
+        // ---------------------------------------------------------------------------------------
+    }
+
+    //
     public void changePassword(String oldPassword, String newPassword, ResultListener listener) {
 
         // TODO: Cambia en la DB del servidor la contraseña del usuario.

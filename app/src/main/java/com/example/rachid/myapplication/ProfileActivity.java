@@ -2,11 +2,9 @@ package com.example.rachid.myapplication;
 
 // AÑADIDOS: ANDROID
 // ----------------------------------------------------------------------------------------
+
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,21 +18,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
-import android.widget.DatePicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-// ----------------------------------------------------------------------------------------
 
-// AÑADIDOS: GOOGLE
-// ----------------------------------------------------------------------------------------
 import com.squareup.picasso.Picasso;
-
-import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import im.delight.android.ddp.ResultListener;
 import im.delight.android.ddp.SubscribeListener;
+
+// ----------------------------------------------------------------------------------------
+// AÑADIDOS: GOOGLE
+// ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
 /**
@@ -43,7 +39,7 @@ import im.delight.android.ddp.SubscribeListener;
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
-    private static Activity activity;
+    public static Activity activity;
 
     //AÑADIDO: FORM EDIT PROFILE
     // -----------------------------------------------------------------------------------------
@@ -248,7 +244,7 @@ public class ProfileActivity extends AppCompatActivity {
                     focusView.requestFocus();
                 } else {
 
-                    if (!userName.equals(newUsername)) {
+                    if ( (!TextUtils.equals(userName, newUsername)) ) {
 
                         final User mUser = MyState.getUser();
                         mUser.setUsername(newUsername);
@@ -265,21 +261,21 @@ public class ProfileActivity extends AppCompatActivity {
 
                                 if (myNetwork.isConnected()) {
 
-                                    Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY CONNECT");
+                                    Log.i(TAG, "ENTRO A Profile:dialogEditUser: SUCCESSFULLY CONNECT");
                                     //TODO: Actualizar los datos del usuario
                                     //updateUser(dialog, mUser, "userName");
-                                    setUsername(mUser.getUsername());
+                                    setUsername(mUser);
 
                                 } else {
-                                    Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT CONNECT");
+                                    Log.i(TAG, "ENTRO A Profile:dialogEditUser: COULD NOT CONNECT");
 
-                                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                                     hideProgressDialog();
+                                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
                                 }
 
                             }
-                        }, 2000);
+                        }, 1000);
                         // ----------------------------------------------------------------------------
 
                     } else {
@@ -292,82 +288,35 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     //
-    public void setUsername(String newUsername) {
+    public void setUsername(final User user) {
 
         // Inicializamos variable error a true
-        MyError.setUsernameResponse(false);
+        //MyError.setUsernameResponse(true);
 
-        myNetwork.setUsername(MyState.getUser().getID(), newUsername, new ResultListener() {
+        //TODO: Actualizar el nombre de usuario
+        myNetwork.setUsername(MyState.getUser().getID(), user.getUsername());
 
-            @Override
-            public void onSuccess(String result) {
-                MyError.setUsernameResponse(true);
-
-                Log.i(TAG, "ENTRO A Profile:setUsername: SUCCESSFULLY: " + result);
-
-                //TODO: Obtener los datos del usuario
-                /*
-                // --------------------------------------------------------------------------------
-                String[] pieces = result.split("\"");
-                String id = pieces[3];
-                Log.i(TAG, "ENTRO A Login:loginUser:ID: " + id);
-
-                getUser(id);
-                // --------------------------------------------------------------------------------
-                */
-
-                Log.i(TAG, "ENTRO A Profile:setUsername: PASSWORD CHANGED");
-
-                myNetwork.Disconnect();
-                Log.i(TAG, "ENTRO A Profile:setUsername: DISCONNECT");
-
-                hideProgressDialog();
-            }
-
-            @Override
-            public void onError(String error, String reason, String details) {
-                MyError.setUsernameResponse(true);
-
-                myNetwork.Disconnect();
-                Log.i(TAG, "ENTRO A Profile:setUsername: DISCONNECT");
-
-                /*
-                if ((error.equals("403") && (reason.equals("User not found")))) {
-                    Toast.makeText(activity, getString(R.string.error_user_not_exists), Toast.LENGTH_LONG).show();
-                } else if ((error.equals("403") && (reason.equals("Incorrect password")))) {
-                    Toast.makeText(activity, getString(R.string.error_password_is_incorrect), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(activity, getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_LONG).show();
-                }
-                */
-
-                Log.i(TAG, "ENTRO A Profile:setUsername: COULD NOT LOGIN: " + error + " / " + reason + " / " + details);
-                hideProgressDialog();
-            }
-
-        });
-
-        // Wait 5 seconds, si no responde en este tiempo, cerrar.
+        // Wait 1 seconds
         // ----------------------------------------------------------------------------------------
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                Log.i(TAG, "ENTRO A Profile:setUsername: USER_NAME UPDATE SUCCESFULL");
 
-                if (!MyError.getLoginResponse()) {
-                    Log.i(TAG, "ENTRO A Profile:setUsername:getChangePasswordResponse: TIMES_EXPIRED");
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Profile:setUsername: DISCONNECT");
 
-                    myNetwork.Disconnect();
-                    Log.i(TAG, "ENTRO A Profile:setUsername:getChangePasswordResponse: DISCONNECT");
+                // Actualizar la ventana de Profile Activity y Actualizar la DB local
+                updateWindowsProfile(user, "userName", false);
 
-                    Log.i(TAG, "ENTRO A Profile:setUsername:getChangePasswordResponse: COULD NOT LOGIN");
-                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                    hideProgressDialog();
-                }
+                hideProgressDialog();
 
+
+                hideProgressDialog();
+                Toast.makeText(activity, getString(R.string.error_could_not_update_username), Toast.LENGTH_SHORT).show();
             }
-        }, 5000);
+        }, 1000);
         // ----------------------------------------------------------------------------------------
-
     }
 
     //
@@ -422,7 +371,7 @@ public class ProfileActivity extends AppCompatActivity {
                     focusView.requestFocus();
                 } else {
 
-                    if ( !email.equals(newEmail) ) { // Si se a editado el email actualizamos, sino nada.
+                    if ( !(TextUtils.equals(email, newEmail)) ) { // Si se a editado el email actualizamos, sino nada.
 
                         final User mUser = MyState.getUser();
                         mUser.setEmail(newEmail);
@@ -526,7 +475,7 @@ public class ProfileActivity extends AppCompatActivity {
                     focusView.requestFocus();
                 } else {
 
-                    if (name.equals(newName) && surname.equals(newSurname)) { // Si NO se ha editado nada ...
+                    if ( (TextUtils.equals(name, newName)) && (TextUtils.equals(surname, newSurname)) ) { // Si NO se ha editado nada ...
 
                         dialog.dismiss();
 
@@ -773,7 +722,7 @@ public class ProfileActivity extends AppCompatActivity {
                     focusView.requestFocus();
                 } else {
 
-                    if ( !place.equals(newPlace) ) {
+                    if ( (!TextUtils.equals(place, newPlace)) ) {
 
                         final User mUser = MyState.getUser();
                         mUser.setPlace(newPlace);
@@ -865,7 +814,7 @@ public class ProfileActivity extends AppCompatActivity {
                     focusView.requestFocus();
                 } else {
 
-                    if ( !musicStyle.equals(newMusicStyle) ) {
+                    if ( (!TextUtils.equals(musicStyle, newMusicStyle)) ) {
 
                         final User mUser = MyState.getUser();
                         mUser.setMusicStyle(newMusicStyle);
@@ -1011,11 +960,14 @@ public class ProfileActivity extends AppCompatActivity {
                 myNetwork.updateUser(user);
                 Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY UPDATE");
 
+                // Actualizar la ventana de Profile Activity
+                // Actualizar la DB local
+                // Actualizar la variable del sistema
+                updateWindowsProfile(user, value, false);
+
+                // Desconectar
                 myNetwork.Disconnect();
                 Log.i(TAG, "ENTRO A Profile:updateUser: DISCONNECT");
-
-                // Actualizar la ventana de Profile Activity y Actualizar la DB local
-                updateWindowsProfile(user, value, false);
 
                 hideProgressDialog();
                 dialog.dismiss();
@@ -1027,9 +979,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Log.i(TAG, "ENTRO A Profile:updateUser: DISCONNECT");
 
                 updateWindowsProfile(user, value, true);
-
                 hideProgressDialog();
-
                 Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT SUBSCRIBE");
             }
 
@@ -1046,8 +996,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_username), Toast.LENGTH_SHORT).show();
 
             } else {
-
-                // Actualizar el dato en la DB local
+                // Actualizar el dato en la variable del sistema
                 MyState.getUser().setUsername(user.getUsername());
 
                 // Actualizar el texto del userName de la ventana "ProfileActivity"
@@ -1064,7 +1013,6 @@ public class ProfileActivity extends AppCompatActivity {
                     EventsActivity.myMenu.updateUserName();
                 }
                 // --------------------------------------------------------------------------------
-
             }
 
         } else if ( value.equals("email") ) {
@@ -1074,7 +1022,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_email), Toast.LENGTH_SHORT).show();
 
             } else {
-                // Actualizar el dato en la DB local
+                // Actualizar el dato en la variable del sistema
                 MyState.getUser().setEmail(user.getEmail());
 
                 // Actualizar el texto del email de la ventana "ProfileActivity"
@@ -1099,7 +1047,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (error) {
                 Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_name), Toast.LENGTH_SHORT).show();
             } else {
-                // Actualizar el dato en la DB local
+                // Actualizar el dato en la variable del sistema
                 MyState.getUser().setName(user.getName());
                 MyState.getUser().setSurname(user.getSurname());
 
@@ -1120,7 +1068,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (error) {
                 Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_gender), Toast.LENGTH_SHORT).show();
             } else {
-                // Actualizar el dato en la DB local
+                // Actualizar el dato en la variable del sistema
                 MyState.getUser().setGender(user.getGender());
 
                 // Actualizar el texto del nombre de la ventana "ProfileActivity"
@@ -1132,7 +1080,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (error) {
                 Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_birthday), Toast.LENGTH_SHORT).show();
             } else {
-                // Actualizar el dato en la DB local
+                // Actualizar el dato en la variable del sistema
                 MyState.getUser().setBirthday(user.getBirthday());
 
                 // Actualizar el texto del nombre de la ventana "ProfileActivity"
@@ -1144,7 +1092,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (error) {
                 Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_place), Toast.LENGTH_SHORT).show();
             } else {
-                // Actualizar el dato en la DB local
+                // Actualizar el dato en la variable del sistema
                 MyState.getUser().setPlace(user.getPlace());
 
                 // Actualizar el texto del nombre de la ventana "ProfileActivity"
@@ -1156,7 +1104,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (error) {
                 Toast.makeText(getBaseContext(), getString(R.string.error_could_not_update_musicstyle), Toast.LENGTH_SHORT).show();
             } else {
-                // Actualizar el dato en la DB local
+                // Actualizar el dato en la variable del sistema
                 MyState.getUser().setMusicStyle(user.getMusicStyle());
 
                 // Actualizar el texto del nombre de la ventana "ProfileActivity"
@@ -1167,6 +1115,9 @@ public class ProfileActivity extends AppCompatActivity {
             // ERROR ..
             Log.i(TAG, "ENTRO A Profile:updateWindowsProfile: FATAL_ERROR_VALUE: " + value);
         }
+
+        // Actualizar el dato en la DB Local
+        MyDatabase.updateUser(TAG, activity, MyState.getUser());
     }
 
     //
@@ -1250,6 +1201,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         });
 
+    }
+    //-----------------------------------------------------------------------------------------
+
+    //AÑADIDO: BOTON ATRAS
+    // ----------------------------------------------------------------------------------------
+    @Override
+    public void onBackPressed() {
+        this.finish();
     }
     //-----------------------------------------------------------------------------------------
 

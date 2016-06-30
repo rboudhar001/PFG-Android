@@ -9,7 +9,6 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -40,9 +39,9 @@ public abstract class MyDatabase {
 
                     // Creamos el ArrayList de eventos creados por este usuarios
                     // ---------------------------------------------------------------------------
-                    ArrayList festivals_created;
+                    ArrayList<String> festivals_created;
                     if (c.getString(13) != null) {
-                        festivals_created = new ArrayList();
+                        festivals_created = new ArrayList<>();
                         try {
                             JSONObject json = new JSONObject(c.getString(13)); /*festivals_created*/
                             JSONArray jArray = json.optJSONArray("festivals_created");
@@ -62,9 +61,9 @@ public abstract class MyDatabase {
 
                     // Creamos el ArrayList de eventos registrados por este usuarios
                     // ---------------------------------------------------------------------------
-                    ArrayList festivals_assisted;
+                    ArrayList<String> festivals_assisted;
                     if (c.getString(14) != null) {
-                        festivals_assisted = new ArrayList();
+                        festivals_assisted = new ArrayList<>();
                         try {
                             JSONObject json = new JSONObject(c.getString(14)); /*festivals_assisted*/
                             JSONArray jArray = json.optJSONArray("festivals_assisted");
@@ -85,8 +84,9 @@ public abstract class MyDatabase {
                     MyState.setUser(new User(c.getString(0) /*id*/, c.getString(1) /*email*/, c.getString(2) /*user_name*/,
                             c.getString(3) /*password*/, c.getString(4) /*name*/, c.getString(5) /*surname*/, c.getString(6) /*gender*/,
                             c.getString(7) /*birthday*/, c.getString(8) /*place*/, c.getString(9) /*music_style*/,
-                            c.getString(10) /*image*/,  c.getString(11) /*google_id*/, c.getString(12) /*facebook_id*/,
-                            festivals_created /*google_id*/, festivals_assisted /*facebook_id*/, c.getString(15) /*location*/));
+                            c.getString(10) /*image*/, c.getString(11) /*google_id*/, c.getString(12) /*facebook_id*/,
+                            festivals_created /*google_id*/, festivals_assisted /*facebook_id*/, c.getString(15) /*location*/,
+                            c.getString(16) /*language*/));
                 }
             }
             c.close();
@@ -469,6 +469,31 @@ public abstract class MyDatabase {
     }
 
     //
+    public static void updateLanguage(String TAG, Activity activity, User user) {
+
+        Log.i(TAG, "ENTRO A MyDatabase:updateLanguage: 0");
+
+        //Abrimos la base de datos
+        Database mDB_Activity = new Database(activity.getApplicationContext(), null);
+
+        SQLiteDatabase db = mDB_Activity.getWritableDatabase();
+        if (db != null) {
+
+            Log.i(TAG, "ENTRO A MyDatabase:updateLanguage: 1");
+
+            //Actualizamos el idioma de la App en la tabla usuario
+            ContentValues valores = new ContentValues();
+            valores.put("language", user.getLanguage());
+
+            // Where ...
+            String[] args = new String[]{user.getID()};
+            db.update("Users", valores, "id=?", args);
+
+            db.close();
+        }
+    }
+
+    //
     public static void registerUserEvent(String TAG, Activity activity, User user, String nameEvent) {
 
         Log.i(TAG, "ENTRO A MyDatabase:registerUserEvent: 0");
@@ -484,7 +509,7 @@ public abstract class MyDatabase {
             // Actualizamos la cuenta
             ContentValues valores = new ContentValues();
             ArrayList festivales_asistidos = user.getfestivalsAssisted();
-            festivales_asistidos.remove(nameEvent);
+            festivales_asistidos.add(nameEvent);
 
             String festivals_assisted = null;
             try {
@@ -507,7 +532,36 @@ public abstract class MyDatabase {
     //
     public static void unregisterUserEvent(String TAG, Activity activity, User user, String nameEvent) {
 
+        Log.i(TAG, "ENTRO A MyDatabase:unregisterUserEvent: 0");
 
+        //Abrimos la base de datos
+        Database mDB_Activity = new Database(activity.getApplicationContext(), null);
 
+        SQLiteDatabase db = mDB_Activity.getWritableDatabase();
+        if (db != null) {
+
+            Log.i(TAG, "ENTRO A MyDatabase:unregisterUserEvent: 1");
+
+            // Actualizamos la cuenta
+            ContentValues valores = new ContentValues();
+            ArrayList festivales_asistidos = user.getfestivalsAssisted();
+            festivales_asistidos.remove(nameEvent);
+
+            String festivals_assisted = null;
+            try {
+                JSONObject json = new JSONObject();
+                json.put("festivals_assisted", new JSONArray( festivales_asistidos ));
+                festivals_assisted = json.toString();
+            } catch (org.json.JSONException e) {
+                e.printStackTrace();
+            }
+            valores.put("festivals_assisted", festivals_assisted);
+
+            // Where ...
+            String[] args = new String[]{user.getID()};
+            db.update("Users", valores, "id=?", args);
+
+            db.close();
+        }
     }
 }

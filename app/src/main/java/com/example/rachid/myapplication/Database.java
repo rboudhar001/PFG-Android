@@ -18,7 +18,7 @@ public class Database extends SQLiteOpenHelper {
     String sqlCreate = "CREATE TABLE Users " +
             "(id TEXT, email TEXT PRIMART KEY, user_name TEXT, password TEXT, name TEXT, surname TEXT, " +
             "gender TEXT, birthday TEXT, place TEXT, music_style TEXT, image TEXT, " +
-            "google_id TEXT, facebook_id TEXT, festivals_created TEXT, festivals_assisted TEXT, location TEXT)";
+            "google_id TEXT, facebook_id TEXT, festivals_created TEXT, festivals_assisted TEXT, location TEXT, language TEXT)";
     //DATETIME = YYYY-MM-DD
 
     public Database(Context contexto, CursorFactory factory) {

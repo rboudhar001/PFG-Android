@@ -31,6 +31,8 @@ public class User implements Serializable {
 
     private String location;
 
+    private String language;
+
     // **************
     // Constructores
     // **************
@@ -44,7 +46,7 @@ public class User implements Serializable {
     public User(String id, String email, String username, String password, String name,
                 String surname, String gender, String birthday, String place, String music_style,
                 String image, String google_id, String facebook_id, ArrayList festivalsCreated,
-                ArrayList festivalsAssisted, String location) {
+                ArrayList festivalsAssisted, String location, String language) {
         this.id = id;
         this.email = email;
         this.username = username;
@@ -56,10 +58,13 @@ public class User implements Serializable {
         this.place = place;
         this.music_style = music_style;
         this.image = image;
+
         this.festivalsCreated = festivalsCreated;
         this.festivalsAssisted = festivalsAssisted;
 
         this.location = location;
+
+        this.language = language;
     }
 
     // **************
@@ -208,5 +213,14 @@ public class User implements Serializable {
 
     public String getLocation() {
         return location;
+    }
+
+    // LANGUAGE
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getLanguage(){
+        return language;
     }
 }

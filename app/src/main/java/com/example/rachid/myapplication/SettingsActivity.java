@@ -5,21 +5,24 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
+import java.util.Locale;
 
 import im.delight.android.ddp.ResultListener;
 
@@ -40,6 +43,11 @@ public class SettingsActivity extends AppCompatActivity {
 
     private static Handler handler;
     private static Runnable runnable;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +79,9 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
         //-----------------------------------------------------------------------------------------
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     //AÑADIDO:
@@ -275,49 +286,102 @@ public class SettingsActivity extends AppCompatActivity {
     //
     private void showAlertDialogChangeLanguage() {
 
-        String spain = getString(R.string.text_spain);
         String english = getString(R.string.text_english);
+        String spain = getString(R.string.text_spain);
         String basque = getString(R.string.text_basque);
 
-        final CharSequence[] items = {spain, english, basque};
+        final CharSequence[] items = {english, spain, basque};
         final int itemDefaultSelect;
 
-        // TODO: Obtener idioma del sistema y poner opcion preseleccionada
-        itemDefaultSelect = 0;
+        // TODO: Obtener idioma de la App y poner opcion pre-seleccionada
+        //Locale current = getResources().getConfiguration().locale;
+        //String language = current.getDefault().getLanguage();
+        String language = Locale.getDefault().getLanguage();
+        Log.i(TAG, "ENTRO A Settings:dialogChangeLanguage:LANGUAGE APP: " + language);
 
-        /*
-        String gender = MyState.getUser().getGender();
-        if (gender != null) {
-            if (gender.equals(male)) {
-                itemDefaultSelect = 0;
-            } else if (gender.equals(female)) {
-                itemDefaultSelect = 1;
-            } else if (gender.equals(other)) {
-                itemDefaultSelect = 2;
-            } else {
-                itemDefaultSelect = -1; // no tiene ninguna opcion seleccionada
-            }
-        }
-        else {
+        if (language.equals("en")) {
+            itemDefaultSelect = 0;
+        } else if (language.equals("es")) {
+            itemDefaultSelect = 1;
+        } else if (language.equals("eu")) {
+            itemDefaultSelect = 2;
+        } else {
             itemDefaultSelect = -1; // no tiene ninguna opcion seleccionada
         }
-        */
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(getString(R.string.profile_text_gender));
+        dialog.setTitle(getString(R.string.settings_text_language));
         dialog.setSingleChoiceItems(items, itemDefaultSelect, new DialogInterface.OnClickListener() {
             public void onClick(final DialogInterface dialog, int item) {
 
                 if (itemDefaultSelect != item) { // Si no se ha modificado nada, no actualizamos nada
 
-                    //TODO: Cambiar el idioma del sistema al seleccionado por el usuario
-                    //items[item].toString(); //Idioma seleccionado por el usuario
+                    //TODO: Cambiar el idioma de la App a la seleccionada por el usuario
+                    // ----------------------------------------------------------------------------
+                    String language = items[item].toString(); //Idioma seleccionado por el usuario
+                    Log.i(TAG, "ENTRO A Settings:dialogChangeLanguage:LANGUAGE SELECTED: '" + language + "'");
+                    Locale localizacion = null;
+
+                    if (language.equals(getString(R.string.text_english))) {
+                        Log.i(TAG, "ENTRO A Settings:dialogChangeLanguage:CHANGE TO ENGLISH: " + language);
+                        localizacion = new Locale("en", "EN");
+                        //localizacion = new Locale(Locale.ENGLISH);
+                    } else if (language.equals(getString(R.string.text_spain))) {
+                        Log.i(TAG, "ENTRO A Settings:dialogChangeLanguage:CHANGE TO SPAIN: " + language);
+                        localizacion = new Locale("es", "ES");
+                    } else if (language.equals(getString(R.string.text_basque))) {
+                        Log.i(TAG, "ENTRO A Settings:dialogChangeLanguage:CHANGE TO BASQUE: " + language);
+                        localizacion = new Locale("eu", "EU");
+                    }
+
+                    if (localizacion != null) {
+                        Locale.setDefault(localizacion);
+                        Configuration config = new Configuration();
+                        config.locale = localizacion;
+                        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+                    } else {
+                        throw new IllegalArgumentException("It has not been detected the selected language");
+                    }
+                    // ----------------------------------------------------------------------------
+
+                    // Guardamos el nuevo idioma de la App
+                    // ---------------------------------------------------------------------------
+                    Locale current = getResources().getConfiguration().locale;
+                    String lan = Locale.getDefault().getLanguage();
+
+                    MyState.getUser().setLanguage(lan);
+                    MyDatabase.updateLanguage(TAG, activity, MyState.getUser());
+                    // ---------------------------------------------------------------------------
+
+                    // REFRESCAMOS LAS VENTANAS!!
+                    // ---------------------------------------------------------------------------
+                    if (MainActivity.activity != null) {
+                        MainActivity.activity.finish();
+                    }
+                    if (EventsActivity.activity != null) {
+                        EventsActivity.activity.finish();
+                    }
+                    ProfileActivity.activity.finish();
+
+                    startActivity(new Intent(SettingsActivity.this, Inicializate.class));
+                    startActivity(new Intent(SettingsActivity.this, ProfileActivity.class));
+                    startActivity(new Intent(SettingsActivity.this, SettingsActivity.class));
+                    finish();
+                    // ---------------------------------------------------------------------------
                 }
 
                 dialog.dismiss();
             }
         });
         dialog.show();
+    }
+    //-----------------------------------------------------------------------------------------
+
+    //AÑADIDO: BOTON ATRAS
+    // ----------------------------------------------------------------------------------------
+    @Override
+    public void onBackPressed() {
+        this.finish();
     }
     //-----------------------------------------------------------------------------------------
 
@@ -338,6 +402,46 @@ public class SettingsActivity extends AppCompatActivity {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.hide();
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Settings Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.rachid.myapplication/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Settings Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.rachid.myapplication/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
     // ----------------------------------------------------------------------------------------
 }
