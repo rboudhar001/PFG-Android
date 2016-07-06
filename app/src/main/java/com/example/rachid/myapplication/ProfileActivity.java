@@ -263,8 +263,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                                     Log.i(TAG, "ENTRO A Profile:dialogEditUser: SUCCESSFULLY CONNECT");
                                     //TODO: Actualizar los datos del usuario
-                                    //updateUser(dialog, mUser, "userName");
-                                    setUsername(mUser);
+                                    updateUser(dialog, mUser, "userName");
 
                                 } else {
                                     Log.i(TAG, "ENTRO A Profile:dialogEditUser: COULD NOT CONNECT");
@@ -285,38 +284,6 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         dialog.show();
-    }
-
-    //
-    public void setUsername(final User user) {
-
-        // Inicializamos variable error a true
-        //MyError.setUsernameResponse(true);
-
-        //TODO: Actualizar el nombre de usuario
-        myNetwork.setUsername(MyState.getUser().getID(), user.getUsername());
-
-        // Wait 1 seconds
-        // ----------------------------------------------------------------------------------------
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.i(TAG, "ENTRO A Profile:setUsername: USER_NAME UPDATE SUCCESFULL");
-
-                myNetwork.Disconnect();
-                Log.i(TAG, "ENTRO A Profile:setUsername: DISCONNECT");
-
-                // Actualizar la ventana de Profile Activity y Actualizar la DB local
-                updateWindowsProfile(user, "userName", false);
-
-                hideProgressDialog();
-
-
-                hideProgressDialog();
-                Toast.makeText(activity, getString(R.string.error_could_not_update_username), Toast.LENGTH_SHORT).show();
-            }
-        }, 1000);
-        // ----------------------------------------------------------------------------------------
     }
 
     //
@@ -400,7 +367,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 }
 
                             }
-                        }, 2000);
+                        }, 1000);
                         // ----------------------------------------------------------------------------
 
                     } else {
@@ -509,7 +476,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 }
 
                             }
-                        }, 2000);
+                        }, 1000);
                         // ----------------------------------------------------------------------------
 
                     }
@@ -580,7 +547,7 @@ public class ProfileActivity extends AppCompatActivity {
                             }
 
                         }
-                    }, 2000);
+                    }, 1000);
                     // ----------------------------------------------------------------------------
                 }
 
@@ -665,7 +632,7 @@ public class ProfileActivity extends AppCompatActivity {
                         }
 
                     }
-                }, 2000);
+                }, 1000);
                 // ----------------------------------------------------------------------------
             }
         }
@@ -751,7 +718,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 }
 
                             }
-                        }, 2000);
+                        }, 1000);
                         // ----------------------------------------------------------------------------
                     } else {
 
@@ -843,7 +810,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 }
 
                             }
-                        }, 2000);
+                        }, 1000);
                         // ----------------------------------------------------------------------------
                     } else {
 
@@ -939,7 +906,7 @@ public class ProfileActivity extends AppCompatActivity {
                         }
 
                     }
-                }, 2000);
+                }, 1000);
                 // --------------------------------------------------------------------------------
 
             }

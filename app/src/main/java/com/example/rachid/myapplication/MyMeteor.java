@@ -287,7 +287,7 @@ public class MyMeteor implements MeteorCallback {
         data.put("userId", userId);
         data.put("newUsername", newUsername);
 
-        mMeteor.call("setUsername", new Object[]{data});
+        mMeteor.call("update", new Object[]{ data });
     }
 
     //
@@ -541,14 +541,27 @@ public class MyMeteor implements MeteorCallback {
     //
     public void updateUser(User user) {
 
-        // Get ID of user that update
+        // QUERY: ID of user that update
         Map<String, Object> query = new HashMap<String, Object>();
         query.put("_id", user.getID());
 
-        // Updating user into a collection "Users"
+        // Use the command "$set" for each value
+        Map<String, Object> set = new HashMap<String, Object>();
+
+        // Values of User
         Map<String, Object> values = new HashMap<String, Object>();
 
-        // Crear el objeto email
+        // ------------------------
+        //EJEMPLO $SET
+        //$set:{"nombre":"mom"}
+        // ------------------------
+
+        // ACTUALIZACION DE LOS CAMPOS
+        // ****************************************************************************************
+        // ID
+        //values.put("_id", user.getID());
+
+        // EMAIL
         // ---------------------------------------------------
         LinkedHashMap<String, java.io.Serializable> email_complete = new LinkedHashMap<String, java.io.Serializable>();
         email_complete.put("address", user.getEmail());
@@ -556,25 +569,81 @@ public class MyMeteor implements MeteorCallback {
 
         ArrayList<LinkedHashMap<String, java.io.Serializable>> emails = new ArrayList<LinkedHashMap<String, java.io.Serializable>>();
         emails.add(email_complete);
+
+        //value = new HashMap<String, Object>();
+        values.put("emails", emails);
+        //params.put("$set", value);
         // ---------------------------------------------------
 
-        //values.put("_id", user.getID());
-        values.put("emails", emails);
+        // USER_NAME
+        //value = new HashMap<String, Object>();
         values.put("username", user.getUsername());
-        //values.put("password", user.getPassword());
-        values.put("name", user.getName());
-        values.put("surname", user.getSurname());
-        values.put("gender", user.getGender());
-        values.put("birthday", user.getBirthday());
-        values.put("place", user.getPlace());
-        values.put("music_style", user.getMusicStyle());
-        values.put("image", user.getImage());
-        values.put("google_id", user.getGoogle_id());
-        values.put("facebook_id", user.getFacebook_id());
-        values.put("festivals_created", user.getFestivalsCreated());
-        values.put("festivals_assisted", user.getfestivalsAssisted());
+        //params.put("$set", value);
 
-        mMeteor.update(Users, query, values);
+        // PASSWORD
+        //value = new HashMap<String, Object>();
+        //value.put("password", user.getPassword());
+        //params.put("$set", value);
+
+        // NAME
+        //value = new HashMap<String, Object>();
+        values.put("name", user.getName());
+        //params.put("$set", value);
+
+        // SURNAME
+        //value = new HashMap<String, Object>();
+        values.put("surname", user.getSurname());
+        //params.put("$set", value);
+
+        // GENDER
+        //value = new HashMap<String, Object>();
+        values.put("gender", user.getGender());
+        //params.put("$set", value);
+
+        // BIRTHDAY
+        //value = new HashMap<String, Object>();
+        values.put("birthday", user.getBirthday());
+        //params.put("$set", value);
+
+        // PLACE
+        //value = new HashMap<String, Object>();
+        values.put("place", user.getPlace());
+        //params.put("$set", value);
+
+        // MUSIC_STYLE
+        //value = new HashMap<String, Object>();
+        values.put("music_style", user.getMusicStyle());
+        //params.put("$set", value);
+
+        // IMAGE
+        //value = new HashMap<String, Object>();
+        values.put("image", user.getImage());
+        //params.put("$set", value);
+
+        // GOOGLE_ID
+        //value = new HashMap<String, Object>();
+        values.put("google_id", user.getGoogle_id());
+        //params.put("$set", value);
+
+        // FACEBOOK_ID
+        //value = new HashMap<String, Object>();
+        values.put("facebook_id", user.getFacebook_id());
+        //params.put("$set", value);
+
+        // FESTIVALS_CREATED
+        //value = new HashMap<String, Object>();
+        values.put("festivals_created", user.getFestivalsCreated());
+        //params.put("$set", value);
+
+        // FESTIVALS_ASSISTED
+        //value = new HashMap<String, Object>();
+        values.put("festivals_assisted", user.getfestivalsAssisted());
+        //params.put("$set", value);
+        // ****************************************************************************************
+
+        set.put("$set", values);
+
+        mMeteor.update(Users, query, set);
     }
 
     //

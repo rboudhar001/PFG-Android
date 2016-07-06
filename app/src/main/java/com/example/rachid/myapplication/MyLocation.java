@@ -26,7 +26,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import java.io.IOException;
@@ -161,28 +160,15 @@ public abstract class MyLocation {
                         List<Address> list = geoCoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 
                         if ((list != null) ){
+                            Log.i(TAG, "ENTRO A M:getLocation:3");
+
                             if (list.size() > 0) {
                                 Address address = list.get(0);
                                 String city = address.getLocality();
-
-                                Log.i(TAG, "ENTRO A M:getLocation:3");
-
-                                if (city == null) {
-                                    Log.i(TAG, "ENTRO A M:getLocation:city es NULL");
-                                }
-                                else {
-                                    Log.i(TAG, "ENTRO A M:getLocation:city NULL STRING?: " + city);
-                                }
+                                Log.i(TAG, "ENTRO A M:getLocation:CITY: " + city);
 
                                 if (city != null) {
-                                    Log.i(TAG, "ENTRO A M:getLocation:4");
-
-                                    if (MyState.getUser().getLocation() == null) {
-                                        Log.i(TAG, "ENTRO A M:getLocation:getLocation es NULL");
-                                    }
-                                    else {
-                                        Log.i(TAG, "ENTRO A M:getLocation:getLocation es NULL STRING?: " + MyState.getUser().getLocation());
-                                    }
+                                    Log.i(TAG, "ENTRO A M:getLocation:MYSTATE_LOCATION: " + MyState.getUser().getLocation());
 
                                     if(!city.equals(MyState.getUser().getLocation())) {
                                         Log.i(TAG, "ENTRO A M:getLocation:5");
@@ -265,7 +251,7 @@ public abstract class MyLocation {
                         activity.getApplicationContext().getPackageName()) == PackageManager.PERMISSION_GRANTED) {
 
                     Log.i(TAG, "ENTRO A M:getLocation:10");
-                    locationManager.requestLocationUpdates(locationProvider, 1000, 1000, locationListener);
+                    locationManager.requestLocationUpdates(locationProvider, 1000 /*minTime-miliseconds*/, 0 /*minDistance-meters*/, locationListener);
                     //locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
                 }
 
@@ -334,7 +320,7 @@ public abstract class MyLocation {
             }
         };
 
-        handler.postDelayed(runnable, 15000); // 15 seg
+        handler.postDelayed(runnable, 4000); // 4 seg
         // ---------------------------------------------------------------------------------------
     }
 

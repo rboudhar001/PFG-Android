@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.Locale;
@@ -39,21 +40,27 @@ public class Inicializate extends AppCompatActivity {
             String language = MyState.getUser().getLanguage();
             Locale localizacion;
 
-            if (language.equals("es")) {
+            if ( (!TextUtils.isEmpty(language)) && (TextUtils.equals(language, "es")) ) {
                 Log.i(TAG, "ENTRO A Inicializate:onCreate:CHANGE TO SPAIN: " + language);
                 localizacion = new Locale("es", "ES");
-            } else if (language.equals("eu")) {
+
+                Locale.setDefault(localizacion);
+                Configuration config = new Configuration();
+                config.locale = localizacion;
+                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+            } else if ( (!TextUtils.isEmpty(language)) && (TextUtils.equals(language, "eu")) ) {
                 Log.i(TAG, "ENTRO A Inicializate:onCreate:CHANGE TO BASQUE: " + language);
                 localizacion = new Locale("eu", "EU");
-            } else {
-                Log.i(TAG, "ENTRO A Inicializate:onCreate:CHANGE TO ENGLISH: " + language);
-                localizacion = new Locale("en", "EN");
-            }
 
-            Locale.setDefault(localizacion);
-            Configuration config = new Configuration();
-            config.locale = localizacion;
-            getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+                Locale.setDefault(localizacion);
+                Configuration config = new Configuration();
+                config.locale = localizacion;
+                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+            } else {
+                // No hacemos nada porque por defecto si no hay idioma preseleccionado carga el ingles
+                Log.i(TAG, "ENTRO A Inicializate:onCreate:CHANGE TO ENGLISH: " + language);
+                //localizacion = new Locale("en", "EN");
+            }
             // ------------------------------------------------------------------------------------
         }
         // ----------------------------------------------------------------------------------------

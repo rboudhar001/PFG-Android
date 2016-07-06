@@ -17,7 +17,7 @@
             android:layout_height="@dimen/listViewEvent_image_event"
             android:id="@+id/listViewEvent_imageView_image"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/com_facebook_profile_picture_blank_portrait"
+            android:src="@drawable/no_img_festival"
             android:layout_marginLeft="4px"
             android:layout_marginRight="4px"
             android:layout_marginTop="2px" />
