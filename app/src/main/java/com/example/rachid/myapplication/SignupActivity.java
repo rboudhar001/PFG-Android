@@ -231,39 +231,42 @@ public class SignupActivity extends AppCompatActivity { //implements LoaderManag
 
             Log.i(TAG, "ENTRO A Signup:attemptSignup:3");
 
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgressDialog();
-            //mAuthTask = new UserLoginTask(userName, email, password);
-            //mAuthTask.execute((Void) null);
+            if ( MyNetwork.isNetworkConnected(activity) ) {
+                showProgressDialog();
+                //mAuthTask = new UserLoginTask(userName, email, password);
+                //mAuthTask.execute((Void) null);
 
-            // SIGN UP USER
-            // ------------------------------------------------------------------------------------
-            myNetwork = new MyNetwork(TAG, activity);
-            myNetwork.Connect();
+                // SIGN UP USER
+                // ------------------------------------------------------------------------------------
+                myNetwork = new MyNetwork(TAG, activity);
+                myNetwork.Connect();
 
-            // Wait 1 second
-            // ----------------------------------------------------------------------------------------
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+                // Wait 1 second
+                // ----------------------------------------------------------------------------------------
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                    if (myNetwork.isConnected()) {
+                        if (myNetwork.isConnected()) {
 
-                        Log.i(TAG, "ENTRO A Signup:attemptSignup:Connect: SUCCESSFULLY CONNECT");
+                            Log.i(TAG, "ENTRO A Signup:attemptSignup:Connect: SUCCESSFULLY CONNECT");
 
-                        //TODO: Registrar al usuario en la DB del servidor
-                        signupUser(userName, email, password);
+                            //TODO: Registrar al usuario en la DB del servidor
+                            signupUser(userName, email, password);
 
-                    } else {
-                        Log.i(TAG, "ENTRO A Signup:attemptSignup:Connect: COULD NOT CONNECT");
-                        Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                        hideProgressDialog();
+                        } else {
+                            Log.i(TAG, "ENTRO A Signup:attemptSignup:Connect: COULD NOT CONNECT");
+                            Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                            hideProgressDialog();
+                        }
+
                     }
-
-                }
-            }, 1000);
-            // ----------------------------------------------------------------------------------------
+                }, 1000);
+                // ----------------------------------------------------------------------------------------
+            } else {
+                Log.i(TAG, "ENTRO A Signup:attemptSignup:Connect: ERROR_NETWORK");
+                Toast.makeText(activity, getString(R.string.error_not_network), Toast.LENGTH_SHORT).show();
+            }
 
             /*
             myNetwork.Connect(new ResultListener() {

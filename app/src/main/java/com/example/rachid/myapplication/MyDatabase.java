@@ -509,7 +509,10 @@ public abstract class MyDatabase {
             // Actualizamos la cuenta
             ContentValues valores = new ContentValues();
             ArrayList festivales_asistidos = user.getfestivalsAssisted();
-            festivales_asistidos.add(nameEvent);
+            Log.i(TAG, "ENTRO A MyDatabase:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + festivales_asistidos);
+
+            //festivales_asistidos.add(nameEvent);
+            //Log.i(TAG, "ENTRO A MyDatabase:RegisterUserEvent: FESTIVALS_ASSISTED_NEW: " + festivales_asistidos);
 
             String festivals_assisted = null;
             try {
@@ -545,7 +548,10 @@ public abstract class MyDatabase {
             // Actualizamos la cuenta
             ContentValues valores = new ContentValues();
             ArrayList festivales_asistidos = user.getfestivalsAssisted();
-            festivales_asistidos.remove(nameEvent);
+            Log.i(TAG, "ENTRO A MyDatabase:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + festivales_asistidos);
+
+            //festivales_asistidos.remove(nameEvent);
+            //Log.i(TAG, "ENTRO A MyDatabase:RegisterUserEvent: FESTIVALS_ASSISTED_NEW: " + festivales_asistidos);
 
             String festivals_assisted = null;
             try {

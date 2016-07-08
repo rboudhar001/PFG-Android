@@ -2,293 +2,265 @@
     <string name="app_name">SocialMusFest</string>
 
     <!-- WINDOWS -->
+    <!-- *************************************************************************************** -->
     <string name="title_activity_main">SocialMusFest</string>
     <string name="title_activity_events">Ekitaldiak</string>
-    <string name="title_activity_show_event">Ikusi Gertaera</string>
-    <string name="title_activity_registered">Erregistratu</string>
-    <string name="title_activity_published">Mezuak</string>
-    <string name="title_activity_account">Kontu</string>
-    <string name="title_activity_login">Login</string>
-    <string name="title_activity_signup">Izena Eman</string>
-    <string name="title_activity_forgotten_password">Galdutako Pasahitza</string>
-    <string name="title_activity_publish">Agitaratzeko</string>
-    <string name="title_activity_search">Bilaketa</string>
+    <string name="title_activity_show_event">Ekitaldia ikusi</string>
+    <string name="title_activity_registered">Erregistratuta</string>
+    <string name="title_activity_published">Argitaratuta</string>
+    <string name="title_activity_account">Kontua</string>
+    <string name="title_activity_login">Sartu</string>
+    <string name="title_activity_signup">Erragistratu</string>
+    <string name="title_activity_forgotten_password">Ahaztutako pasahitza</string>
+    <string name="title_activity_publish">Argitaratzeko</string>
+    <string name="title_activity_search">Bilatu</string>
     <string name="title_activity_search_results">Emaitzak</string>
-    <string name="title_activity_info">Informazio</string>
-    <string name="title_activity_version">Bertsio</string>
+    <string name="title_activity_info">Informazioa</string>
+    <string name="title_activity_version">Bartsioa</string>
     <string name="title_activity_profile">Profila</string>
     <string name="title_activity_location">Kokapena</string>
-    <string name="title_activity_settings">Aukera</string>
-
+    <string name="title_activity_settings">Aukerak</string>
     <!-- *************************************************************************************** -->
-    <!-- ACCOUNT -->
-    <string name="account_text_account">Inicia sesión</string>
-    <string name="or">O</string>
-    <string name="prompt_username">Usuario</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="prompt_name">Nombre</string>
-    <string name="prompt_surname">Apellido</string>
-    <string name="prompt_gender">Genero</string>
-    <string name="prompt_birthday">Cumpleaños</string>
-    <string name="prompt_place">Lugar</string>
-    <string name="prompt_musicstyle">Estilos de musica</string>
-    <string name="error_could_not_connect_with_this_service">No se ha podido iniciar sesion con este servicio</string>
 
-    <string name="account_button_login_email">INICIA SESIÓN</string>
-    <string name="account_button_signup_email">REGISTRATE</string>
+    <!-- ACCOUNT -->
+    <!-- *************************************************************************************** -->
+    <string name="account_text_account">Sartu</string>
+    <string name="or">Edo</string>
+    <string name="prompt_username">Erabiltzailea</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Pasahitza</string>
+    <string name="prompt_name">Izena</string>
+    <string name="prompt_surname">Abizena</string>
+    <string name="prompt_gender">Sexua</string>
+    <string name="prompt_birthday">Jaioteguna</string>
+    <string name="prompt_place">Herria</string>
+    <string name="prompt_musicstyle">Musika Estiloak</string>
+    <string name="error_could_not_connect_with_this_service">Ezin izan da zerbitzu honekin sesioa hasi</string>
+
+    <string name="account_button_login_email">SARTU</string>
+    <string name="account_button_signup_email">ERREGISTRATU</string>
+    <!-- *************************************************************************************** -->
 
     <!-- LOGIN -->
-    <string name="login_text_title">Inicia sesión</string>
-    <string name="login_button_login">Iniciar sesión</string>
-    <string name="login_button_forgotten_password">¿Has olvidado tu contraseña?</string>
-    <string name="login_button_no_account">¿No tienes un cuenta? Registrate</string>
-    <string name="error_could_not_connect_to_server">No se ha podido conectar al servidor</string>
-    <string name="error_could_not_logged_to_server">No se ha podido logear al servidor</string>
-    <string name="error_could_not_logout_to_server">No se ha podido des-logear al servidor</string>
-    <string name="error_this_account_not_exists">Esta cuenta no existe</string>
-    <string name="error_user_not_exists">El usuario no existe</string>
-    <string name="error_password_is_incorrect">La contraseña es incorrecta</string>
+    <!-- *************************************************************************************** -->
+    <string name="login_text_title">Sartu</string>
+    <string name="login_button_login">Sesioa hasi</string>
+    <string name="login_button_forgotten_password">Pasahitza ahaztu duzu?</string>
+    <string name="login_button_no_account">Konturik ez? Erregistratu</string>
+    <string name="error_could_not_connect_to_server">Ezin izan da serbidorearekin konektatu</string>
+    <string name="error_could_not_logged_to_server">Ezin izan da serbidorean sartu</string>
+    <string name="error_could_not_logout_to_server">Ezin izan da serbidoretik atera</string>
+    <string name="error_this_account_not_exists">Kontu hau ez da existitzen</string>
+    <string name="error_user_not_exists">Erabiltzaile hau ez da existitzen</string>
+    <string name="error_password_is_incorrect">Pasahitza ez da zuzena</string>
+    <!-- *************************************************************************************** -->
 
     <!-- SIGNUP -->
-    <string name="signup_text_title">Registrate</string>
-    <string name="signup_button_signup">Registrarse</string>
-    <string name="signup_button_have_account">¿Ya tienes una cuenta? Inicia sesión</string>
-    <string name="error_could_not_sign_up_the_user">No se ha podido registrar al usuario</string>
-    <string name="error_username_already_exists">Ya existe una cuenta con este Username</string>
-    <string name="error_email_already_exists">Ya existe una cuenta con este Email</string>
+    <!-- *************************************************************************************** -->
+    <string name="signup_text_title">Erregistratu</string>
+    <string name="signup_button_signup">Erregistratu</string>
+    <string name="signup_button_have_account">Konturik bai? Saioa hasi</string>
+    <string name="error_could_not_sign_up_the_user">Ezin izan da erabiltzailea erregistratu</string>
+    <string name="error_username_already_exists">Badago kontua Username honekin</string>
+    <string name="error_email_already_exists">Badago kontua Email honekin</string>
 
-    <string name="action_login_short">Login</string>
-    <string name="action_sign_up_short">Sign up</string>
-    <string name="action_done_short">Done</string>
+    <string name="action_login_short">Sartu</string>
+    <string name="action_sign_up_short">Erregistratu</string>
+    <string name="action_done_short">Ongi</string>
 
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_password_not_same">The password not same</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+    <string name="error_invalid_email">Email hau ez da zuzena</string>
+    <string name="error_invalid_password">Pasahitza motzegia da</string>
+    <string name="error_incorrect_password">Pasahitza ez da zuzena</string>
+    <string name="error_password_not_same">Pasahitzak ez dira berdinak</string>
+    <string name="error_field_required">Informazio hau beharrezkoa da</string>
+    <string name="permission_rationale">"Kontaktuen baimena behar da email bukaerak emateko."</string>
     <!-- *************************************************************************************** -->
 
     <!-- MAIN ACTIVITY -->
-    <string name="geolocation_title">¿Empezamos a buscar eventos?</string>
-    <string name="know_the_events">¿Quieres conocer los eventos mas cercanos a ti?</string>
-    <string name="button_use_location">ACTIVAR LOCALIZACIÓN</string>
-
     <!-- *************************************************************************************** -->
+    <string name="geolocation_title">Hasiko gara ekitaldiak bilatzen?</string>
+    <string name="know_the_events">Hurbilen dauden ekitaldiak ezagutu nahi dituzu?</string>
+    <string name="button_use_location">KOKAPENA AKTIBATU</string>
+    <!-- *************************************************************************************** -->
+
     <!-- PROFILE: Account Info -->
-    <string name="profile_text_info_account">Información de Cuenta</string>
-    <string name="profile_text_username">Usuario</string>
-    <string name="profile_text_cl_username">USUARIO</string>
+    <!-- *************************************************************************************** -->
+    <string name="profile_text_info_account">Kontu Informazioa</string>
+    <string name="profile_text_username">Erabiltzailea</string>
+    <string name="profile_text_cl_username">ERABILTZAILEA</string>
     <string name="profile_text_email">Email</string>
     <string name="profile_text_cl_email">EMAIL</string>
+    <!-- *************************************************************************************** -->
 
     <!-- PROFILE: Personal Info -->
-    <string name="profile_text_info_personal">Información Personal</string>
-    <string name="profile_text_name">Nombre</string>
-    <string name="profile_text_cl_name">NOMBRE</string>
-    <string name="profile_text_surname">Apellido</string>
-    <string name="profile_text_cl_surname">APELLIDO</string>
-    <string name="profile_text_gender">Genero</string>
-    <string name="profile_text_cl_gender">GENERO</string>
-    <string name="profile_text_birthday">Cumpleaños</string>
-    <string name="profile_text_cl_birthday">CUMPLEAÑOS</string>
-    <string name="profile_text_place">Lugar</string>
-    <string name="profile_text_cl_place">LUGAR</string>
-    <string name="profile_text_musicstyle">Estilo de musica</string>
-    <string name="profile_text_cl_musicstyle">ESTILO DE MUSICA</string>
+    <!-- *************************************************************************************** -->
+    <string name="profile_text_info_personal">Informazio Pertsonala</string>
+    <string name="profile_text_name">Izena</string>
+    <string name="profile_text_cl_name">IZENA</string>
+    <string name="profile_text_surname">Abizena</string>
+    <string name="profile_text_cl_surname">ABIZENA</string>
+    <string name="profile_text_gender">Sexua</string>
+    <string name="profile_text_cl_gender">SEXUA</string>
+    <string name="profile_text_birthday">Jaioteguna</string>
+    <string name="profile_text_cl_birthday">JAIOTEGUNA</string>
+    <string name="profile_text_place">Herria</string>
+    <string name="profile_text_cl_place">HERRIA</string>
+    <string name="profile_text_musicstyle">Musika estiloa</string>
+    <string name="profile_text_cl_musicstyle">MUSIKA ESTILOA</string>
 
-    <string name="text_male">Hombre</string>
-    <string name="text_female">Mujer</string>
-    <string name="text_other">Otro</string>
+    <string name="text_male">Gizona</string>
+    <string name="text_female">Emakumea</string>
+    <string name="text_other">Beste</string>
 
-    <string name="text_spain">Español</string>
-    <string name="text_english">Ingles</string>
+    <string name="text_music_styles">Musika estiloak</string>
+    <string name="text_music_rock">Rock</string>
+    <string name="text_music_jazz">Jazz</string>
+    <string name="text_music_rap">Rap</string>
+    <string name="text_music_pop">Pop</string>
+    <string name="text_music_classic">Klasikoa</string>
+    <string name="text_music_alternative">Alternatiboa</string>
+    <string name="text_music_dance">Dance</string>
+    <string name="text_music_other">Beste</string>
+
+    <string name="text_spain">Gaztelera</string>
+    <string name="text_english">Ingelesa</string>
     <string name="text_basque">Euskera</string>
 
     <string name="simbol_next">></string>
-    <string name="profile_text_complete_name">Nombre completo</string>
+    <string name="profile_text_complete_name">Izen eta abizenak</string>
 
-    <string name="text_cancel">Cancelar</string>
-    <string name="text_done">Ok</string>
-    <string name="text_logout">Logout</string>
-    <string name="text_log_out">Log Out</string>
-    <string name="text_are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
+    <string name="text_cancel">Ezeztatu</string>
+    <string name="text_done">Ongi</string>
+    <string name="text_logout">Irten</string>
+    <string name="text_log_out">Saioa Itxi</string>
+    <string name="text_are_you_sure_you_want_to_logout">Ziur irten nahi duzula?</string>
 
-    <string name="error_could_not_update_username">Error, no se ha podido actualizar el nombre de usuario</string>
-    <string name="error_could_not_update_email">Error, no se ha podido actualizar el email</string>
-    <string name="error_could_not_update_password">Error, no se ha podido actualizar la contraseña</string>
-    <string name="error_could_not_update_name">Error, no se ha podido actualizar el nombre</string>
-    <string name="error_could_not_update_gender">Error, no se ha podido actualizar el genero</string>
-    <string name="error_could_not_update_birthday">Error, no se ha podido actualizar el cumpleaños</string>
-    <string name="error_could_not_update_place">Error, no se ha podido actualizar el lugar</string>
-    <string name="error_could_not_update_musicstyle">Error, no se ha podido actualizar el estilo de musica</string>
+    <string name="error_could_not_update_username">Errorea, ezin izan da erabiltzailearen izena eguneratu</string>
+    <string name="error_could_not_update_email">Errorea, ezin izan da email-a eguneratu</string>
+    <string name="error_could_not_update_password">Errorea, ezin izan da pasahitza eguneratu</string>
+    <string name="error_could_not_update_name">Errorea, ezin izan da izena eguneratu</string>
+    <string name="error_could_not_update_gender">Errorea, ezin izan da sexua eguneratu</string>
+    <string name="error_could_not_update_birthday">Errorea, ezin izan da jaioteguna eguneratu</string>
+    <string name="error_could_not_update_place">Errorea, ezin izan da herria eguneratu</string>
+    <string name="error_could_not_update_musicstyle">Errorea, ezin izan da musika estiloa eguneratu</string>
 
-    <string name="error_could_not_view_event">Error, no se ha podido visualizar el evento</string>
-    <string name="error_could_not_view_events">Error, no se ha podido visualizar los eventos</string>
+    <string name="error_could_not_view_event">Errorea, ezin izan da ekitaldia erakutsi</string>
+    <string name="error_could_not_view_events">Errorea, ezin izan dira ekitaldiak erakutsi</string>
     <!-- *************************************************************************************** -->
 
     <!-- SETTINGS -->
     <!-- *************************************************************************************** -->
-    <string name="settings_button_changePassword">Aldatu Pasahitza</string>
-    <string name="settings_button_changeLanguage">Aldatu Hizkuntza</string>
-    <string name="settings_changePassowrd">Pasahitz Aldaketa</string>
-    <string name="settings_changeLanguage">Aldaketaren Hizkuntza</string>
+    <string name="settings_button_changePassword">Pasahitza aldatu</string>
+    <string name="settings_button_changeLanguage">Hizkuntza aldatu</string>
+    <string name="settings_changePassowrd">Pasahitza aldatu</string>
+    <string name="settings_changeLanguage">Hizkuntza aldatu</string>
     <string name="settings_text_language">Hizkuntza</string>
 
-    <string name="prompt_old_password">Contraseña actual</string>
-    <string name="prompt_new_password">Nueva contraseña</string>
-    <string name="prompt_repeat_new_password">Repetir nueva contraseña</string>
+    <string name="prompt_old_password">Oraingo pasahitza</string>
+    <string name="prompt_new_password">Pasahitz berria</string>
+    <string name="prompt_repeat_new_password">Pasahitz berria errepikatu</string>
     <!-- *************************************************************************************** -->
 
     <!-- TOOLBAR TabLayout -->
-    <string name="text_events">Eventos</string>
-    <string name="text_registered">Registrados</string>
-    <string name="text_published">Publicados</string>
+    <!-- *************************************************************************************** -->
+    <string name="text_events">Ekitaldiak</string>
+    <string name="text_registered">Erregistratutakoak</string>
+    <string name="text_published">Argitaratutakoak</string>
+    <!-- *************************************************************************************** -->
 
     <!-- MENU -->
-    <string name="text_main_page">Pagina Principal</string>
-    <string name="text_my_account">Mi Cuenta</string>
-    <string name="text_publish">Publicar</string>
-    <string name="text_search">Buscar</string>
-    <string name="text_info">Información</string>
+    <!-- *************************************************************************************** -->
+    <string name="text_main_page">Orrialde nagusia</string>
+    <string name="text_my_account">Nire kontua</string>
+    <string name="text_publish">Argitaratu</string>
+    <string name="text_search">Bilatu</string>
+    <string name="text_info">Informazioa</string>
 
     <!-- MENU_LOGIN -->
     <string name="text_not_exists_location">___________________</string>
 
     <!-- MENU_LOCATION -->
-    <string name="button_update_location">Actualizar localización</string>
+    <string name="button_update_location">Kokapena eguneratu</string>
 
     <!-- MENU_INFO -->
-    <string name="info_button_help">Ayuda</string>
-    <string name="info_button_terms_of_service">Términos de Servicio</string>
-    <string name="info_button_privacy_policy">Políticas de Privacidad</string>
-    <string name="info_button_version">Versión</string>
+    <string name="info_button_help">Laguntza</string>
+    <string name="info_button_terms_of_service">Zerbitzuaren Zehaztapenak</string>
+    <string name="info_button_privacy_policy">Pribatutasun Politikak</string>
+    <string name="info_button_version">Bertsioa</string>
 
     <!-- MENU_INFO -->
-    <string name="version_text_version">Versión 1.0.0</string>
+    <string name="version_text_version">1.0.0 bertsioa</string>
     <string name="version_text_autor">Rachid Boudhar Tannaoui</string>
-    <string name="version_text_info">Proyecto TFG</string>
+    <string name="version_text_info">GAP Proiektua</string>
+    <!-- *************************************************************************************** -->
 
     <!-- LOCATION -->
-    <string name="button_use_my_current_location">Usar mi propia localización</string>
-    <string name="text_popular_location">Localizaciónes mas populares</string>
+    <!-- *************************************************************************************** -->
+    <string name="button_use_my_current_location">Nire kokapena erabili</string>
+    <string name="text_popular_location">Kokapen ezagunenak</string>
+    <!-- *************************************************************************************** -->
 
     <!--AÑADIDO: FACEBOOK y GOOGLE-->
     <!-- *************************************************************************************** -->
     <integer name="google_play_services_version">8298000</integer>
-    <string name="loading">Cargando...</string>
+    <string name="loading">Kargatzen...</string>
     <string name="facebook_app_id">1592965991028641</string>
     <!-- *************************************************************************************** -->
 
     <!-- EVENTS -->
     <!-- *************************************************************************************** -->
-    <string name="tabEvents_text_no_events">No hay eventos</string>
-    <string name="tabPublished_text_no_events">No has publicado ningun evento</string>
-    <string name="tabRegistered_text_no_events">No te has registrado en ningun evento</string>
+    <string name="tabEvents_text_no_events">Ez dago ekitaldirik</string>
+    <string name="tabPublished_text_no_events">Ez duzu ekitaldirik argitaratu</string>
+    <string name="tabRegistered_text_no_events">Ez duzu erregistraturiko ekitaldirik</string>
     <!-- *************************************************************************************** -->
 
     <!-- SHOW EVENT -->
     <!-- *************************************************************************************** -->
-    <string name="showEvent_text_place">LUGAR:</string>
-    <string name="showEvent_text_dates">FECHAS:</string>
-    <string name="showEvent_text_sales">ENTRADAS:</string>
-    <string name="showEvent_text_contact_number">CONTACTO:</string>
-    <string name="showEvent_text_webpage">ENLACE DEL SITIO:</string>
-    <string name="showEvent_text_creator">CREADO POR:</string>
-    <string name="showEvent_text_assistants_capacity">ASISTENTES / CAPACIDAD</string>
-    <string name="showEvent_text_user_not_logged">Inicia sesion para poder registrarte</string>
-    <string name="showEvent_button_register">REGISTRARSE</string>
+    <string name="showEvent_text_place">LEKUA:</string>
+    <string name="showEvent_text_dates">DATA:</string>
+    <string name="showEvent_text_sales">SARRERAK:</string>
+    <string name="showEvent_text_contact_number">KONTAKTUA:</string>
+    <string name="showEvent_text_webpage">LEKUAREKIN LOTURA:</string>
+    <string name="showEvent_text_creator">EGILEA:</string>
+    <string name="showEvent_text_assistants_capacity">PARTAIDEAK / KAPAZITATEA</string>
+    <string name="showEvent_text_user_not_logged">Saioa hasi erregistratu ahal izateko</string>
+    <string name="showEvent_button_register">ERREGISTRATU</string>
 
-    <string name="showEvent_text_register">Apuntarse</string>
-    <string name="showEvent_text_unregister">Desapuntarse</string>
+    <string name="showEvent_text_register">Izena eman</string>
+    <string name="showEvent_text_unregister">Irten</string>
 
-    <string name="error_event_complete">El evento esta completo, no tiene mas plazas</string>
+    <string name="error_event_complete">Ekitaldia beterik dago, es dauka tokirik</string>
     <!-- *************************************************************************************** -->
 
     <!-- SEARCH -->
     <!-- *************************************************************************************** -->
-    <string name="searchResult_text_no_events">No se han encontrado eventos</string>
-    <string name="search_text_title">Buscar eventos</string>
-    <string name="action_search_short">Search</string>
-    <string name="prompt_city_or_country">Ciudad o Pais</string>
-    <string name="prompt_date">Fecha del dia</string>
-    <string name="prompt_first_day">Fecha de inicio</string>
-    <string name="prompt_last_day">Fecha final</string>
-    <string name="search_button_search">Buscar</string>
+    <string name="searchResult_text_no_events">Ez da ekitaldirik aurkitu</string>
+    <string name="search_text_title">Ekitaldiak bilatu</string>
+    <string name="action_search_short">Bilatu</string>
+    <string name="prompt_city_or_country">Hiria edo Herria</string>
+    <string name="prompt_date">Gaurko data</string>
+    <string name="prompt_first_day">Hasiera eguna</string>
+    <string name="prompt_last_day">Bukaera eguna</string>
+    <string name="search_button_search">Bilatu</string>
     <!-- *************************************************************************************** -->
 
     <!-- SEARCH -->
     <!-- *************************************************************************************** -->
-    <string name="publish_text_publishEvent">Publicar Evento</string>
-    <string name="publish_text_publishWithWeb">"Si desea publicar un evento realicelo desde nuestra pagina web"</string>
-    <string name="publish_button_publish">Publicar</string>
+    <string name="publish_text_publishEvent">Ekitaldia Argitaratu</string>
+    <string name="publish_text_publishWithWeb">"Ekitaldirik argitaratu nahi baldin baduzu, egin ezazu gure web orriaren bidez"</string>
+    <string name="publish_button_publish">Argitaratu</string>
     <!-- *************************************************************************************** -->
 
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Nabigazio kutxa ireki</string>
+    <string name="navigation_drawer_close">Nabigazio kutxa itxi</string>
 
     <!-- Strings related to Settings -->
-    <string name="action_edit">Editar</string>
-    <string name="action_settings">Opciones</string>
-    <string name="action_log_out">Cerrar sesión</string>
-
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
-
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
-
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
-    </string-array>
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="pref_title_vibrate">Vibrate</string>
     <!-- *************************************************************************************** -->
-
+    <string name="action_edit">Aldatu</string>
+    <string name="action_settings">Aukerak</string>
+    <string name="action_log_out">Saioa itxi</string>
+    <string name="error_not_detect_location">Error, impossible to detect the location</string>
+    <string name="error_not_network">Error, Not network connected</string>
+    <string name="password_update_succesfull">Password update!!</string>
+    <!-- *************************************************************************************** -->
 </resources>

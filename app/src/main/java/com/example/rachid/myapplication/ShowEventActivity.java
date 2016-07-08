@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -160,18 +159,31 @@ public class ShowEventActivity extends AppCompatActivity {
                             public void run() {
 
                                 if ( myNetwork.isConnected() ) {
-                                    registerOrUnregisterOnEvent(asistentes);
+
+                                    if (myNetwork.isLoggedIn()) {
+
+                                        Log.i(TAG, "ENTRO A ShowEvent:sButtonRegister: SUCCESSFULLY CONNECT");
+                                        //TODO: Registramos o desgeistramos este evento al usuario
+                                        registerOrUnregisterOnEvent(asistentes);
+
+                                    } else {
+                                        myNetwork.Disconnect();
+                                        Log.i(TAG, "ENTRO A ShowEvent:sButtonRegister: DISCONNECT");
+
+                                        Log.i(TAG, "ENTRO A ShowEvent:sButtonRegister: NO_LOGGIN_IN");
+                                        hideProgressDialog();
+                                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
+                                    }
+
                                 } else {
                                     hideProgressDialog();
                                     Log.i(TAG, "ENTRO A ShowEvent:onCreate: NO_CONNECT");
                                     Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                                     hideProgressDialog();
                                 }
-
                             }
                         }, 1000);
                         // ------------------------------------------------------------------------------------
-
                     }
                     else {
                         Toast.makeText(activity, getString(R.string.error_event_complete), Toast.LENGTH_SHORT).show();
@@ -186,8 +198,6 @@ public class ShowEventActivity extends AppCompatActivity {
     // --------------------------------------------------------------------------------------------
     public void registerOrUnregisterOnEvent(final TextView asistentes) {
 
-        Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterOnEvent: LOGGED");
-
         // Inicializamos variable error a true
         MyError.setSubscribeResponse(false);
 
@@ -196,8 +206,8 @@ public class ShowEventActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 MyError.setSubscribeResponse(true);
-
                 Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: SUCCESSFULLY SUBSCRIBE");
+
                 registerOrUnregisterUserEvent(asistentes);
             }
 
@@ -208,9 +218,9 @@ public class ShowEventActivity extends AppCompatActivity {
                 myNetwork.Disconnect();
                 Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: DISCONNECT");
 
-                Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: COULD NOT SUBSCRIBE");
-                //Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                 hideProgressDialog();
+                Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: COULD NOT SUBSCRIBE");
             }
 
         });
@@ -227,9 +237,9 @@ public class ShowEventActivity extends AppCompatActivity {
                     myNetwork.Disconnect();
                     Log.i(TAG, "ENTRO A Account:loginOrSignupUser:getSubscribeResponse: DISCONNECT");
 
-                    Log.i(TAG, "ENTRO A Account:loginOrSignupUser:getSubscribeResponse: COULD NOT SUBSCRIBE");
-                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                     hideProgressDialog();
+                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "ENTRO A Account:loginOrSignupUser:getSubscribeResponse: COULD NOT SUBSCRIBE");
                 }
 
             }
@@ -247,7 +257,7 @@ public class ShowEventActivity extends AppCompatActivity {
             Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterOnEvent: USER_ARE_REGISTERED");
 
             // TODO: Des-Registrar a este usuario en este evento
-            myNetwork.unregisterUserEvent(MyState.getUser(), sEvent.getName());
+            myNetwork.unregisterUserEvent(MyState.getUser(), sEvent);
 
             // Wait 1 second
             // ----------------------------------------------------------------------------------------
@@ -260,6 +270,7 @@ public class ShowEventActivity extends AppCompatActivity {
 
                     // Eliminamos este evento al usuario (System)
                     MyState.getUser().getfestivalsAssisted().remove(sEvent.getName());
+                    Log.i(TAG, "ENTRO A ShowEvent:RegisterOrUnregisterUserEvent: FESTIVALS_ASSISTED: " + MyState.getUser().getfestivalsAssisted());
 
                     // Actualizar estado del boton
                     mButtonRegister.setBackgroundColor(getResources().getColor(R.color.VERDE));
@@ -286,7 +297,7 @@ public class ShowEventActivity extends AppCompatActivity {
             Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterOnEvent: USER_NOT_ARE_REGISTERED");
 
             // TODO: Registrar a este usuario en este evento
-            myNetwork.registerUserEvent(MyState.getUser(), sEvent.getName());
+            myNetwork.registerUserEvent(MyState.getUser(), sEvent);
 
             // Wait 1 second
             // ----------------------------------------------------------------------------------------
@@ -298,7 +309,9 @@ public class ShowEventActivity extends AppCompatActivity {
                     MyDatabase.registerUserEvent(TAG, activity, MyState.getUser(), sEvent.getName());
 
                     // Añadimos este evento al usuario (System)
-                    MyState.getUser().getfestivalsAssisted().add(sEvent.getName());
+                    //Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + MyState.getUser().getfestivalsAssisted());
+                    //MyState.getUser().getfestivalsAssisted().add(sEvent.getName());
+                    //Log.i(TAG, "ENTRO A ShowEvent:RegisterOrUnregisterUserEvent: FESTIVALS_ASSISTED_NEW: " + MyState.getUser().getfestivalsAssisted());
 
                     // Actualizar estado del boton
                     mButtonRegister.setBackgroundColor(getResources().getColor(R.color.ROJO));

@@ -170,7 +170,9 @@ public class SettingsActivity extends AppCompatActivity {
 
                                     if (myNetwork.isLoggedIn()) {
 
+                                        Log.i(TAG, "ENTRO A Settings:DialogChangePassword: SUCCESSFULLY CONNECT");
                                         // TODO: Actualizar la contraseña en la base de datos del servidor
+                                        //setPassword(MyState.getUser().getID(), mNewPassword);
                                         changePassword(mOldPassword, mNewPassword);
 
                                     } else {
@@ -183,7 +185,7 @@ public class SettingsActivity extends AppCompatActivity {
                                     }
 
                                 } else {
-                                    Log.i(TAG, "ENTRO A Profile:updateUser: COULD NOT CONNECT");
+                                    Log.i(TAG, "ENTRO A Settings:DialogChangePassword: COULD NOT CONNECT");
                                     hideProgressDialog();
                                     Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                                 }
@@ -204,6 +206,22 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     // AÑADIDO: Cambiar Contraseña
+    // --------------------------------------------------------------------------------------------
+    private void setPassword(final String userID, final String newPassword) {
+
+        myNetwork.setPassword(userID, newPassword);
+        Log.i(TAG, "ENTRO A Settings:setPassword: PASSWORD CHANGED");
+
+        myNetwork.Disconnect();
+        Log.i(TAG, "ENTRO A Settings:setPassword: DISCONNECT");
+
+        hideProgressDialog();
+        Toast.makeText(activity, getString(R.string.password_update_succesfull), Toast.LENGTH_SHORT).show();
+        Log.i(TAG, "ENTRO A Settings:changePassword: PASSWORD CHANGED");
+    }
+    // --------------------------------------------------------------------------------------------
+
+    // AÑADIDO: Cambiar Contraseña
     // -------------------------------------------------------------------------------------------------------
     private void changePassword(final String oldPassword, final String newPassword) {
 
@@ -215,26 +233,14 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String result) {
                 MyError.setChangePasswordResponse(true);
-
                 Log.i(TAG, "ENTRO A Settings:changePassword: SUCCESSFULLY: " + result);
-
-                //TODO: Obtener los datos del usuario
-                /*
-                // --------------------------------------------------------------------------------
-                String[] pieces = result.split("\"");
-                String id = pieces[3];
-                Log.i(TAG, "ENTRO A Login:loginUser:ID: " + id);
-
-                getUser(id);
-                // --------------------------------------------------------------------------------
-                */
-
-                Log.i(TAG, "ENTRO A Settings:changePassword: PASSWORD CHANGED");
 
                 myNetwork.Disconnect();
                 Log.i(TAG, "ENTRO A Settings:changePassword: DISCONNECT");
 
                 hideProgressDialog();
+                Toast.makeText(activity, getString(R.string.password_update_succesfull), Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "ENTRO A Settings:changePassword: PASSWORD CHANGED");
             }
 
             @Override
@@ -244,18 +250,9 @@ public class SettingsActivity extends AppCompatActivity {
                 myNetwork.Disconnect();
                 Log.i(TAG, "ENTRO A Settings:changePassword: DISCONNECT");
 
-                /*
-                if ((error.equals("403") && (reason.equals("User not found")))) {
-                    Toast.makeText(activity, getString(R.string.error_user_not_exists), Toast.LENGTH_LONG).show();
-                } else if ((error.equals("403") && (reason.equals("Incorrect password")))) {
-                    Toast.makeText(activity, getString(R.string.error_password_is_incorrect), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(activity, getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_LONG).show();
-                }
-                */
-
-                Log.i(TAG, "ENTRO A Settings:changePassword: COULD NOT LOGIN: " + error + " / " + reason + " / " + details);
                 hideProgressDialog();
+                Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "ENTRO A Settings:changePassword: COULD NOT LOGIN: " + error + " / " + reason + " / " + details);
             }
 
         });
@@ -266,22 +263,22 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                if (!MyError.getLoginResponse()) {
+                if (!MyError.getChangePasswordResponse()) {
                     Log.i(TAG, "ENTRO A Settings:changePassword:getChangePasswordResponse: TIMES_EXPIRED");
 
                     myNetwork.Disconnect();
                     Log.i(TAG, "ENTRO A Settings:changePassword:getChangePasswordResponse: DISCONNECT");
 
-                    Log.i(TAG, "ENTRO A Settings:changePassword:getChangePasswordResponse: COULD NOT LOGIN");
-                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                     hideProgressDialog();
+                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "ENTRO A Settings:changePassword:getChangePasswordResponse: COULD NOT LOGIN");
                 }
 
             }
         }, 5000);
         // ----------------------------------------------------------------------------------------
     }
-    // -------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------
 
     //
     private void showAlertDialogChangeLanguage() {
@@ -299,11 +296,11 @@ public class SettingsActivity extends AppCompatActivity {
         String language = Locale.getDefault().getLanguage();
         Log.i(TAG, "ENTRO A Settings:dialogChangeLanguage:LANGUAGE APP: " + language);
 
-        if (language.equals("en")) {
+        if ( language.equals("en") ) {
             itemDefaultSelect = 0;
-        } else if (language.equals("es")) {
+        } else if ( language.equals("es") ) {
             itemDefaultSelect = 1;
-        } else if (language.equals("eu")) {
+        } else if ( language.equals("eu") ) {
             itemDefaultSelect = 2;
         } else {
             itemDefaultSelect = -1; // no tiene ninguna opcion seleccionada

@@ -1,6 +1,9 @@
 package com.example.rachid.myapplication;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.support.v4.app.Fragment;
 
 import java.util.ArrayList;
@@ -20,8 +23,8 @@ public class MyNetwork {
     private Activity activity;
     private Fragment fragment;
 
+    private ProgressDialog mProgressDialog;
     private MyMeteor myMeteor;
-
 
     // *******************
     // *** CONSTRUCTOR ***
@@ -134,6 +137,15 @@ public class MyNetwork {
     }
 
     //
+    public void setPassword(String userID, String newPassword) {
+
+        // TODO: Cambia en la DB del servidor la contraseña del usuario.
+        // ---------------------------------------------------------------------------------------
+        myMeteor.setPassword(userID, newPassword);
+        // ---------------------------------------------------------------------------------------
+    }
+
+    //
     public void changePassword(String oldPassword, String newPassword, ResultListener listener) {
 
         // TODO: Cambia en la DB del servidor la contraseña del usuario.
@@ -183,20 +195,20 @@ public class MyNetwork {
     }
 
     //
-    public void registerUserEvent(User user, String nameEvent) {
+    public void registerUserEvent(User user, Event event) {
 
         // TODO: Apuntar al usuario el evento
         // ------------------------------------------------------------------------------------
-        myMeteor.registerUserEvent(user, nameEvent);
+        myMeteor.registerUserEvent(user, event);
         // ------------------------------------------------------------------------------------
     }
 
     //
-    public void unregisterUserEvent(User user, String nameEvent) {
+    public void unregisterUserEvent(User user, Event event) {
 
         // TODO: Desapuntar del usuario el evento
         // ------------------------------------------------------------------------------------
-        myMeteor.unregisterUserEvent(user, nameEvent);
+        myMeteor.unregisterUserEvent(user, event);
         // ------------------------------------------------------------------------------------
     }
     // ********************************************************************************************
@@ -270,6 +282,33 @@ public class MyNetwork {
         }
 
         return list;
+    }
+    // ********************************************************************************************
+
+    // GENERIC METHODS
+    // ********************************************************************************************
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(activity);
+            mProgressDialog.setMessage(activity.getString(R.string.loading));
+        }
+        mProgressDialog.show();
+        mProgressDialog.setCancelable(false);
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.hide();
+        }
+    }
+    // ********************************************************************************************
+
+    // STATIC METHODS
+    // ********************************************************************************************
+    //
+    public static boolean isNetworkConnected(Activity activity) {
+        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
     // ********************************************************************************************
 }

@@ -2,6 +2,7 @@ package com.example.rachid.myapplication;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -14,6 +15,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 /**
  * Created by Rachid on 13/04/2016.
@@ -38,6 +43,11 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
     // --------------------------------------------------------------------------------------------
 
     private boolean doubleBackToExitPressedOnce = false;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +64,7 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
         // ----------------------------------------------------------------------------------------
         if (MyState.getLoged()) { // Si el usuario esta con sesion iniciada, cargamos el nav_header_login
             myMenu.loadHeaderLogin();
-        }
-        else if (MyState.getExistsLocation()) {
+        } else if (MyState.getExistsLocation()) {
             myMenu.loadHeaderLocation();
         }
         // ----------------------------------------------------------------------------------------
@@ -81,12 +90,12 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
         int NumOfTabs = 3;
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        mViewPageAdapter =  new ViewPagerAdapter(getSupportFragmentManager(), Titles, NumOfTabs);
+        mViewPageAdapter = new ViewPagerAdapter(getSupportFragmentManager(), Titles, NumOfTabs);
 
         // Assigning ViewPager View and setting the adapter
         mViewPager = (ViewPager) findViewById(R.id.events_viewpager);
         mViewPager.setAdapter(mViewPageAdapter);
-        mViewPager.setCurrentItem(1); // 0 = Publish, 1 = Events, 3 = Registered, windows for default
+        mViewPager.setCurrentItem(1); // 0 = Publish, 1 = Events, 3 = Registered, z
 
         // Assiging the Sliding Tab Layout View
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.events_slidingtabs);
@@ -115,12 +124,15 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
             public void onPageSelected(int position) {
                 // TODO Auto-generated method stub
                 switch (position) {
-                    case 0: setTitle(getString(R.string.title_activity_published));
-                            break;
-                    case 1: setTitle(getString(R.string.title_activity_events));
-                            break;
-                    case 2: setTitle(getString(R.string.title_activity_registered));
-                            break;
+                    case 0:
+                        setTitle(getString(R.string.title_activity_published));
+                        break;
+                    case 1:
+                        setTitle(getString(R.string.title_activity_events));
+                        break;
+                    case 2:
+                        setTitle(getString(R.string.title_activity_registered));
+                        break;
                 }
             }
 
@@ -135,6 +147,9 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
             }
         });
         //-----------------------------------------------------------------------------------------
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     //AÑADIDO MENU
@@ -188,6 +203,46 @@ public class EventsActivity extends AppCompatActivity implements NavigationView.
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Events Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.rachid.myapplication/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Events Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.rachid.myapplication/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
     //-----------------------------------------------------------------------------------------
 }

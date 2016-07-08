@@ -287,13 +287,28 @@ public class MyMeteor implements MeteorCallback {
         data.put("userId", userId);
         data.put("newUsername", newUsername);
 
-        mMeteor.call("update", new Object[]{ data });
+        mMeteor.call("update", new Object[]{data});
+    }
+
+    //
+    public void setPassword(final String userID, final String newPassword) {
+
+        if ( (userID == null) || (newPassword == null) ) {
+            throw new IllegalArgumentException("You must provide either a userID and Password");
+        }
+
+        final Map<String, Object> data = new HashMap<String, Object>();
+        data.put("userID", userID);
+        data.put("newPassword", newPassword);
+        //data.put("logout", false);
+
+        mMeteor.call("setPassword", new Object[]{ data });
     }
 
     //
     public void changePassword(final String oldPassword, final String newPassword, ResultListener listener) {
         if ( (oldPassword == null) || (newPassword == null) ) {
-            throw new IllegalArgumentException("You must provide either a Passwords");
+            throw new IllegalArgumentException("You must provide either a oldPassword and newPassword");
         }
 
         final Map<String, Object> authData = new HashMap<String, Object>();
@@ -647,35 +662,103 @@ public class MyMeteor implements MeteorCallback {
     }
 
     //
-    public void registerUserEvent(User user, String nameEvent) {
+    public void registerUserEvent(final User mUser, final Event mEvent) {
 
-        // Get ID of user that update
+        // UPDATE USER
+        // ****************************************************************************************
+        // QUERY: ID of user to update
         Map<String, Object> query = new HashMap<String, Object>();
-        query.put("_id", user.getID());
+        query.put("_id", mUser.getID());
 
-        // Updating user into a collection "Users"
-        Map<String, Object> values = new HashMap<String, Object>();
-        ArrayList festivales_asistidos = user.getfestivalsAssisted();
-        festivales_asistidos.add(nameEvent);
-        values.put("festivals_assisted", festivales_asistidos);
+        // Use the command "$set" for each value
+        Map<String, Object> set = new HashMap<String, Object>();
 
-        mMeteor.update(Users, query, values);
+        // Updating festivals_assisted into a collection "Users"
+        Map<String, Object> value = new HashMap<String, Object>();
+
+        ArrayList festivales_asistidos = mUser.getfestivalsAssisted();
+        Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + festivales_asistidos);
+        festivales_asistidos.add(mEvent.getName());
+        Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_NEW: " + festivales_asistidos);
+
+        value.put("festivals_assisted", festivales_asistidos);
+
+        set.put("$set", value);
+
+        mMeteor.update(Users, query, set);
+        // ****************************************************************************************
+
+        // UPDATE EVENT
+        // ****************************************************************************************
+        // QUERY: NAME of event to update
+        query = new HashMap<String, Object>();
+        query.put("_id", mEvent.getID());
+
+        // Use the command "$set" for each value
+        set = new HashMap<String, Object>();
+
+        // Updating assistants into a collection "Festivales"
+        value = new HashMap<String, Object>();
+
+        int assistants = mEvent.getAssistants() ;
+        assistants = assistants + 1;
+        value.put("assistants", assistants);
+        Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: ASSISTANTS: " + assistants);
+
+        set.put("$set", value);
+
+        mMeteor.update(Events, query, set);
+        // ****************************************************************************************
     }
 
     //
-    public void unregisterUserEvent(User user, String nameEvent) {
+    public void unregisterUserEvent(final User mUser, final Event mEvent) {
 
+        // UPDATE EVENT
+        // ****************************************************************************************
         // Get ID of user that update
         Map<String, Object> query = new HashMap<String, Object>();
-        query.put("_id", user.getID());
+        query.put("_id", mUser.getID());
 
-        // Updating user into a collection "Users"
-        Map<String, Object> values = new HashMap<String, Object>();
-        ArrayList festivales_asistidos = user.getfestivalsAssisted();
-        festivales_asistidos.remove(nameEvent);
-        values.put("festivals_assisted", festivales_asistidos);
+        // Use the command "$set" for each value
+        Map<String, Object> set = new HashMap<String, Object>();
 
-        mMeteor.update(Users, query, values);
+        // Updating festials_assisted into a collection "Users"
+        Map<String, Object> value = new HashMap<String, Object>();
+
+        ArrayList festivales_asistidos = mUser.getfestivalsAssisted();
+        Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + festivales_asistidos);
+        festivales_asistidos.remove(mEvent.getName());
+        Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_NEW: " + festivales_asistidos);
+
+        value.put("festivals_assisted", festivales_asistidos);
+
+        set.put("$set", value);
+
+        mMeteor.update(Users, query, set);
+        // ****************************************************************************************
+
+        // UPDATE EVENT
+        // ****************************************************************************************
+        // QUERY: NAME of event to update
+        query = new HashMap<String, Object>();
+        query.put("_id", mEvent.getID());
+
+        // Use the command "$set" for each value
+        set = new HashMap<String, Object>();
+
+        // Updating assistants into a collection "Festivales"
+        value = new HashMap<String, Object>();
+
+        int assistants = mEvent.getAssistants();
+        assistants = assistants - 1;
+        value.put("assistants", assistants);
+        Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: ASSISTANTS: " + assistants);
+
+        set.put("$set", value);
+
+        mMeteor.update(Events, query, set);
+        // ****************************************************************************************
     }
     // ********************************************************************************************
 

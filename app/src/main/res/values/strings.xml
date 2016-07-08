@@ -112,6 +112,16 @@
     <string name="text_female">Mujer</string>
     <string name="text_other">Otro</string>
 
+    <string name="text_music_styles">Music Styles</string>
+    <string name="text_music_rock">Rock</string>
+    <string name="text_music_jazz">Jazz</string>
+    <string name="text_music_rap">Rap</string>
+    <string name="text_music_pop">Pop</string>
+    <string name="text_music_classic">Classic</string>
+    <string name="text_music_alternative">Alternative</string>
+    <string name="text_music_dance">Dance</string>
+    <string name="text_music_other">Other</string>
+
     <string name="text_spain">Español</string>
     <string name="text_english">Ingles</string>
     <string name="text_basque">Euskera</string>
@@ -149,6 +159,8 @@
     <string name="prompt_old_password">Contraseña actual</string>
     <string name="prompt_new_password">Nueva contraseña</string>
     <string name="prompt_repeat_new_password">Repetir nueva contraseña</string>
+
+    <string name="password_update_succesfull">Password update!!</string>
     <!-- *************************************************************************************** -->
 
     <!-- TOOLBAR TabLayout -->
@@ -188,7 +200,15 @@
     <!-- *************************************************************************************** -->
     <string name="button_use_my_current_location">Usar mi propia localización</string>
     <string name="text_popular_location">Localizaciónes mas populares</string>
+
+    <string name="error_not_detect_location">Error, impossible to detect the location</string>
     <!-- *************************************************************************************** -->
+
+    <!-- NETWORK -->
+    <!-- *************************************************************************************** -->
+    <string name="error_not_network">Error, Not network connected</string>
+    <!-- *************************************************************************************** -->
+
 
     <!--AÑADIDO: FACEBOOK y GOOGLE-->
     <!-- *************************************************************************************** -->
@@ -250,4 +270,69 @@
     <string name="action_settings">Opciones</string>
     <string name="action_log_out">Cerrar sesión</string>
     <!-- *************************************************************************************** -->
+
+
+    <!-- CONFIGURATIONS -->
+    <!-- *************************************************************************************** -->
+    <!-- *************************************************************************************** -->
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+    <!-- *************************************************************************************** -->
+    <!-- *************************************************************************************** -->
+
+
 </resources>

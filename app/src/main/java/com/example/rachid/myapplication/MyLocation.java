@@ -3,7 +3,6 @@ package com.example.rachid.myapplication;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -12,7 +11,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -32,6 +30,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 /**
  * Created by Rachid on 14/04/2016.
  */
@@ -45,8 +45,6 @@ public abstract class MyLocation {
     private static GoogleApiClient mGoogleApiClient;
     private static LocationManager locationManager;
     private static LocationListener locationListener;
-
-    private static boolean obtainedLocation = false;
 
     private static ProgressDialog mProgressDialog;
 
@@ -141,7 +139,8 @@ public abstract class MyLocation {
 
         Log.i(TAG, "ENTRO A M:getLocation:0");
 
-        locationManager = (LocationManager) activity.getSystemService(activity.getApplicationContext().LOCATION_SERVICE);
+        activity.getApplicationContext();
+        locationManager = (LocationManager) activity.getSystemService(LOCATION_SERVICE);
 
         if ( locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) { // Si esta activo el GPS
 
@@ -170,7 +169,7 @@ public abstract class MyLocation {
                                 if (city != null) {
                                     Log.i(TAG, "ENTRO A M:getLocation:MYSTATE_LOCATION: " + MyState.getUser().getLocation());
 
-                                    if(!city.equals(MyState.getUser().getLocation())) {
+                                    if( !city.equals(MyState.getUser().getLocation()) ) {
                                         Log.i(TAG, "ENTRO A M:getLocation:5");
                                         MyDatabase.insertLocation(TAG, activity, city);
 
@@ -189,25 +188,21 @@ public abstract class MyLocation {
                                         // --------------------------------------------------------------------------------
                                         MyState.setExistsLocation(true); // Esto despues del bloque de arriba ...
                                     }
-                                    obtainedLocation = true;
-                                }
 
-                                endTime(); // Cancelamos la espera max de 15 seg
+                                    endTime(); // Cancelamos la espera max de 15 seg
 
-                                if (mGoogleApiClient != null) {
-                                    mGoogleApiClient.disconnect();
-                                }
+                                    if (mGoogleApiClient != null) {
+                                        mGoogleApiClient.disconnect();
+                                    }
 
-                                PackageManager packageManager = activity.getApplicationContext().getPackageManager();
-                                if (packageManager.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
-                                        activity.getApplicationContext().getPackageName()) == PackageManager.PERMISSION_GRANTED) {
-                                    locationManager.removeUpdates(locationListener);
-                                }
+                                    PackageManager packageManager = activity.getApplicationContext().getPackageManager();
+                                    if (packageManager.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
+                                            activity.getApplicationContext().getPackageName()) == PackageManager.PERMISSION_GRANTED) {
+                                        locationManager.removeUpdates(locationListener);
+                                    }
 
-                                hideProgressDialog();
-                                if (obtainedLocation) {
+                                    hideProgressDialog();
                                     if (EventsActivity.activity != null) {
-
                                         EventsActivity.activity.finish();
                                         activity.startActivity(new Intent(activity, EventsActivity.class));
                                         activity.finish();
@@ -217,8 +212,6 @@ public abstract class MyLocation {
                                         activity.startActivity(new Intent(activity, EventsActivity.class));
                                         activity.finish();
                                     }
-                                } else {
-                                    Toast.makeText(activity.getBaseContext(), "Impossible to detect the location", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
@@ -241,7 +234,7 @@ public abstract class MyLocation {
             };
 
             String locationProvider;
-            if ( isNetworkConnected() ) { // Si la red esta activa
+            if ( MyNetwork.isNetworkConnected(activity) ) { // Si la red esta activa
                 // Use NETWORK location data:
                 locationProvider = LocationManager.NETWORK_PROVIDER;
                 Log.i(TAG, "ENTRO A M:BUSCANDO_POR_RED");
@@ -262,15 +255,9 @@ public abstract class MyLocation {
                 }
 
                 hideProgressDialog();
-                Toast.makeText(activity.getBaseContext(), "Not network connected, impossible to detect the location", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, activity.getString(R.string.error_not_network), Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    //
-    private static boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
     }
 
     //
@@ -278,6 +265,10 @@ public abstract class MyLocation {
         mGoogleApiClient.disconnect();
     }
 
+    // **********
+    // FUNTIONS
+    // **********
+    // -------------------------------------------------------------------------------------------------
     //
     private static void showProgressDialog() {
         mProgressDialog = new ProgressDialog(activity);
@@ -316,7 +307,7 @@ public abstract class MyLocation {
                 }
 
                 hideProgressDialog();
-                Toast.makeText(activity.getBaseContext(), "Impossible to detect the location", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity.getBaseContext(), activity.getString(R.string.error_not_detect_location), Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -328,4 +319,5 @@ public abstract class MyLocation {
     private static void endTime() {
         handler.removeCallbacks(runnable);
     }
+    // -------------------------------------------------------------------------------------------------
 }

@@ -26,8 +26,8 @@ public class User implements Serializable {
     private String google_id;
     private String facebook_id;
 
-    private ArrayList festivalsCreated;
-    private ArrayList festivalsAssisted;
+    private ArrayList<String> festivalsCreated;
+    private ArrayList<String> festivalsAssisted;
 
     private String location;
 

@@ -219,7 +219,7 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
         }
 
         // Check for a valid password, if the user entered one.
-        if ( (!TextUtils.isEmpty(password)) && (!isPasswordValid(password)) ) {
+        if ( (TextUtils.isEmpty(password)) || (!isPasswordValid(password)) ) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -236,38 +236,41 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
 
             Log.i(TAG, "ENTRO A Login:attemptLogin:3");
 
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgressDialog();
-            ///mAuthTask = new UserLoginTask(email, password);
-            //mAuthTask.execute((Void) null);
+            if ( MyNetwork.isNetworkConnected(activity) ) {
+                showProgressDialog();
+                ///mAuthTask = new UserLoginTask(email, password);
+                //mAuthTask.execute((Void) null);
 
-            // LOGIN USER
-            // ------------------------------------------------------------------------------------
-            myNetwork = new MyNetwork(TAG, activity);
-            myNetwork.Connect();
+                // LOGIN USER
+                // ------------------------------------------------------------------------------------
+                myNetwork = new MyNetwork(TAG, activity);
+                myNetwork.Connect();
 
-            // Wait 1 second to Connect
-            // ----------------------------------------------------------------------------------------
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+                // Wait 1 second to Connect
+                // ----------------------------------------------------------------------------------------
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                    if (myNetwork.isConnected()) {
+                        if (myNetwork.isConnected()) {
 
-                        Log.i(TAG, "ENTRO A Login:attemptLogin: SUCCESSFULLY CONNECT");
-                        //TODO: Logear al usuario si es que esta cuenta existe en la DB del servidor
-                        loginUser(email, password);
+                            Log.i(TAG, "ENTRO A Login:attemptLogin: SUCCESSFULLY CONNECT");
+                            //TODO: Logear al usuario si es que esta cuenta existe en la DB del servidor
+                            loginUser(email, password);
 
-                    } else {
-                        Log.i(TAG, "ENTRO A Login:attemptLogin: COULD NOT CONNECT");
-                        Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                        hideProgressDialog();
+                        } else {
+                            Log.i(TAG, "ENTRO A Login:attemptLogin: COULD NOT CONNECT");
+                            Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                            hideProgressDialog();
+                        }
+
                     }
-
-                }
-            }, 1000);
-            // ----------------------------------------------------------------------------------------
+                }, 1000);
+                // ----------------------------------------------------------------------------------------
+            } else {
+                Log.i(TAG, "ENTRO A Login:attemptLogin:Connect: ERROR_NETWORK");
+                Toast.makeText(activity, getString(R.string.error_not_network), Toast.LENGTH_SHORT).show();
+            }
 
             /*
             myNetwork.Connect(new ResultListener() {
