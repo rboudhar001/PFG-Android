@@ -1,6 +1,5 @@
 package com.example.rachid.myapplication;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -31,6 +31,8 @@ public class TabEvents extends Fragment {
     private ArrayList<Event> listViewValues;
 
     private TextView mNoEventsView;
+    private Button mButtonRetry;
+
     //private ProgressDialog mProgressDialog;
     private ProgressBar mProgressBar;
 
@@ -38,8 +40,8 @@ public class TabEvents extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.tab_events, container, false);
 
+        final View view = inflater.inflate(R.layout.tab_events, container, false);
         fragment = this;
 
         Log.i(TAG, "ENTRO A TabEvents:onCreateView: CREATE_NEW_INSTANCE");
@@ -47,7 +49,18 @@ public class TabEvents extends Fragment {
         // ----------------------------------------------------------------------------------------
         mProgressBar = (ProgressBar) view.findViewById(R.id.tabEvents_progress);
         mNoEventsView = (TextView) view.findViewById(R.id.tabEvents_text_no_events);
+        mButtonRetry = (Button) view.findViewById(R.id.tabEvents_button_retry);
         mListView = (ListView) view.findViewById(R.id.tabEvents_listView_events);
+
+        //AÑADIDO: BUTTON_USE_LOCATION
+        // ----------------------------------------------------------------------------------------
+        mButtonRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fragment.getActivity().recreate();
+            }
+        });
+        // ----------------------------------------------------------------------------------------
 
         final Resources res = getResources();
 
@@ -103,100 +116,75 @@ public class TabEvents extends Fragment {
 
         // Connect and Get data from Server
         // ----------------------------------------------------------------------------------------
-        showProgressDialog();
-        myNetwork = new MyNetwork(TAG, fragment);
-        myNetwork.Connect();
+        if ( MyNetwork.isNetworkConnected(fragment.getActivity()) ) {
 
-        // Wait 1 sec to Connect
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+            myNetwork = new MyNetwork(TAG, fragment);
+            showProgressDialog();
+            myNetwork.Connect();
 
-                if ( myNetwork.isConnected() ) {
+            // Wait 1 sec to Connect
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
 
-                    if ( myNetwork.isLoggedIn() ) {
+                    if ( myNetwork.isConnected() ) {
 
-                        listViewValues = myNetwork.getAllEvents(MyState.getUser().getLocation());
-                        Log.i(TAG, "ENTRO A TabEvents:onCreateView: GET_EVENTS_SUCCESFULL");
+                        if ( myNetwork.isLoggedIn() ) {
 
-                        myNetwork.Disconnect();
-                        Log.i(TAG, "ENTRO A TabEvents:onCreateView: DISCONNECT");
+                            listViewValues = myNetwork.getAllEvents(MyState.getUser().getLocation());
+                            Log.i(TAG, "ENTRO A TabEvents:onCreateView: GET_EVENTS_SUCCESFULL");
 
-                        hideProgressDialog();
-                        // ----------------------------------------------------------------------------------------
+                            myNetwork.Disconnect();
+                            Log.i(TAG, "ENTRO A TabEvents:onCreateView: DISCONNECT");
 
-                        if (listViewValues == null) {
-                            Log.i(TAG, "ENTRO A TabEvents:onCreateView:listViewValues: NULL");
-                            listViewValues = new ArrayList<>();
+                            hideProgressDialog();
+                            // ----------------------------------------------------------------------------------------
+
+                            if (listViewValues == null) {
+                                Log.i(TAG, "ENTRO A TabEvents:onCreateView:listViewValues: NULL");
+                                listViewValues = new ArrayList<>();
+                            }
+
+                            if ( !listViewValues.isEmpty() ) {
+                                Log.i(TAG, "ENTRO A TabEvents:onCreateView:listViewValues: NO_EMPTY");
+                                mNoEventsView.setVisibility(View.INVISIBLE);
+                                mButtonRetry.setVisibility(View.INVISIBLE);
+                                mListView.setVisibility(View.VISIBLE);
+
+                            } else {
+                                Log.i(TAG, "ENTRO A TabEvents:onCreateView:listViewValues: EMPTY");
+                                mNoEventsView.setVisibility(View.VISIBLE);
+                                mButtonRetry.setVisibility(View.VISIBLE);
+                                mListView.setVisibility(View.INVISIBLE);
+
+                            }
+
+                            //Log.i(TAG, "ENTRO A TabEvents:onCreateView:FRAGMENT.ACTIVITY: " + fragment.getActivity());
+                            //Log.i(TAG, "ENTRO A TabEvents:onCreateView:ACTIVITY: " + EventsActivity.activity);
+                            //adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
+                            adapter = new EventsAdapter(TAG, EventsActivity.activity, listViewValues, res);
+                            mListView.setAdapter(adapter);
+
+                        }
+                        else {
+                            Log.i(TAG, "ENTRO A TabEvents:onCreateView: NO_LOGGIN_IN");
+                            Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
+                            hideProgressDialog();
                         }
 
-                        if (!listViewValues.isEmpty()) {
-
-                            Log.i(TAG, "ENTRO A TabEvents:onCreateView:listViewValues: NO_EMPTY");
-
-                            mNoEventsView.setVisibility(View.INVISIBLE);
-                            mListView.setVisibility(View.VISIBLE);
-                        } else {
-
-                            Log.i(TAG, "ENTRO A TabEvents:onCreateView:listViewValues: EMPTY");
-
-                            mNoEventsView.setVisibility(View.VISIBLE);
-                            mListView.setVisibility(View.INVISIBLE);
-                        }
-
-                        //Log.i(TAG, "ENTRO A TabEvents:onCreateView:FRAGMENT.ACTIVITY: " + fragment.getActivity());
-                        //Log.i(TAG, "ENTRO A TabEvents:onCreateView:ACTIVITY: " + EventsActivity.activity);
-                        //adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
-                        adapter = new EventsAdapter(TAG, EventsActivity.activity, listViewValues, res);
-                        mListView.setAdapter(adapter);
-
-                    }
-                    else {
-                        Log.i(TAG, "ENTRO A TabEvents:onCreateView: NO_LOGGIN_IN");
-                        Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.i(TAG, "ENTRO A TabEvents:onCreateView: NO_CONNECT");
+                        Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                         hideProgressDialog();
                     }
 
-                } else {
-                    Log.i(TAG, "ENTRO A TabEvents:onCreateView: NO_CONNECT");
-                    Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
-                    hideProgressDialog();
                 }
-
-            }
-        }, 1000);
-        // ----------------------------------------------------------------------------------------
-
-
-        /*
-        startTime(10); //10 seg
-        while ( (!myNetwork.isConnected()) || (!myNetwork.isLoggedIn()) ) { // durante 10 seg
-            SystemClock.sleep(1000);
+            }, 1000);
+            // ----------------------------------------------------------------------------------------
+        } else {
+            Log.i(TAG, "ENTRO A Profile:connectAndDo:Connect: ERROR_NETWORK");
+            Toast.makeText(fragment.getContext(), getString(R.string.error_not_network), Toast.LENGTH_SHORT).show();
         }
-        endTime();
-
-        listViewValues = myNetwork.getAllEvents(MyState.getUser().getLocation());
-        myNetwork.Disconnect();
-        hideProgressDialog();
-        // ----------------------------------------------------------------------------------------
-
-        if (listViewValues == null) {
-            listViewValues = new ArrayList<>();
-        }
-
-        TextView mNoEventsView = (TextView) view.findViewById(R.id.tabEvents_text_no_events);
-        if (!listViewValues.isEmpty()) {
-            mNoEventsView.setVisibility(View.INVISIBLE);
-            mListView.setVisibility(View.VISIBLE);
-        }
-        else {
-            mNoEventsView.setVisibility(View.VISIBLE);
-            mListView.setVisibility(View.INVISIBLE);
-        }
-
-        adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
-        mListView.setAdapter(adapter);
-        */
 
         return view;
     }
@@ -224,6 +212,7 @@ public class TabEvents extends Fragment {
     private void showProgressDialog() {
         mProgressBar.setVisibility(View.VISIBLE);
         mNoEventsView.setVisibility(View.INVISIBLE);
+        mButtonRetry.setVisibility(View.INVISIBLE);
         mListView.setVisibility(View.INVISIBLE);
     }
 

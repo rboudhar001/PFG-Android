@@ -1,7 +1,6 @@
 package com.example.rachid.myapplication;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -52,7 +51,6 @@ public class ShowEventActivity extends AppCompatActivity {
     private Button mButtonRegister;
     // --------------------------------------------------------------------------------------------
 
-    private ProgressDialog mProgressDialog;
     private MyNetwork myNetwork;
 
     @Override
@@ -111,22 +109,16 @@ public class ShowEventActivity extends AppCompatActivity {
         mCapacityView.setText("" + sEvent.getCapacity());
         // ----------------------------------------------------------------------------------------
 
-        // AÑADIDO: BUTTON LISTENER
-        // ----------------------------------------------------------------------------------------
+        // AÑADIDO: BUTTON
+        // ****************************************************************************************
         mUserNotLoggedView = (TextView) findViewById(R.id.showEvent_text_user_not_logged);
         mButtonRegister = (Button) findViewById(R.id.showEvent_button_register);
 
+        // ESTADO
+        // ---------------------------------------------------------------------------------------
         if (MyState.getLoged()) { // Si el usuario esta logeado
 
-            // Darle estilo al boton "Apuntarse" o "Desapuntarse" segun si esta o no registrado el usuario a este evento
-            if (thisUserRegisteredInThisEvent()) {
-                mButtonRegister.setBackgroundColor( getResources().getColor(R.color.ROJO) );
-                mButtonRegister.setText(getString(R.string.showEvent_text_unregister));
-            }
-            else {
-                mButtonRegister.setBackgroundColor( getResources().getColor(R.color.VERDE) );
-                mButtonRegister.setText(getString(R.string.showEvent_text_register));
-            }
+            connectAndDo("getFestivalsAssisted", null);
 
             // NO mostrar mensaje y habilitar boton
             mUserNotLoggedView.setVisibility(View.INVISIBLE);
@@ -138,65 +130,70 @@ public class ShowEventActivity extends AppCompatActivity {
             mButtonRegister.setActivated(false);
             mButtonRegister.setEnabled(false);
         }
+        // ---------------------------------------------------------------------------------------
 
+        // LISTENER
+        // ---------------------------------------------------------------------------------------
         mButtonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if (MyState.getLoged()) {
-                    if (sEvent.getAssistants() < sEvent.getCapacity()) {
-
-                        showProgressDialog();
-                        myNetwork = new MyNetwork(TAG, activity);
-                        myNetwork.Connect();
-
-                        final TextView asistentes = mAssistantsView;
-
-                        // Wait 1 seconds to Connect
-                        // ------------------------------------------------------------------------------------
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                if ( myNetwork.isConnected() ) {
-
-                                    if (myNetwork.isLoggedIn()) {
-
-                                        Log.i(TAG, "ENTRO A ShowEvent:sButtonRegister: SUCCESSFULLY CONNECT");
-                                        //TODO: Registramos o desgeistramos este evento al usuario
-                                        registerOrUnregisterOnEvent(asistentes);
-
-                                    } else {
-                                        myNetwork.Disconnect();
-                                        Log.i(TAG, "ENTRO A ShowEvent:sButtonRegister: DISCONNECT");
-
-                                        Log.i(TAG, "ENTRO A ShowEvent:sButtonRegister: NO_LOGGIN_IN");
-                                        hideProgressDialog();
-                                        Toast.makeText(getBaseContext(), getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
-                                    }
-
-                                } else {
-                                    hideProgressDialog();
-                                    Log.i(TAG, "ENTRO A ShowEvent:onCreate: NO_CONNECT");
-                                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                                    hideProgressDialog();
-                                }
-                            }
-                        }, 1000);
-                        // ------------------------------------------------------------------------------------
-                    }
-                    else {
-                        Toast.makeText(activity, getString(R.string.error_event_complete), Toast.LENGTH_SHORT).show();
-                    }
+                    final TextView asistentes = mAssistantsView;
+                    connectAndDo("registerOrUnregister", asistentes);
                 }
             }
         });
         // ----------------------------------------------------------------------------------------
+        // ****************************************************************************************
     }
 
-    // AÑADIDO: Caso de uso "Apuntarse" o "Desapuntarse"
-    // --------------------------------------------------------------------------------------------
-    public void registerOrUnregisterOnEvent(final TextView asistentes) {
+    public void connectAndDo(final String hacer, final TextView asistentes) {
+
+        if ( MyNetwork.isNetworkConnected(activity) ) {
+
+            myNetwork = new MyNetwork(TAG, activity);
+            myNetwork.showProgressDialog();
+            myNetwork.Connect();
+
+            // Wait 1 seconds to Connect
+            // -----------------------------------------------------------------------------------
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    if ( myNetwork.isConnected() ) {
+
+                        if (myNetwork.isLoggedIn()) {
+                            Log.i(TAG, "ENTRO A ShowEvent:sButtonRegister: SUCCESSFULLY CONNECT");
+
+                            subscribeAndDo(hacer, asistentes);
+
+                        } else {
+                            myNetwork.Disconnect();
+                            Log.i(TAG, "ENTRO A ShowEvent:sButtonRegister: DISCONNECT");
+
+                            myNetwork.hideProgressDialog();
+                            Toast.makeText(getBaseContext(), getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
+                            Log.i(TAG, "ENTRO A ShowEvent:sButtonRegister: NO_LOGGIN_IN");
+                        }
+
+                    } else {
+                        myNetwork.hideProgressDialog();
+                        Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "ENTRO A ShowEvent:onCreate: NO_CONNECT");
+                    }
+                }
+            }, 1000);
+            // -----------------------------------------------------------------------------------
+
+        } else {
+            Log.i(TAG, "ENTRO A Profile:connectAndDo:Connect: ERROR_NETWORK");
+            Toast.makeText(activity, getString(R.string.error_not_network), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void subscribeAndDo(final String hacer, final TextView asistentes) {
 
         // Inicializamos variable error a true
         MyError.setSubscribeResponse(false);
@@ -208,7 +205,35 @@ public class ShowEventActivity extends AppCompatActivity {
                 MyError.setSubscribeResponse(true);
                 Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: SUCCESSFULLY SUBSCRIBE");
 
-                registerOrUnregisterUserEvent(asistentes);
+                // Obtenermos al usuario del servidor
+                final User userServer = myNetwork.getUserWithId(MyState.getUser().getID());
+
+                // Wait 1 seconds
+                // ----------------------------------------------------------------------------------------
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Actualizamos el usuario en la DB
+                        MyDatabase.updateUser(TAG, activity, userServer);
+                        // Actualizamos el usuario en el Sistema
+                        MyState.setUser(userServer);
+
+                        if ( hacer.equals("getFestivalsAssisted") ) {
+                            //Actualizamos la ventana con el estado del boton
+                            updateButton();
+                            myNetwork.hideProgressDialog();
+
+                        } else if ( hacer.equals("registerOrUnregister") ) {
+                            //Registramos o des-registramos del usuario este evento
+                            registerOrUnregisterUserEvent(userServer, asistentes);
+
+                        } else {
+                            throw new IllegalArgumentException("ShowEvent:SubscribeAndDo: It is not detected method");
+                        }
+
+                    }
+                }, 1000);
+                // ----------------------------------------------------------------------------------------
             }
 
             @Override
@@ -216,125 +241,192 @@ public class ShowEventActivity extends AppCompatActivity {
                 MyError.setSubscribeResponse(true);
 
                 myNetwork.Disconnect();
-                Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: DISCONNECT");
+                Log.i(TAG, "ENTRO A ShowEvent:Subscribe: DISCONNECT");
 
-                hideProgressDialog();
+                myNetwork.hideProgressDialog();
                 Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: COULD NOT SUBSCRIBE");
+                Log.i(TAG, "ENTRO A ShowEvent:Subscribe: COULD NOT SUBSCRIBE");
             }
 
         });
 
-        // Wait 6 seconds, si no responde en este tiempo, cerrar.
+        // Wait 5 seconds, si no responde en este tiempo, cerrar.
         // ------------------------------------------------------------------------------------
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
-                if ( !MyError.getSubscribeResponse() ) {
-                    Log.i(TAG, "ENTRO A Account:loginOrSignupUser:getSubscribeResponse: TIMES_EXPIRED");
+                if (!MyError.getSubscribeResponse()) {
+                    Log.i(TAG, "ENTRO A ShowEvent:Subscribe:getSubscribeResponse: TIMES_EXPIRED");
 
                     myNetwork.Disconnect();
-                    Log.i(TAG, "ENTRO A Account:loginOrSignupUser:getSubscribeResponse: DISCONNECT");
+                    Log.i(TAG, "ENTRO A ShowEvent:Subscribe:getSubscribeResponse: DISCONNECT");
 
-                    hideProgressDialog();
+                    myNetwork.hideProgressDialog();
                     Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "ENTRO A Account:loginOrSignupUser:getSubscribeResponse: COULD NOT SUBSCRIBE");
+                    Log.i(TAG, "ENTRO A ShowEvent:Subscribe:getSubscribeResponse: COULD NOT SUBSCRIBE");
                 }
 
             }
-        }, 6000);
+        }, 5000);
         // ------------------------------------------------------------------------------------
     }
-    // --------------------------------------------------------------------------------------------
 
-    // AÑADIDO: FUNCIONES
+    //
+    public void updateButton() {
+
+        // Darle estilo al boton "Apuntarse" o "Desapuntarse" segun si esta o no registrado el usuario a este evento
+        if ( thisUserRegisteredInThisEvent() ) {
+            mButtonRegister.setBackgroundColor(getResources().getColor(R.color.ROJO));
+            mButtonRegister.setText(getString(R.string.showEvent_text_unregister));
+        }
+        else {
+            mButtonRegister.setBackgroundColor(getResources().getColor(R.color.VERDE));
+            mButtonRegister.setText(getString(R.string.showEvent_text_register));
+        }
+    }
+
+    // AÑADIDO: Caso de uso "Apuntarse" o "Desapuntarse"
     // --------------------------------------------------------------------------------------------
     //
-    public void registerOrUnregisterUserEvent(final TextView asistentes) {
+    public void registerOrUnregisterUserEvent(final User userServer, final TextView asistentes) {
 
-        if (thisUserRegisteredInThisEvent()) {
+        String button_state = mButtonRegister.getText().toString();
+
+        if ( thisUserRegisteredInThisEvent() ) {
             Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterOnEvent: USER_ARE_REGISTERED");
 
-            // TODO: Des-Registrar a este usuario en este evento
-            myNetwork.unregisterUserEvent(MyState.getUser(), sEvent);
+            // Comprobar posible error: por si el usuario se ha desapuntado desde la pagina web y no se ha cambiado el estado del boton en el transcurso
+            if ( TextUtils.equals(button_state, getString(R.string.showEvent_text_unregister)) ) { // Si el boton es igual a des-registrarse
 
-            // Wait 1 second
-            // ----------------------------------------------------------------------------------------
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+                // TODO: Des-Registrar a este usuario en este evento
+                myNetwork.unregisterUserEvent(userServer, sEvent);
 
-                    // Eliminamos este evento al usuario (DB Local)
-                    MyDatabase.unregisterUserEvent(TAG, activity, MyState.getUser(), sEvent.getName());
+                // Wait 1 second
+                // --------------------------------------------------------------------------------
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                    // Eliminamos este evento al usuario (System)
-                    MyState.getUser().getfestivalsAssisted().remove(sEvent.getName());
-                    Log.i(TAG, "ENTRO A ShowEvent:RegisterOrUnregisterUserEvent: FESTIVALS_ASSISTED: " + MyState.getUser().getfestivalsAssisted());
+                        // Eliminamos este evento al usuario (DB Local)
+                        MyDatabase.unregisterUserEvent(TAG, activity, userServer, sEvent.getName());
 
-                    // Actualizar estado del boton
-                    mButtonRegister.setBackgroundColor(getResources().getColor(R.color.VERDE));
-                    mButtonRegister.setText(getString(R.string.showEvent_text_register));
+                        // Eliminamos este evento al usuario (System)
+                        userServer.getfestivalsAssisted().remove(sEvent.getName());
+                        Log.i(TAG, "ENTRO A ShowEvent:RegisterOrUnregisterUserEvent: FESTIVALS_ASSISTED: " + userServer.getfestivalsAssisted());
 
-                    int aux = sEvent.getAssistants() - 1;
-                    sEvent.setAssistants(aux);
-                    asistentes.setText("" + aux);
+                        // Actualizar estado del boton
+                        mButtonRegister.setBackgroundColor(getResources().getColor(R.color.VERDE));
+                        mButtonRegister.setText(getString(R.string.showEvent_text_register));
 
-                    // Cerramos la ventana de la cual provenimos para actualizar
-                    if ( (sPlace != null) && (!TextUtils.isEmpty(sPlace)) ) {
-                        SearchResultsActivity.activity.finish();
-                    } else {
-                        EventsActivity.activity.finish();
+                        int aux = sEvent.getAssistants() - 1;
+                        sEvent.setAssistants(aux);
+                        asistentes.setText("" + aux);
+
+                        // Cerramos la ventana de la cual provenimos para actualizar
+                        if ( (sPlace != null) && (!TextUtils.isEmpty(sPlace)) ) {
+                            SearchResultsActivity.activity.finish();
+                        } else {
+                            EventsActivity.activity.finish();
+                        }
+
+                        myNetwork.hideProgressDialog();
                     }
 
-                    hideProgressDialog();
-                }
+                }, 1000);
+                // --------------------------------------------------------------------------------
 
-            }, 1000);
-            // ----------------------------------------------------------------------------------------
+            } else {
+                // Actualizar estado del boton
+                mButtonRegister.setBackgroundColor(getResources().getColor(R.color.ROJO));
+                mButtonRegister.setText(getString(R.string.showEvent_text_unregister));
+
+                int aux = sEvent.getAssistants() + 1;
+                sEvent.setAssistants(aux);
+                asistentes.setText("" + sEvent.getAssistants());
+
+                myNetwork.hideProgressDialog();
+                Toast.makeText(activity, getString(R.string.error_you_are_already_unregistered), Toast.LENGTH_SHORT).show();
+            }
         }
         else {
             Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterOnEvent: USER_NOT_ARE_REGISTERED");
 
-            // TODO: Registrar a este usuario en este evento
-            myNetwork.registerUserEvent(MyState.getUser(), sEvent);
+            // Comprobar posible error: por si el usuario se ha apuntado desde la pagina web y no se ha cambiado el estado del boton en el transcurso
+            if ( TextUtils.equals(button_state, getString(R.string.showEvent_text_register)) ) { // Si el boton es igual a registrarse
 
-            // Wait 1 second
-            // ----------------------------------------------------------------------------------------
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+                //TODO: Comprobamos en VIVO si el evento no esta completo
+                final Event eventServer = myNetwork.getEventWithID(sEvent.getID());
 
-                    // Añadimos este evento al usuario (DB Local)
-                    MyDatabase.registerUserEvent(TAG, activity, MyState.getUser(), sEvent.getName());
+                // Wait 1 second
+                // ----------------------------------------------------------------------------------------
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                    // Añadimos este evento al usuario (System)
-                    //Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + MyState.getUser().getfestivalsAssisted());
-                    //MyState.getUser().getfestivalsAssisted().add(sEvent.getName());
-                    //Log.i(TAG, "ENTRO A ShowEvent:RegisterOrUnregisterUserEvent: FESTIVALS_ASSISTED_NEW: " + MyState.getUser().getfestivalsAssisted());
+                        if (eventServer.getAssistants() < eventServer.getCapacity()) {
 
-                    // Actualizar estado del boton
-                    mButtonRegister.setBackgroundColor(getResources().getColor(R.color.ROJO));
-                    mButtonRegister.setText(getString(R.string.showEvent_text_unregister));
+                            // TODO: Registrar a este usuario en este evento
+                            myNetwork.registerUserEvent(userServer, sEvent);
 
-                    int aux = sEvent.getAssistants() + 1;
-                    sEvent.setAssistants(aux);
-                    asistentes.setText("" + sEvent.getAssistants());
+                            // Wait 1 second
+                            // ----------------------------------------------------------------------------------------
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
 
-                    if (EventsActivity.activity != null) {
-                        EventsActivity.activity.finish();
+                                    // Añadimos este evento al usuario (DB Local)
+                                    MyDatabase.registerUserEvent(TAG, activity, userServer, sEvent.getName());
+
+                                    // Añadimos este evento al usuario (System)
+                                    //Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + userServer.getfestivalsAssisted());
+                                    //userServer.getfestivalsAssisted().add(sEvent.getName());
+                                    //Log.i(TAG, "ENTRO A ShowEvent:RegisterOrUnregisterUserEvent: FESTIVALS_ASSISTED_NEW: " + userServer.getfestivalsAssisted());
+
+                                    // Actualizar estado del boton
+                                    mButtonRegister.setBackgroundColor(getResources().getColor(R.color.ROJO));
+                                    mButtonRegister.setText(getString(R.string.showEvent_text_unregister));
+
+                                    int aux = sEvent.getAssistants() + 1;
+                                    sEvent.setAssistants(aux);
+                                    asistentes.setText("" + sEvent.getAssistants());
+
+                                    if (EventsActivity.activity != null) {
+                                        EventsActivity.activity.finish();
+                                    }
+
+                                    myNetwork.hideProgressDialog();
+                                }
+
+                            }, 1000);
+                            // ----------------------------------------------------------------------------------------
+
+                        } else {
+                            Toast.makeText(activity, getString(R.string.error_event_complete), Toast.LENGTH_SHORT).show();
+                        }
                     }
 
-                    hideProgressDialog();
-                }
+                }, 1000);
+                // ----------------------------------------------------------------------------------------
 
-            }, 1000);
-            // ----------------------------------------------------------------------------------------
+            } else {
+                // Actualizar estado del boton
+                mButtonRegister.setBackgroundColor(getResources().getColor(R.color.VERDE));
+                mButtonRegister.setText(getString(R.string.showEvent_text_register));
+
+                int aux = sEvent.getAssistants() - 1;
+                sEvent.setAssistants(aux);
+                asistentes.setText("" + sEvent.getAssistants());
+
+                myNetwork.hideProgressDialog();
+                Toast.makeText(activity, getString(R.string.error_you_are_already_registered), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     //
     public boolean thisUserRegisteredInThisEvent() {
+
         ArrayList<String> festivales_asistidos = MyState.getUser().getfestivalsAssisted();
         for (String name : festivales_asistidos) {
             if (sEvent.getName().equals(name)) {
@@ -344,7 +436,6 @@ public class ShowEventActivity extends AppCompatActivity {
 
         return false;
     }
-    // --------------------------------------------------------------------------------------------
 
     //AÑADIDO: BOTON ATRAS
     // --------------------------------------------------------------------------------------------
@@ -364,24 +455,4 @@ public class ShowEventActivity extends AppCompatActivity {
         this.finish();
     }
     //---------------------------------------------------------------------------------------------
-
-    // **********
-    // FUNTIONS
-    // **********
-    // ----------------------------------------------------------------------------------------
-    private void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage(getString(R.string.loading));
-        }
-        mProgressDialog.show();
-        mProgressDialog.setCancelable(false);
-    }
-
-    private void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
-        }
-    }
-    // ----------------------------------------------------------------------------------------
 }

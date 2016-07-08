@@ -20,7 +20,7 @@
     <!-- AÑADIDO : Main -->
     <dimen name="geolocation_title">24sp</dimen>
     <dimen name="know_the_events">20sp</dimen>
-    <dimen name="button_use_location">18sp</dimen>
+    <dimen name="button_standard">18sp</dimen>
 
     <!-- AÑADIDO : Events -->
     <dimen name="listViewEvent_image_event">300px</dimen>

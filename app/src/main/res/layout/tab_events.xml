@@ -25,6 +25,22 @@
         android:layout_centerHorizontal="true"
         android:gravity="center" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tabEvents_button_retry"
+        android:id="@+id/tabEvents_button_retry"
+        android:textSize="16dp"
+        android:textColor="@color/AZUL_CLARO_APP"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/tabEvents_text_no_events"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

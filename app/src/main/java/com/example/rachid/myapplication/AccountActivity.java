@@ -608,7 +608,7 @@ public class AccountActivity extends AppCompatActivity implements
 
                 //TODO: Actualizamos los datos del usuario en el servidor
                 // --------------------------------------------------------------------------------
-                myNetwork.updateUser(user);
+                //myNetwork.updateUser(user);
                 // --------------------------------------------------------------------------------
 
                 myNetwork.Disconnect();

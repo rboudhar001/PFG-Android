@@ -262,7 +262,6 @@ public class ProfileActivity extends AppCompatActivity {
                 }
                 // --------------------------------------------------------------------------------
 
-                myNetwork.hideProgressDialog();
             }
         }, 2500);
         // ----------------------------------------------------------------------------------------
@@ -298,30 +297,11 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                // Reset errors.
-                mUserNameView.setError(null);
-
                 // get values
                 String newUsername = mUserNameView.getText().toString();
 
-                boolean cancel = false;
-                View focusView = null;
-
-                // Check for a valid values
-                if (TextUtils.isEmpty(newUsername)) {
-                    mUserNameView.setError(getString(R.string.error_field_required));
-                    focusView = mUserNameView;
-                    cancel = true;
-                }
-
-                if (cancel) {
-                    Log.i(TAG, "ENTRO A Profile:DialogEditUserName: ERROR_PARAMETERS");
-
-                    // Show the errors
-                    focusView.requestFocus();
-                } else {
-
-                    if ((!TextUtils.equals(userName, newUsername))) {
+                if (!TextUtils.isEmpty(newUsername)) {
+                    if ((!TextUtils.equals(userName, newUsername))) { // Si se ha editado algo ...
 
                         User user = new User();
                         user.setUsername(newUsername);
@@ -332,6 +312,9 @@ public class ProfileActivity extends AppCompatActivity {
                     } else {
                         dialog.dismiss();
                     }
+                } else {
+                    Toast.makeText(activity, getString(R.string.error_the_username_can_not_be_empty), Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
                 }
             }
         });
@@ -367,30 +350,11 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                // Reset errors.
-                mEmailView.setError(null);
-
                 // get values
                 String newEmail = mEmailView.getText().toString();
 
-                boolean cancel = false;
-                View focusView = null;
-
-                // Check for a valid values
-                if (TextUtils.isEmpty(newEmail)) {
-                    mEmailView.setError(getString(R.string.error_field_required));
-                    focusView = mEmailView;
-                    cancel = true;
-                }
-
-                if (cancel) {
-                    Log.i(TAG, "ENTRO A Profile:DialogEditEmail: ERROR_PARAMETERS");
-
-                    // Show the errors
-                    focusView.requestFocus();
-                } else {
-
-                    if (!(TextUtils.equals(email, newEmail))) { // Si se a editado el email actualizamos, sino nada.
+                if (!TextUtils.isEmpty(newEmail)) {
+                    if (!(TextUtils.equals(email, newEmail))) { // Si se a editado algo ...
 
                         User user = new User();
                         user.setEmail(newEmail);
@@ -401,7 +365,9 @@ public class ProfileActivity extends AppCompatActivity {
                     } else {
                         dialog.dismiss();
                     }
-
+                } else {
+                    Toast.makeText(activity, getString(R.string.error_the_email_can_not_be_empty), Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
                 }
             }
         });
@@ -585,75 +551,18 @@ public class ProfileActivity extends AppCompatActivity {
     }
     // --------------------------------------------------------------------------------------------
 
-    //AÑADIDO: OPTIONS
-    // --------------------------------------------------------------------------------------------
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(ProfileActivity.this, SettingsActivity.class));
-            return true;
-        }
-        else if (id == R.id.action_log_out) {
-
-            showAlertDialogForLogOut();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     //
-    private void showAlertDialogForLogOut() {
-
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(getString(R.string.text_logout));
-        dialog.setMessage(getString(R.string.text_are_you_sure_you_want_to_logout));
-        dialog.setNegativeButton(getString(R.string.text_cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        dialog.setPositiveButton(getString(R.string.text_log_out), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                // Llamamos al metodo generico para cerrar sesión
-                connectAndDo("logout", null);
-            }
-        });
-        dialog.show();
-    }
-    // --------------------------------------------------------------------------------------------
-
-    // *****************
-    // GENERIC FUNTIONS
-    // ****************
     // --------------------------------------------------------------------------------------------
     public void connectAndDo(final String hacer, final User user) {
 
         if ( MyNetwork.isNetworkConnected(activity) ) {
-            // TODO: Deslogear al usuario de Meteor
-            // --------------------------------------------------------------------------------
+
             myNetwork = new MyNetwork(TAG, activity);
             myNetwork.showProgressDialog();
             myNetwork.Connect();
 
             // Wait 1 second
-            // --------------------------------------------------------------------------------
+            // ------------------------------------------------------------------------------------
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -687,7 +596,8 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 }
             }, 1000);
-            // --------------------------------------------------------------------------------
+            // ------------------------------------------------------------------------------------
+
         } else {
             Log.i(TAG, "ENTRO A Profile:connectAndDo:Connect: ERROR_NETWORK");
             Toast.makeText(activity, getString(R.string.error_not_network), Toast.LENGTH_SHORT).show();
@@ -786,7 +696,7 @@ public class ProfileActivity extends AppCompatActivity {
         // Inicializamos variable error a true
         MyError.setSubscribeResponse(false);
 
-        String subscriptionId = myNetwork.subscribe("userData", null, new SubscribeListener() {
+        myNetwork.subscribe("userData", null, new SubscribeListener() {
 
             @Override
             public void onSuccess() {
@@ -808,25 +718,15 @@ public class ProfileActivity extends AppCompatActivity {
                             MyDatabase.updateUser(TAG, activity, userServer);
                             MyState.setUser(userServer);
 
+                            myNetwork.hideProgressDialog();
+
                         } else { // hacer = username, email, name, gender, birthday, place or music_style
                             //TODO: Actualizar en el usuario obtenido del servidor, el campo a actualizar.
                             updateUserServer(hacer, userServer, user);
 
-                            //TODO: Actualizar el usuario (con el campo editado) en el servidor
-                            myNetwork.updateUser(userServer);
-                            Log.i(TAG, "ENTRO A Profile:updateUser: SUCCESSFULLY UPDATE");
-
-                            // Actualizar la DB local
-                            // Actualizar la variable del sistema
-                            // Actualizar la ventana de Profile Activity
-                            updateWindowsProfile(hacer, userServer, false);
-
-                            myNetwork.hideProgressDialog();
+                            //TODO: Actualizar el usuario
+                            updateUserOnNetwork(hacer, userServer);
                         }
-
-                        // Desconectar
-                        myNetwork.Disconnect();
-                        Log.i(TAG, "ENTRO A Profile:updateUser: DISCONNECT");
 
                     }
                 }, 1000);
@@ -866,6 +766,70 @@ public class ProfileActivity extends AppCompatActivity {
 
             }
         }, 6000);
+        // ----------------------------------------------------------------------------------------
+    }
+
+    public void updateUserOnNetwork(final String hacer, final User userServer) {
+
+        // Inicializamos variable error a true
+        MyError.setUpdateUserResponse(false);
+
+        myNetwork.updateUser(userServer, new ResultListener() {
+
+            @Override
+            public void onSuccess(String result) {
+                MyError.setUpdateUserResponse(true);
+                Log.i(TAG, "ENTRO A Profile:updateUserOnNetwork: SUCCESSFULLY UPDATE USER");
+
+                // Actualizar la DB local
+                // Actualizar la variable del sistema
+                // Actualizar la ventana de Profile Activity
+                updateWindowsProfile(hacer, userServer, false);
+
+                // Desconectar
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Profile:updateUserOnNetwork: DISCONNECT");
+
+                myNetwork.hideProgressDialog();
+            }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+                MyError.setUpdateUserResponse(true);
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A Profile:updateUserOnNetwork: DISCONNECT");
+
+                myNetwork.hideProgressDialog();
+                if ( (error.equals("409")) && (reason.contains("username")) ) {
+                    Toast.makeText(activity, getString(R.string.error_username_already_exists), Toast.LENGTH_LONG).show();
+                } else if ( (error.equals("409")) && (reason.contains("email")) ) {
+                    Toast.makeText(activity, getString(R.string.error_email_already_exists), Toast.LENGTH_LONG).show();
+                } else {
+                    updateWindowsProfile(hacer, null, true); //Para mostrar el error correspondiente!!!
+                }
+                Log.i(TAG, "ENTRO A Profile:updateUserOnNetwork: COULD NOT UPDATE: " + error + " / " + reason + " / " + details);
+            }
+        });
+
+        // Wait 10 seconds, si no responde en este tiempo, cerrar.
+        // ----------------------------------------------------------------------------------------
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (!MyError.getUpdateUserResponse()) {
+                    Log.i(TAG, "ENTRO A Profile:updateUser:getUpdateUserResponse: TIMES_EXPIRED");
+
+                    myNetwork.Disconnect();
+                    Log.i(TAG, "ENTRO A Profile:updateUser:getUpdateUserResponse: DISCONNECT");
+
+                    myNetwork.hideProgressDialog();
+                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "ENTRO A Profile:updateUser:getUpdateUserResponse: COULD NOT SUBSCRIBE");
+                }
+            }
+        }, 10000);
         // ----------------------------------------------------------------------------------------
     }
 
@@ -987,6 +951,60 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
     //---------------------------------------------------------------------------------------------
+
+    //AÑADIDO: OPTIONS
+    // --------------------------------------------------------------------------------------------
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_profile, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(ProfileActivity.this, SettingsActivity.class));
+            return true;
+        }
+        else if (id == R.id.action_log_out) {
+
+            showAlertDialogForLogOut();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    //
+    private void showAlertDialogForLogOut() {
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(getString(R.string.text_logout));
+        dialog.setMessage(getString(R.string.text_are_you_sure_you_want_to_logout));
+        dialog.setNegativeButton(getString(R.string.text_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setPositiveButton(getString(R.string.text_log_out), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // Llamamos al metodo generico para cerrar sesión
+                connectAndDo("logout", null);
+            }
+        });
+        dialog.show();
+    }
+    // --------------------------------------------------------------------------------------------
 
     //AÑADIDO: BOTON ATRAS
     // ----------------------------------------------------------------------------------------

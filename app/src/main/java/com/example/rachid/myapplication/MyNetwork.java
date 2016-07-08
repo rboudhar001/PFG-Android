@@ -186,11 +186,11 @@ public class MyNetwork {
     }
 
     //
-    public void updateUser(User user) {
+    public void updateUser(User user, final ResultListener listener) {
 
         // TODO: Actualiza en la DB el usuario pasado como parametro
         // ------------------------------------------------------------------------------------
-        myMeteor.updateUser(user);
+        myMeteor.updateUser(user, listener);
         // ------------------------------------------------------------------------------------
     }
 

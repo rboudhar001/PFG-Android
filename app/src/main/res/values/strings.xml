@@ -61,8 +61,8 @@
     <string name="signup_button_signup">Registrarse</string>
     <string name="signup_button_have_account">¿Ya tienes una cuenta? Inicia sesión</string>
     <string name="error_could_not_sign_up_the_user">No se ha podido registrar al usuario</string>
-    <string name="error_username_already_exists">Ya existe una cuenta con este Username</string>
-    <string name="error_email_already_exists">Ya existe una cuenta con este Email</string>
+    <string name="error_username_already_exists">Ya existe una cuenta con ese Nombre de usuario</string>
+    <string name="error_email_already_exists">Ya existe una cuenta con ese Email</string>
 
     <string name="action_login_short">Login</string>
     <string name="action_sign_up_short">Sign up</string>
@@ -122,9 +122,9 @@
     <string name="text_music_dance">Dance</string>
     <string name="text_music_other">Other</string>
 
-    <string name="text_spain">Español</string>
-    <string name="text_english">Ingles</string>
-    <string name="text_basque">Euskera</string>
+    <string name="text_spain">Spain</string>
+    <string name="text_english">English</string>
+    <string name="text_basque">Basque</string>
 
     <string name="simbol_next">></string>
     <string name="profile_text_complete_name">Nombre completo</string>
@@ -134,6 +134,9 @@
     <string name="text_logout">Logout</string>
     <string name="text_log_out">Log Out</string>
     <string name="text_are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
+
+    <string name="error_the_username_can_not_be_empty">Error, the username can not be empty</string>
+    <string name="error_the_email_can_not_be_empty">Error, the email can not be empty</string>
 
     <string name="error_could_not_update_username">Error, no se ha podido actualizar el nombre de usuario</string>
     <string name="error_could_not_update_email">Error, no se ha podido actualizar el email</string>
@@ -219,6 +222,8 @@
 
     <!-- EVENTS -->
     <!-- *************************************************************************************** -->
+    <string name="tabEvents_button_retry">Retry</string>
+
     <string name="tabEvents_text_no_events">No hay eventos</string>
     <string name="tabPublished_text_no_events">No has publicado ningun evento</string>
     <string name="tabRegistered_text_no_events">No te has registrado en ningun evento</string>
@@ -240,6 +245,8 @@
     <string name="showEvent_text_unregister">Desapuntarse</string>
 
     <string name="error_event_complete">El evento esta completo, no tiene mas plazas</string>
+    <string name="error_you_are_already_registered">Error, you are already Registered</string>
+    <string name="error_you_are_already_unregistered">Error, you are already Unregistered</string>
     <!-- *************************************************************************************** -->
 
     <!-- SEARCH -->
@@ -269,6 +276,7 @@
     <string name="action_edit">Editar</string>
     <string name="action_settings">Opciones</string>
     <string name="action_log_out">Cerrar sesión</string>
+    <string name="action_refresh">Refresh</string>
     <!-- *************************************************************************************** -->
 
 
@@ -334,5 +342,6 @@
     <!-- *************************************************************************************** -->
     <!-- *************************************************************************************** -->
 
+    <!-- AÑADIDAS POR EL EDITOR -->
 
 </resources>

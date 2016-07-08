@@ -554,7 +554,7 @@ public class MyMeteor implements MeteorCallback {
     }
 
     //
-    public void updateUser(User user) {
+    public void updateUser(User user, final ResultListener listener) {
 
         // QUERY: ID of user that update
         Map<String, Object> query = new HashMap<String, Object>();
@@ -657,8 +657,10 @@ public class MyMeteor implements MeteorCallback {
         // ****************************************************************************************
 
         set.put("$set", values);
+        Map<String, Object> emptyMap = new HashMap<String, Object>();
 
-        mMeteor.update(Users, query, set);
+        mMeteor.update(Users, query, set, emptyMap, listener);
+        //mMeteor.update(Users, query, set);
     }
 
     //

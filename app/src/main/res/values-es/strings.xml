@@ -61,8 +61,8 @@
     <string name="signup_button_signup">Registrarse</string>
     <string name="signup_button_have_account">¿Ya tienes una cuenta? Inicia sesión</string>
     <string name="error_could_not_sign_up_the_user">No se ha podido registrar al usuario</string>
-    <string name="error_username_already_exists">Ya existe una cuenta con este Username</string>
-    <string name="error_email_already_exists">Ya existe una cuenta con este Email</string>
+    <string name="error_username_already_exists">Ya existe una cuenta con ese Nombre de usuario</string>
+    <string name="error_email_already_exists">Ya existe una cuenta con ese Email</string>
 
     <string name="action_login_short">Login</string>
     <string name="action_sign_up_short">Sign up</string>
@@ -133,7 +133,10 @@
     <string name="text_done">Ok</string>
     <string name="text_logout">Logout</string>
     <string name="text_log_out">Log Out</string>
-    <string name="text_are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
+    <string name="text_are_you_sure_you_want_to_logout">¿Estas seguro de cerrar sesión?</string>
+
+    <string name="error_the_username_can_not_be_empty">Error, el nombre de usuario no puede ser vacio</string>
+    <string name="error_the_email_can_not_be_empty">Error, el email no puede ser vacio</string>
 
     <string name="error_could_not_update_username">Error, no se ha podido actualizar el nombre de usuario</string>
     <string name="error_could_not_update_email">Error, no se ha podido actualizar el email</string>
@@ -219,6 +222,8 @@
 
     <!-- EVENTS -->
     <!-- *************************************************************************************** -->
+    <string name="tabEvents_button_retry">Reintentar</string>
+
     <string name="tabEvents_text_no_events">No hay eventos</string>
     <string name="tabPublished_text_no_events">No has publicado ningun evento</string>
     <string name="tabRegistered_text_no_events">No te has registrado en ningun evento</string>
@@ -240,6 +245,8 @@
     <string name="showEvent_text_unregister">Desapuntarse</string>
 
     <string name="error_event_complete">El evento esta completo, no tiene mas plazas</string>
+    <string name="error_you_are_already_registered">Error, ya estabas Registrado</string>
+    <string name="error_you_are_already_unregistered">Error, ya estabas Desregistrado</string>
     <!-- *************************************************************************************** -->
 
     <!-- SEARCH -->
@@ -269,5 +276,9 @@
     <string name="action_edit">Editar</string>
     <string name="action_settings">Opciones</string>
     <string name="action_log_out">Cerrar sesión</string>
+    <string name="action_refresh">Refrescar</string>
     <!-- *************************************************************************************** -->
+
+    <!-- AÑADIDAS POR EL EDITOR -->
+
 </resources>

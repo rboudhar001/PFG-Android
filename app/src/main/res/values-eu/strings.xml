@@ -135,6 +135,9 @@
     <string name="text_log_out">Saioa Itxi</string>
     <string name="text_are_you_sure_you_want_to_logout">Ziur irten nahi duzula?</string>
 
+    <string name="error_the_username_can_not_be_empty">Errorea, erabiltzaile izena ezin da hutsik egon</string>
+    <string name="error_the_email_can_not_be_empty">Errorea, e-posta ezin da hutsik egon</string>
+
     <string name="error_could_not_update_username">Errorea, ezin izan da erabiltzailearen izena eguneratu</string>
     <string name="error_could_not_update_email">Errorea, ezin izan da email-a eguneratu</string>
     <string name="error_could_not_update_password">Errorea, ezin izan da pasahitza eguneratu</string>
@@ -209,6 +212,8 @@
 
     <!-- EVENTS -->
     <!-- *************************************************************************************** -->
+    <string name="tabEvents_button_retry">Saiatu berriro</string>
+
     <string name="tabEvents_text_no_events">Ez dago ekitaldirik</string>
     <string name="tabPublished_text_no_events">Ez duzu ekitaldirik argitaratu</string>
     <string name="tabRegistered_text_no_events">Ez duzu erregistraturiko ekitaldirik</string>
@@ -230,6 +235,8 @@
     <string name="showEvent_text_unregister">Irten</string>
 
     <string name="error_event_complete">Ekitaldia beterik dago, es dauka tokirik</string>
+    <string name="error_you_are_already_registered">Errorea, dagoeneko erregistratuta zara</string>
+    <string name="error_you_are_already_unregistered">Errorea, dagoeneko baja duzu</string>
     <!-- *************************************************************************************** -->
 
     <!-- SEARCH -->
@@ -259,8 +266,12 @@
     <string name="action_edit">Aldatu</string>
     <string name="action_settings">Aukerak</string>
     <string name="action_log_out">Saioa itxi</string>
+    <string name="action_refresh">Egunera</string>
+    <!-- *************************************************************************************** -->
+
+    <!-- AÑADIDAS POR EL EDITOR -->
     <string name="error_not_detect_location">Error, impossible to detect the location</string>
     <string name="error_not_network">Error, Not network connected</string>
     <string name="password_update_succesfull">Password update!!</string>
-    <!-- *************************************************************************************** -->
+
 </resources>

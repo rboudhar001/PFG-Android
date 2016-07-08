@@ -347,6 +347,7 @@ public class SignupActivity extends AppCompatActivity { //implements LoaderManag
                 myNetwork.Disconnect();
                 Log.i(TAG, "ENTRO A Signup:signupUser: DISCONNECT");
 
+                hideProgressDialog();
                 if ( (error.equals("403") && (reason.equals("Username already exists."))) ) {
                     Toast.makeText(activity, getString(R.string.error_username_already_exists), Toast.LENGTH_LONG).show();
                 } else if ( (error.equals("403") && (reason.equals("Email already exists."))) ) {
@@ -354,9 +355,7 @@ public class SignupActivity extends AppCompatActivity { //implements LoaderManag
                 } else {
                     Toast.makeText(activity, getString(R.string.error_could_not_sign_up_the_user), Toast.LENGTH_LONG).show();
                 }
-
                 Log.i(TAG, "ENTRO A Signup:signupUser: COULD NOT SIGN UP: " + error + " / " + reason + " / " + details);
-                hideProgressDialog();
             }
 
         });

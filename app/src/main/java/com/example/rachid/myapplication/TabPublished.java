@@ -66,100 +66,76 @@ public class TabPublished extends Fragment {
 
         // Connect and Get data from Server
         // ----------------------------------------------------------------------------------------
-        showProgressDialog();
-        myNetwork = new MyNetwork(TAG, fragment.getActivity());
-        myNetwork.Connect();
+        if ( MyNetwork.isNetworkConnected(fragment.getActivity()) ) {
 
-        // Wait 1 sec to Connect
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+            myNetwork = new MyNetwork(TAG, fragment.getActivity());
+            showProgressDialog();
+            myNetwork.Connect();
 
-                if ( myNetwork.isConnected() ) {
+            // Wait 1 sec to Connect
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
 
-                    if ( myNetwork.isLoggedIn() ) {
+                    if ( myNetwork.isConnected() ) {
 
-                        listViewValues = myNetwork.getAllEvents(MyState.getUser().getFestivalsCreated());
-                        Log.i(TAG, "ENTRO A TabPublished:onCreateView: GET_EVENTS_SUCCESFULL");
+                        if ( myNetwork.isLoggedIn() ) {
 
-                        myNetwork.Disconnect();
-                        Log.i(TAG, "ENTRO A TabPublished:onCreateView: DISCONNECT");
+                            listViewValues = myNetwork.getAllEvents(MyState.getUser().getFestivalsCreated());
+                            Log.i(TAG, "ENTRO A TabPublished:onCreateView: GET_EVENTS_SUCCESFULL");
 
-                        hideProgressDialog();
-                        // ----------------------------------------------------------------------------------------
+                            myNetwork.Disconnect();
+                            Log.i(TAG, "ENTRO A TabPublished:onCreateView: DISCONNECT");
 
-                        if (listViewValues == null) {
-                            Log.i(TAG, "ENTRO A TabPublished:onCreateView:listViewValues: NULL");
-                            listViewValues = new ArrayList<>();
+                            hideProgressDialog();
+                            // ----------------------------------------------------------------------------------------
+
+                            if (listViewValues == null) {
+                                Log.i(TAG, "ENTRO A TabPublished:onCreateView:listViewValues: NULL");
+                                listViewValues = new ArrayList<>();
+                            }
+
+                            if (!listViewValues.isEmpty()) {
+
+                                Log.i(TAG, "ENTRO A TabPublished:onCreateView:listViewValues: NO_EMPTY");
+
+                                mNoEventsView.setVisibility(View.INVISIBLE);
+                                mListView.setVisibility(View.VISIBLE);
+                            } else {
+
+                                Log.i(TAG, "ENTRO A TabPublished:onCreateView:listViewValues: EMPTY");
+
+                                mNoEventsView.setVisibility(View.VISIBLE);
+                                mListView.setVisibility(View.INVISIBLE);
+                            }
+
+                            //Log.i(TAG, "ENTRO A TabPublished:onCreateView:FRAGMENT.ACTIVITY: " + fragment.getActivity());
+                            //Log.i(TAG, "ENTRO A TabPublished:onCreateView:ACTIVITY: " + EventsActivity.activity);
+                            //adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
+                            adapter = new EventsAdapter(TAG, EventsActivity.activity, listViewValues, res);
+                            mListView.setAdapter(adapter);
+
+                        }
+                        else {
+                            Log.i(TAG, "ENTRO A TabPublished:onCreateView: NO_LOGGIN_IN");
+                            Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
+                            hideProgressDialog();
                         }
 
-                        if (!listViewValues.isEmpty()) {
-
-                            Log.i(TAG, "ENTRO A TabPublished:onCreateView:listViewValues: NO_EMPTY");
-
-                            mNoEventsView.setVisibility(View.INVISIBLE);
-                            mListView.setVisibility(View.VISIBLE);
-                        } else {
-
-                            Log.i(TAG, "ENTRO A TabPublished:onCreateView:listViewValues: EMPTY");
-
-                            mNoEventsView.setVisibility(View.VISIBLE);
-                            mListView.setVisibility(View.INVISIBLE);
-                        }
-
-                        //Log.i(TAG, "ENTRO A TabPublished:onCreateView:FRAGMENT.ACTIVITY: " + fragment.getActivity());
-                        //Log.i(TAG, "ENTRO A TabPublished:onCreateView:ACTIVITY: " + EventsActivity.activity);
-                        //adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
-                        adapter = new EventsAdapter(TAG, EventsActivity.activity, listViewValues, res);
-                        mListView.setAdapter(adapter);
-
-                    }
-                    else {
-                        Log.i(TAG, "ENTRO A TabPublished:onCreateView: NO_LOGGIN_IN");
-                        Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
+                    } else {
+                        hideProgressDialog();
+                        Log.i(TAG, "ENTRO A TabPublished:onCreateView: NO_CONNECT");
+                        Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
                         hideProgressDialog();
                     }
 
-                } else {
-                    hideProgressDialog();
-                    Log.i(TAG, "ENTRO A TabPublished:onCreateView: NO_CONNECT");
-                    Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_view_events), Toast.LENGTH_SHORT).show();
-                    hideProgressDialog();
                 }
-
-            }
-        }, 1000);
+            }, 1000);
         // ----------------------------------------------------------------------------------------
-
-        /*
-        startTime(10); //10 seg
-        while ( (!myNetwork.isConnected()) || (!myNetwork.isLoggedIn()) ) { // durante 10 seg
-            SystemClock.sleep(1000);
+        } else {
+            Log.i(TAG, "ENTRO A Profile:connectAndDo:Connect: ERROR_NETWORK");
+            Toast.makeText(fragment.getContext(), getString(R.string.error_not_network), Toast.LENGTH_SHORT).show();
         }
-        endTime();
-
-        listViewValues = myNetwork.getPublishedEvents(MyState.getUser().getID());
-        myNetwork.Disconnect();
-        hideProgressDialog();
-        // ----------------------------------------------------------------------------------------
-
-        if (listViewValues == null) {
-            listViewValues = new ArrayList<>();
-        }
-
-        TextView mNoEventsView = (TextView) view.findViewById(R.id.tabPublished_text_no_events);
-        if (!listViewValues.isEmpty()) {
-            mNoEventsView.setVisibility(View.INVISIBLE);
-            mListView.setVisibility(View.VISIBLE);
-        }
-        else {
-            mNoEventsView.setVisibility(View.VISIBLE);
-            mListView.setVisibility(View.INVISIBLE);
-        }
-
-        adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
-        mListView.setAdapter(adapter);
-        */
 
         return view;
     }
