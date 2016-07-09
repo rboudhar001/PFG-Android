@@ -66,7 +66,7 @@ public class MyNetwork {
 
     //
     public boolean isLoggedIn() {
-        return myMeteor.isConnected();
+        return myMeteor.isLoggedIn();
     }
     // ********************************************************************************************
 
@@ -100,20 +100,11 @@ public class MyNetwork {
     }
 
     //
-    public void loginUserWithGoogle(String google_id, ResultListener listener) {
+    public void loginUserWithService(String email, String id, ResultListener listener) {
 
-        // TODO: Guarda en la DB del servidor al usuario, devuelve el ID que se le ha dado en la DB del servidor.
+        // TODO: Inicia sesion con el servicio (Google o Facebook)
         // ---------------------------------------------------------------------------------------
-        myMeteor.loginUserWithGoogle(google_id, listener);
-        // ---------------------------------------------------------------------------------------
-    }
-
-    //
-    public void loginUserWithFacebook(String facebook_id, ResultListener listener) {
-
-        // TODO: Guarda en la DB del servidor al usuario, devuelve el ID que se le ha dado en la DB del servidor.
-        // ---------------------------------------------------------------------------------------
-        myMeteor.loginUserWithFacebook(facebook_id, listener);
+        myMeteor.loginUserWithService(email, id, listener);
         // ---------------------------------------------------------------------------------------
     }
 

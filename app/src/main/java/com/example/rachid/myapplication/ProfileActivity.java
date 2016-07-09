@@ -769,6 +769,7 @@ public class ProfileActivity extends AppCompatActivity {
         // ----------------------------------------------------------------------------------------
     }
 
+    //
     public void updateUserOnNetwork(final String hacer, final User userServer) {
 
         // Inicializamos variable error a true

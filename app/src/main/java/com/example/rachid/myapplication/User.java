@@ -45,8 +45,8 @@ public class User implements Serializable {
 
     public User(String id, String email, String username, String password, String name,
                 String surname, String gender, String birthday, String place, String music_style,
-                String image, String google_id, String facebook_id, ArrayList festivalsCreated,
-                ArrayList festivalsAssisted, String location, String language) {
+                String image, String google_id, String facebook_id, ArrayList<String> festivalsCreated,
+                ArrayList<String> festivalsAssisted, String location, String language) {
         this.id = id;
         this.email = email;
         this.username = username;
@@ -189,20 +189,20 @@ public class User implements Serializable {
     }
 
     // Festivales Publicados
-    public void setFestivalsCreated(ArrayList festivalsCreated) {
+    public void setFestivalsCreated(ArrayList<String> festivalsCreated) {
         this.festivalsCreated = festivalsCreated;
     }
 
-    public ArrayList getFestivalsCreated() {
+    public ArrayList<String> getFestivalsCreated() {
         return festivalsCreated;
     }
 
     // Festivales Apuntados
-    public void setfestivalsAssisted(ArrayList festivalsAssisted) {
+    public void setfestivalsAssisted(ArrayList<String> festivalsAssisted) {
         this.festivalsAssisted = festivalsAssisted;
     }
 
-    public ArrayList getfestivalsAssisted() {
+    public ArrayList<String> getfestivalsAssisted() {
         return festivalsAssisted;
     }
 

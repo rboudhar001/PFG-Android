@@ -138,6 +138,7 @@
     <string name="error_the_username_can_not_be_empty">Error, el nombre de usuario no puede ser vacio</string>
     <string name="error_the_email_can_not_be_empty">Error, el email no puede ser vacio</string>
 
+    <string name="error_could_not_update_user">Error, no se ha podido actualizar al usuario</string>
     <string name="error_could_not_update_username">Error, no se ha podido actualizar el nombre de usuario</string>
     <string name="error_could_not_update_email">Error, no se ha podido actualizar el email</string>
     <string name="error_could_not_update_password">Error, no se ha podido actualizar la contraseña</string>

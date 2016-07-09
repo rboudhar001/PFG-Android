@@ -138,6 +138,7 @@
     <string name="error_the_username_can_not_be_empty">Errorea, erabiltzaile izena ezin da hutsik egon</string>
     <string name="error_the_email_can_not_be_empty">Errorea, e-posta ezin da hutsik egon</string>
 
+    <string name="error_could_not_update_user">Error, ezin izan da erabiltzailea eguneratu</string>
     <string name="error_could_not_update_username">Errorea, ezin izan da erabiltzailearen izena eguneratu</string>
     <string name="error_could_not_update_email">Errorea, ezin izan da email-a eguneratu</string>
     <string name="error_could_not_update_password">Errorea, ezin izan da pasahitza eguneratu</string>

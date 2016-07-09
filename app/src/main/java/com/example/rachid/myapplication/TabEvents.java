@@ -129,8 +129,6 @@ public class TabEvents extends Fragment {
 
                     if ( myNetwork.isConnected() ) {
 
-                        if ( myNetwork.isLoggedIn() ) {
-
                             listViewValues = myNetwork.getAllEvents(MyState.getUser().getLocation());
                             Log.i(TAG, "ENTRO A TabEvents:onCreateView: GET_EVENTS_SUCCESFULL");
 
@@ -164,13 +162,6 @@ public class TabEvents extends Fragment {
                             //adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
                             adapter = new EventsAdapter(TAG, EventsActivity.activity, listViewValues, res);
                             mListView.setAdapter(adapter);
-
-                        }
-                        else {
-                            Log.i(TAG, "ENTRO A TabEvents:onCreateView: NO_LOGGIN_IN");
-                            Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
-                            hideProgressDialog();
-                        }
 
                     } else {
                         Log.i(TAG, "ENTRO A TabEvents:onCreateView: NO_CONNECT");

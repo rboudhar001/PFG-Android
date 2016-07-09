@@ -92,25 +92,29 @@ public class MyMeteor implements MeteorCallback {
         mMeteor.connect();
     }
 
+    //
     public boolean isConnected(){
         return mMeteor.isConnected();
     }
 
+    //
     public boolean isLoggedIn(){
         return mMeteor.isLoggedIn();
     }
 
+    //
     public void Disconnect(){
         mMeteor.disconnect();
     }
 
+    //
     public void onConnect(boolean signedInAutomatically) {
 
         Log.i(TAG, "ENTRO A MyMeteor:onConnect: Connected");
         Log.i(TAG, "ENTRO A MyMeteor:onConnect: Is logged in: " + mMeteor.isLoggedIn());
         Log.i(TAG, "ENTRO A MyMeteor:onConnect: User ID: " + mMeteor.getUserId());
 
-        if (signedInAutomatically) {
+        if ( signedInAutomatically ) {
             Log.i(TAG, "ENTRO A MyMeteor:onConnect: Successfully logged in automatically");
         }
         /*
@@ -183,37 +187,43 @@ public class MyMeteor implements MeteorCallback {
         // call an arbitrary method
         mMeteor.call("myMethod");
         */
-
     }
 
+    //
     public void onDisconnect() {
         System.out.println("Disconnected");
         mMeteor.removeCallback(this);
     }
 
+    //
     public void onDataAdded(String collectionName, String documentID, String newValuesJson) {
         // parse the JSON and manage the data yourself (not recommended)
         // or
         // enable a database (see section "Using databases to manage data") (recommended)
     }
 
+    //
     public void onDataChanged(String collectionName, String documentID, String updatedValuesJson, String removedValuesJson) {
         // parse the JSON and manage the data yourself (not recommended)
         // or
         // enable a database (see section "Using databases to manage data") (recommended)
     }
 
+    //
     public void onDataRemoved(String collectionName, String documentID) {
         // parse the JSON and manage the data yourself (not recommended)
         // or
         // enable a database (see section "Using databases to manage data") (recommended)
     }
 
+    //
     public void onException(Exception e) {
     }
     // ********************************************************************************************
 
+    // **********
     // USUARIOS : Llamada a funciones de la API de Meteor
+    // **********
     // ********************************************************************************************
     //
     public void signupUser(String mUserName, String mEmail, String mPassword, ResultListener listener) {
@@ -242,28 +252,41 @@ public class MyMeteor implements MeteorCallback {
     }
 
     // -------------------------------------------------------------------------------------------------------
-    public void loginUserWithGoogle(String google_id, ResultListener listener) {
-        if ( (google_id == null) || (TextUtils.isEmpty(google_id)) ) {
-            throw new IllegalArgumentException("MyMeteor:loginUserWithGoogle: You must provide either a Google ID");
+    public void loginUserWithService(String email, String id, ResultListener listener) {
+
+        final Map<String, Object> userData = new HashMap<String, Object>();
+        if (email != null) {
+            userData.put("email", email);
+        }
+        else {
+            throw new IllegalArgumentException("You must provide either a email");
         }
 
         final Map<String, Object> authData = new HashMap<String, Object>();
-        authData.put("loginHint", google_id);
+        authData.put("user", userData);
+        authData.put("password", id);
 
-        mMeteor.call("login", new Object[]{authData}, listener);
-    }
-    // ------------------------------------------------------------------------------------------------------
+        mMeteor.call("login", new Object[] { authData }, listener);
 
-    // -------------------------------------------------------------------------------------------------------
-    public void loginUserWithFacebook(String facebook_id, ResultListener listener) {
-        if ( (facebook_id == null) || (TextUtils.isEmpty(facebook_id)) ) {
-            throw new IllegalArgumentException("MyMeteor:loginUserWithGoogle: You must provide either a Facebook ID");
+        /*
+        final Map<String, Object> userData = new HashMap<String, Object>();
+        userData.put("requestPermissions", new ArrayList<String>() );
+        userData.put("requestOfflineToken", false);
+        userData.put("loginUrlParameters", new HashMap<String, Object>());
+        if (email != null) {
+            userData.put("loginHint", email);
         }
+        else {
+            throw new IllegalArgumentException("You must provide either a email");
+        }
+        userData.put("loginStyle", "");
+        userData.put("redirectUrl", "");
 
         final Map<String, Object> authData = new HashMap<String, Object>();
-        authData.put("loginHint", facebook_id);
+        authData.put("options", userData);
 
-        mMeteor.call("login", new Object[]{authData}, listener);
+        mMeteor.call("loginWithGoogle", new Object[]{ authData }, listener);
+        */
     }
     // ------------------------------------------------------------------------------------------------------
 
@@ -430,8 +453,8 @@ public class MyMeteor implements MeteorCallback {
         String google_id = null; //(String) document.getField("google_id");
         String facebook_id = null; //(String) document.getField("facebook_id");
 
-        ArrayList festivals_created = (ArrayList) document.getField("festivals_created");
-        ArrayList festivals_assisted = (ArrayList) document.getField("festivals_assisted");
+        ArrayList<String> festivals_created = (ArrayList<String>) document.getField("festivals_created");
+        ArrayList<String> festivals_assisted = (ArrayList<String>) document.getField("festivals_assisted");
 
         String location = MyState.getUser().getLocation();
         String language = MyState.getUser().getLanguage();
@@ -496,8 +519,8 @@ public class MyMeteor implements MeteorCallback {
         String google_id = null; //(String) document.getField("google_id");
         //String facebook_id = null; //(String) document.getField("facebook_id");
 
-        ArrayList festivals_created = (ArrayList) document.getField("festivals_created");
-        ArrayList festivals_assisted = (ArrayList) document.getField("festivals_assisted");
+        ArrayList<String> festivals_created = (ArrayList<String>) document.getField("festivals_created");
+        ArrayList<String> festivals_assisted = (ArrayList<String>) document.getField("festivals_assisted");
 
         String location = MyState.getUser().getLocation();
         String language = MyState.getUser().getLanguage();
@@ -542,8 +565,8 @@ public class MyMeteor implements MeteorCallback {
         //String google_id = null; //(String) document.getField("google_id");
         String facebook_id = null; //(String) document.getField("facebook_id");
 
-        ArrayList festivals_created = (ArrayList) document.getField("festivals_created");
-        ArrayList festivals_assisted = (ArrayList) document.getField("festivals_assisted");
+        ArrayList<String> festivals_created = (ArrayList<String>) document.getField("festivals_created");
+        ArrayList<String> festivals_assisted = (ArrayList<String>) document.getField("festivals_assisted");
 
         String location = MyState.getUser().getLocation();
         String language = MyState.getUser().getLanguage();
@@ -578,11 +601,11 @@ public class MyMeteor implements MeteorCallback {
 
         // EMAIL
         // ---------------------------------------------------
-        LinkedHashMap<String, java.io.Serializable> email_complete = new LinkedHashMap<String, java.io.Serializable>();
+        LinkedHashMap<String, java.io.Serializable> email_complete = new LinkedHashMap<>();
         email_complete.put("address", user.getEmail());
         email_complete.put("verified", false);
 
-        ArrayList<LinkedHashMap<String, java.io.Serializable>> emails = new ArrayList<LinkedHashMap<String, java.io.Serializable>>();
+        ArrayList<LinkedHashMap<String, java.io.Serializable>> emails = new ArrayList<>();
         emails.add(email_complete);
 
         //value = new HashMap<String, Object>();
@@ -591,69 +614,34 @@ public class MyMeteor implements MeteorCallback {
         // ---------------------------------------------------
 
         // USER_NAME
-        //value = new HashMap<String, Object>();
         values.put("username", user.getUsername());
-        //params.put("$set", value);
-
         // PASSWORD
         //value = new HashMap<String, Object>();
         //value.put("password", user.getPassword());
         //params.put("$set", value);
-
         // NAME
-        //value = new HashMap<String, Object>();
         values.put("name", user.getName());
-        //params.put("$set", value);
-
         // SURNAME
-        //value = new HashMap<String, Object>();
         values.put("surname", user.getSurname());
-        //params.put("$set", value);
-
         // GENDER
-        //value = new HashMap<String, Object>();
         values.put("gender", user.getGender());
-        //params.put("$set", value);
-
         // BIRTHDAY
-        //value = new HashMap<String, Object>();
         values.put("birthday", user.getBirthday());
-        //params.put("$set", value);
-
         // PLACE
-        //value = new HashMap<String, Object>();
         values.put("place", user.getPlace());
-        //params.put("$set", value);
-
         // MUSIC_STYLE
-        //value = new HashMap<String, Object>();
         values.put("music_style", user.getMusicStyle());
-        //params.put("$set", value);
-
         // IMAGE
-        //value = new HashMap<String, Object>();
         values.put("image", user.getImage());
-        //params.put("$set", value);
-
         // GOOGLE_ID
-        //value = new HashMap<String, Object>();
         values.put("google_id", user.getGoogle_id());
-        //params.put("$set", value);
-
         // FACEBOOK_ID
         //value = new HashMap<String, Object>();
         values.put("facebook_id", user.getFacebook_id());
-        //params.put("$set", value);
-
         // FESTIVALS_CREATED
-        //value = new HashMap<String, Object>();
         values.put("festivals_created", user.getFestivalsCreated());
-        //params.put("$set", value);
-
         // FESTIVALS_ASSISTED
-        //value = new HashMap<String, Object>();
         values.put("festivals_assisted", user.getfestivalsAssisted());
-        //params.put("$set", value);
         // ****************************************************************************************
 
         set.put("$set", values);
@@ -678,7 +666,7 @@ public class MyMeteor implements MeteorCallback {
         // Updating festivals_assisted into a collection "Users"
         Map<String, Object> value = new HashMap<String, Object>();
 
-        ArrayList festivales_asistidos = mUser.getfestivalsAssisted();
+        ArrayList<String> festivales_asistidos = mUser.getfestivalsAssisted();
         Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + festivales_asistidos);
         festivales_asistidos.add(mEvent.getName());
         Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_NEW: " + festivales_asistidos);
@@ -728,7 +716,7 @@ public class MyMeteor implements MeteorCallback {
         // Updating festials_assisted into a collection "Users"
         Map<String, Object> value = new HashMap<String, Object>();
 
-        ArrayList festivales_asistidos = mUser.getfestivalsAssisted();
+        ArrayList<String> festivales_asistidos = mUser.getfestivalsAssisted();
         Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + festivales_asistidos);
         festivales_asistidos.remove(mEvent.getName());
         Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_NEW: " + festivales_asistidos);

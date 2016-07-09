@@ -1,7 +1,6 @@
 package com.example.rachid.myapplication;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,8 +40,6 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
 
     private static final String TAG = "LoginActivity";
     private final Activity activity = this;
-
-    private ProgressDialog mProgressDialog;
 
     private MyNetwork myNetwork;
 
@@ -237,13 +234,13 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
             Log.i(TAG, "ENTRO A Login:attemptLogin:3");
 
             if ( MyNetwork.isNetworkConnected(activity) ) {
-                showProgressDialog();
                 ///mAuthTask = new UserLoginTask(email, password);
                 //mAuthTask.execute((Void) null);
 
                 // LOGIN USER
                 // ------------------------------------------------------------------------------------
                 myNetwork = new MyNetwork(TAG, activity);
+                myNetwork.showProgressDialog();
                 myNetwork.Connect();
 
                 // Wait 1 second to Connect
@@ -259,9 +256,9 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
                             loginUser(email, password);
 
                         } else {
-                            Log.i(TAG, "ENTRO A Login:attemptLogin: COULD NOT CONNECT");
+                            myNetwork.hideProgressDialog();
                             Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                            hideProgressDialog();
+                            Log.i(TAG, "ENTRO A Login:attemptLogin: COULD NOT CONNECT");
                         }
 
                     }
@@ -317,7 +314,7 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
                 String id = pieces[3];
                 Log.i(TAG, "ENTRO A Login:loginUser:ID: " + id);
 
-                getUser(id);
+                getUserWithID(id);
                 // --------------------------------------------------------------------------------
             }
 
@@ -328,6 +325,7 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
                 myNetwork.Disconnect();
                 Log.i(TAG, "ENTRO A Login:loginUser: DISCONNECT");
 
+                myNetwork.hideProgressDialog();
                 if ( (error.equals("403") && (reason.equals("User not found"))) ) {
                     Toast.makeText(activity, getString(R.string.error_user_not_exists), Toast.LENGTH_LONG).show();
                 } else if ( (error.equals("403") && (reason.equals("Incorrect password"))) ) {
@@ -335,9 +333,7 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
                 } else {
                     Toast.makeText(activity, getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_LONG).show();
                 }
-
                 Log.i(TAG, "ENTRO A Login:loginUser: COULD NOT LOGIN: " + error + " / " + reason + " / " + details);
-                hideProgressDialog();
             }
 
         });
@@ -354,9 +350,9 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
                     myNetwork.Disconnect();
                     Log.i(TAG, "ENTRO A Login:loginUser:getLoginResponse: DISCONNECT");
 
-                    Log.i(TAG, "ENTRO A Login:loginUser:getLoginResponse: COULD NOT LOGIN");
+                    myNetwork.hideProgressDialog();
                     Toast.makeText(activity, getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
-                    hideProgressDialog();
+                    Log.i(TAG, "ENTRO A Login:loginUser:getLoginResponse: COULD NOT LOGIN");
                 }
 
             }
@@ -365,7 +361,7 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
     }
 
     //
-    private void getUser(final String id) {
+    private void getUserWithID(final String id) {
 
         // Inicializamos variable error a true
         MyError.setSubscribeResponse(false);
@@ -375,8 +371,7 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
             @Override
             public void onSuccess() {
                 MyError.setSubscribeResponse(true);
-
-                Log.i(TAG, "ENTRO A Login:getUser: SUCCESSFULLY SUBSCRIBE");
+                Log.i(TAG, "ENTRO A Login:getUserWithID: SUCCESSFULLY SUBSCRIBE");
 
                 //TODO: Obtener al usuario de la DB del servidor
                 // --------------------------------------------------------------------------------
@@ -397,9 +392,9 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
                         // --------------------------------------------------------------------------------
 
                         myNetwork.Disconnect();
-                        Log.i(TAG, "ENTRO A Login:getUser: DISCONNECT");
+                        Log.i(TAG, "ENTRO A Login:getUserWithID: DISCONNECT");
 
-                        hideProgressDialog();
+                        myNetwork.hideProgressDialog();
 
                         AccountActivity.activity.finish();
 
@@ -422,11 +417,11 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
                 MyError.setSubscribeResponse(true);
 
                 myNetwork.Disconnect();
-                Log.i(TAG, "ENTRO A Login:getUser: DISCONNECT");
+                Log.i(TAG, "ENTRO A Login:getUserWithID: DISCONNECT");
 
-                Log.i(TAG, "ENTRO A Login:getUser: COULD NOT SUBSCRIBE");
+                myNetwork.hideProgressDialog();
                 Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                hideProgressDialog();
+                Log.i(TAG, "ENTRO A Login:getUserWithID: COULD NOT SUBSCRIBE");
             }
 
         });
@@ -438,14 +433,15 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
             public void run() {
 
                 if ( !MyError.getSubscribeResponse() ) {
-                    Log.i(TAG, "ENTRO A Login:getUser:getSubscribeResponse: TIMES_EXPIRED");
+                    Log.i(TAG, "ENTRO A Login:getUserWithID:getSubscribeResponse: TIMES_EXPIRED");
 
                     myNetwork.Disconnect();
-                    Log.i(TAG, "ENTRO A Login:getUser:getSubscribeResponse: DISCONNECT");
+                    Log.i(TAG, "ENTRO A Login:getUserWithID:getSubscribeResponse: DISCONNECT");
 
-                    Log.i(TAG, "ENTRO A Login:getUser:getSubscribeResponse: COULD NOT SUBSCRIBE");
+
+                    myNetwork.hideProgressDialog();
                     Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                    hideProgressDialog();
+                    Log.i(TAG, "ENTRO A Login:getUserWithID:getSubscribeResponse: COULD NOT SUBSCRIBE");
                 }
 
             }
@@ -642,25 +638,5 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
         this.finish();
     }
     //-----------------------------------------------------------------------------------------
-
-    // **********
-    // FUNTIONS
-    // **********
-    // ----------------------------------------------------------------------------------------
-    private void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage(getString(R.string.loading));
-        }
-        mProgressDialog.show();
-        mProgressDialog.setCancelable(false);
-    }
-
-    private void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
-        }
-    }
-    // ----------------------------------------------------------------------------------------
 }
 
