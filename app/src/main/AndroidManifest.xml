@@ -179,6 +179,15 @@
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.ProfileActivity" />
         </activity>
 
+        <activity
+            android:name=".ChangePasswordActivity"
+            android:label="@string/title_activity_change_password"
+            android:launchMode="singleTask"
+            android:parentActivityName=".SettingsActivity">
+
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.rachid.myapplication.SettingsActivity" />
+        </activity>
+
     </application>
 
 </manifest>

@@ -716,7 +716,7 @@ public class MyMeteor implements MeteorCallback {
         // Updating festials_assisted into a collection "Users"
         Map<String, Object> value = new HashMap<String, Object>();
 
-        ArrayList<String> festivales_asistidos = mUser.getfestivalsAssisted();
+        ArrayList festivales_asistidos = mUser.getfestivalsAssisted();
         Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + festivales_asistidos);
         festivales_asistidos.remove(mEvent.getName());
         Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_NEW: " + festivales_asistidos);

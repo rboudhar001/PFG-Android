@@ -29,7 +29,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -57,14 +56,16 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
 
     //AÑADIDO: GOOGLE
     // ----------------------------------------------------------------------------------------
-    private SignInButton signInButtonLoginGoogle;
+    private Button mButtonLoginGoogle;
+    //private SignInButton signInButtonLoginGoogle;
     private static final int RC_GOOGLE = 9001;
     private GoogleApiClient mGoogleApiClient;
     // ----------------------------------------------------------------------------------------
 
     //AÑADIDO: FACEBOOK
     // ----------------------------------------------------------------------------------------
-    private LoginButton loginFacebookButton;
+    private Button mButtonLoginFacebook;
+    private LoginButton loginButtonFacebook;
     private CallbackManager callbackManager;
     private static final int RC_FACEBOOK = 9002;
     // ----------------------------------------------------------------------------------------
@@ -92,47 +93,33 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
 
         setContentView(R.layout.activity_account);
 
-        //AÑADIDO GOOGLE
+        //AÑADIDO: onClick - BUTTON GOOGLE
         // ----------------------------------------------------------------------------------------
-        // [START configure_signin]
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        // [END configure_signin]
-
-        // [START build_client]
-        // Build a GoogleApiClient with access to the Google Sign-In API and the
-        // options specified by gso.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Plus.API)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-        // [END build_client]
-
-        // [START customize_button]
-        // Customize sign-in button. The sign-in button can be displayed in
-        // multiple sizes and color schemes. It can also be contextually
-        // rendered based on the requested scopes. For example. a red button may
-        // be displayed when Google+ scopes are requested, but a white button
-        // may be displayed when only basic profile is requested. Try adding the
-        // Scopes.PLUS_LOGIN scope to the GoogleSignInOptions to see the
-        // difference.
-
-        signInButtonLoginGoogle = (SignInButton) findViewById(R.id.account_signInButton_login_google);
-        signInButtonLoginGoogle.setSize(SignInButton.SIZE_STANDARD);
-        signInButtonLoginGoogle.setScopes(gso.getScopeArray());
-        // [END customize_button]
-        //-----------------------------------------------------------------------------------------
-
-        //AÑADIDO FACEBOOK
+        mButtonLoginGoogle = (Button) findViewById(R.id.account_button_google);
+        mButtonLoginGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "ENTRO A Account:onClick:0");
+                signIn();
+                Log.i(TAG, "ENTRO A Account:onClick:1");
+            }
+        });
         // ----------------------------------------------------------------------------------------
+
+        //AÑADIDO: onClick - BUTTON FACEBOOK
+        // ----------------------------------------------------------------------------------------
+        mButtonLoginFacebook = (Button) findViewById(R.id.account_button_facebook);
+        mButtonLoginFacebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginButtonFacebook.performClick();
+            }
+        });
+        // ----------------------------------------------------------------------------------------
+
         callbackManager = CallbackManager.Factory.create();
-        loginFacebookButton = (LoginButton)findViewById(R.id.login_facebook_button);
-
-        loginFacebookButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        loginButtonFacebook = (LoginButton) findViewById(R.id.account_loginButton_facebook);
+        loginButtonFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
@@ -165,21 +152,9 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
         });
         // ----------------------------------------------------------------------------------------
 
-        //AÑADIDO: onClick - BUTTON GOOGLE
-        // ----------------------------------------------------------------------------------------
-        signInButtonLoginGoogle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(TAG, "ENTRO A Account:onClick:0");
-                signIn();
-                Log.i(TAG, "ENTRO A Account:onClick:1");
-            }
-        });
-        // ----------------------------------------------------------------------------------------
-
         // BUTTON - LOGIN/SIGNUP EMAIL
         // ----------------------------------------------------------------------------------------
-        buttonLoginEmail = (Button) findViewById(R.id.account_button_login_email);
+        buttonLoginEmail = (Button) findViewById(R.id.account_button_loginEmail);
         buttonLoginEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -187,7 +162,7 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
             }
         });
 
-        buttonSignupEmail = (Button) findViewById(R.id.account_button_signup_email);
+        buttonSignupEmail = (Button) findViewById(R.id.account_button_signupEmail);
         buttonSignupEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -203,6 +178,41 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
     // ********************************************************************************************
     // [START signIn]
     private void signIn() {
+
+        //AÑADIDO GOOGLE
+        // ----------------------------------------------------------------------------------------
+        // [START configure_signin]
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        // [END configure_signin]
+
+        // [START build_client]
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Plus.API)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        // [END build_client]
+
+        // [START customize_button]
+        // Customize sign-in button. The sign-in button can be displayed in
+        // multiple sizes and color schemes. It can also be contextually
+        // rendered based on the requested scopes. For example. a red button may
+        // be displayed when Google+ scopes are requested, but a white button
+        // may be displayed when only basic profile is requested. Try adding the
+        // Scopes.PLUS_LOGIN scope to the GoogleSignInOptions to see the
+        // difference.
+
+        //mButtonLoginGoogle = (Button) findViewById(R.id.account_button_google);
+        //signInButtonLoginGoogle.setSize(SignInButton.SIZE_STANDARD);
+        //signInButtonLoginGoogle.setScopes(gso.getScopeArray());
+        // [END customize_button]
+        //-----------------------------------------------------------------------------------------
 
         Log.i(TAG, "ENTRO A Account:signIn:0");
 

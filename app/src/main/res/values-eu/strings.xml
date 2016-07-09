@@ -20,6 +20,7 @@
     <string name="title_activity_profile">Profila</string>
     <string name="title_activity_location">Kokapena</string>
     <string name="title_activity_settings">Aukerak</string>
+    <string name="title_activity_change_password">Pasahitz Aldaketa</string>
     <!-- *************************************************************************************** -->
 
     <!-- ACCOUNT -->
@@ -74,6 +75,12 @@
     <string name="error_password_not_same">Pasahitzak ez dira berdinak</string>
     <string name="error_field_required">Informazio hau beharrezkoa da</string>
     <string name="permission_rationale">"Kontaktuen baimena behar da email bukaerak emateko."</string>
+    <!-- *************************************************************************************** -->
+
+    <!-- CHANGE PASSWORD-->
+    <!-- *************************************************************************************** -->
+    <string name="changePassword_text_changePassword">Pasahitz Aldaketa</string>
+    <string name="changePassword_button_changePassword">Pasahitz aldaketa</string>
     <!-- *************************************************************************************** -->
 
     <!-- MAIN ACTIVITY -->
@@ -142,6 +149,7 @@
     <string name="error_could_not_update_username">Errorea, ezin izan da erabiltzailearen izena eguneratu</string>
     <string name="error_could_not_update_email">Errorea, ezin izan da email-a eguneratu</string>
     <string name="error_could_not_update_password">Errorea, ezin izan da pasahitza eguneratu</string>
+    <string name="error_the_current_password_is_not_correct">Errorea, uneko pasahitza ez da zuzena</string>
     <string name="error_could_not_update_name">Errorea, ezin izan da izena eguneratu</string>
     <string name="error_could_not_update_gender">Errorea, ezin izan da sexua eguneratu</string>
     <string name="error_could_not_update_birthday">Errorea, ezin izan da jaioteguna eguneratu</string>

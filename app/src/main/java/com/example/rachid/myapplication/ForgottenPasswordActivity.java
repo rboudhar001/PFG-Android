@@ -40,5 +40,4 @@ public class ForgottenPasswordActivity extends AppCompatActivity {
         this.finish();
     }
     //-----------------------------------------------------------------------------------------
-
 }

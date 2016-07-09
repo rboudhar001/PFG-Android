@@ -11,7 +11,7 @@
     <string name="title_activity_account">Cuenta</string>
     <string name="title_activity_login">Iniciar sesión</string>
     <string name="title_activity_signup">Registrarse</string>
-    <string name="title_activity_forgotten_password">Contraseña olvidada</string>
+    <string name="title_activity_forgotten_password">Contraseña Olvidada</string>
     <string name="title_activity_publish">Publicar</string>
     <string name="title_activity_search">Buscar</string>
     <string name="title_activity_search_results">Resultados</string>
@@ -20,6 +20,7 @@
     <string name="title_activity_profile">Perfil</string>
     <string name="title_activity_location">Localización</string>
     <string name="title_activity_settings">Opciones</string>
+    <string name="title_activity_change_password">Cambiar Contraseña</string>
     <!-- *************************************************************************************** -->
 
     <!-- ACCOUNT -->
@@ -74,6 +75,12 @@
     <string name="error_password_not_same">The password not same</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+    <!-- *************************************************************************************** -->
+
+    <!-- CHANGE PASSWORD-->
+    <!-- *************************************************************************************** -->
+    <string name="changePassword_text_changePassword">Cambiar Contraseña</string>
+    <string name="changePassword_button_changePassword">Cambiar contraseña</string>
     <!-- *************************************************************************************** -->
 
     <!-- MAIN ACTIVITY -->
@@ -142,6 +149,7 @@
     <string name="error_could_not_update_username">Error, no se ha podido actualizar el nombre de usuario</string>
     <string name="error_could_not_update_email">Error, no se ha podido actualizar el email</string>
     <string name="error_could_not_update_password">Error, no se ha podido actualizar la contraseña</string>
+    <string name="error_the_current_password_is_not_correct">Error, la contraseña actual no es correcta</string>
     <string name="error_could_not_update_name">Error, no se ha podido actualizar el nombre</string>
     <string name="error_could_not_update_gender">Error, no se ha podido actualizar el genero</string>
     <string name="error_could_not_update_birthday">Error, no se ha podido actualizar el cumpleaños</string>

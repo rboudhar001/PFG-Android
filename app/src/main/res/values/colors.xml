@@ -6,6 +6,9 @@
 
     <!-- AÑADIDO: COLORES -->
     <!-- ************************************************************************************** -->
+    <color name="Rojo_GOOGLE">#dd4b39</color>
+    <color name="Azul_FACEBOOK">#3b5998</color>
+
     <color name="BLANCO">#FFFFFF</color>
     <color name="NARANJA">#F28220</color>
     <color name="MORADO">#C733C9</color>

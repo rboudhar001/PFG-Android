@@ -244,7 +244,7 @@ public abstract class MyLocation {
                         activity.getApplicationContext().getPackageName()) == PackageManager.PERMISSION_GRANTED) {
 
                     Log.i(TAG, "ENTRO A M:getLocation:10");
-                    locationManager.requestLocationUpdates(locationProvider, 1000 /*minTime-miliseconds*/, 0 /*minDistance-meters*/, locationListener);
+                    locationManager.requestLocationUpdates(locationProvider, 1000 /*minTime-miliseconds*/, 100 /*minDistance-meters*/, locationListener);
                     //locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
                 }
 
