@@ -277,7 +277,7 @@ public class TabRegistered extends Fragment {
             if ( !connection ) {
                 mNoEventsView.setText( getString(R.string.msg_no_connection) );
             } else {
-                mNoEventsView.setText( getString(R.string.tabPublished_text_no_events) );
+                mNoEventsView.setText( getString(R.string.tabRegistered_text_no_events) );
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -245,10 +245,10 @@ public abstract class MyDatabase {
         }
 
         db = mDB_Activity.getWritableDatabase();
-        if (existsLocation) { //Existe la localizacion
+        if ( existsLocation ) { //Existe la localizacion
             if (db != null) {
 
-                Log.i(TAG, "ENTRO A MyDatabase:insertUser:2");
+                Log.i(TAG, "ENTRO A MyDatabase:insertUser: EXIST_LOCATION");
 
                 //Actualizamos la cuenta
                 ContentValues valores = new ContentValues();
@@ -286,7 +286,9 @@ public abstract class MyDatabase {
                 }
                 valores.put("festivals_assisted", festivals_assisted);
 
-                String[] args = new String[]{location};
+                valores.put("language", user.getLanguage());
+
+                String[] args = new String[]{ location };
                 db.update("Users", valores, "location=?", args);
 
                 Log.i(TAG, "ENTRO A MyDatabase:insertUser:location: " + location);
@@ -297,7 +299,7 @@ public abstract class MyDatabase {
         else { // No existe la localizacion
             if (db != null) {
 
-                Log.i(TAG, "ENTRO A MyDatabase:insertUser:3");
+                Log.i(TAG, "ENTRO A MyDatabase:insertUser: NO_EXIST_LOCATION");
 
                 //Insertamos la nueva cuenta
                 ContentValues valores = new ContentValues();
@@ -336,6 +338,8 @@ public abstract class MyDatabase {
                 valores.put("festivals_assisted", festivals_assisted);
 
                 valores.put("location", (String) null);
+                valores.put("language", user.getLanguage());
+
 
                 db.insert("Users", null, valores);
                 db.close();
