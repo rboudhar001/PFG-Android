@@ -1,7 +1,6 @@
 package com.example.rachid.myapplication;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,8 +40,6 @@ public class SignupActivity extends AppCompatActivity { //implements LoaderManag
 
     private static final String TAG = "SignupActivity";
     private final Activity activity = this;
-
-    private static ProgressDialog mProgressDialog;
 
     private MyNetwork myNetwork;
 
@@ -232,16 +229,21 @@ public class SignupActivity extends AppCompatActivity { //implements LoaderManag
             Log.i(TAG, "ENTRO A Signup:attemptSignup:3");
 
             if ( MyNetwork.isNetworkConnected(activity) ) {
-                showProgressDialog();
                 //mAuthTask = new UserLoginTask(userName, email, password);
                 //mAuthTask.execute((Void) null);
 
                 // SIGN UP USER
                 // ------------------------------------------------------------------------------------
                 myNetwork = new MyNetwork(TAG, activity);
+
+                if (myNetwork.isConnected()) {
+                    myNetwork.Disconnect();
+                }
+
+                myNetwork.showProgressDialog();
                 myNetwork.Connect();
 
-                // Wait 1 second
+                // Wait 2 second
                 // ----------------------------------------------------------------------------------------
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -255,13 +257,13 @@ public class SignupActivity extends AppCompatActivity { //implements LoaderManag
                             signupUser(userName, email, password);
 
                         } else {
-                            Log.i(TAG, "ENTRO A Signup:attemptSignup:Connect: COULD NOT CONNECT");
+                            myNetwork.hideProgressDialog();
                             Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                            hideProgressDialog();
+                            Log.i(TAG, "ENTRO A Signup:attemptSignup:Connect: COULD NOT CONNECT");
                         }
 
                     }
-                }, 1000);
+                }, 2000);
                 // ----------------------------------------------------------------------------------------
             } else {
                 Log.i(TAG, "ENTRO A Signup:attemptSignup:Connect: ERROR_NETWORK");
@@ -326,7 +328,7 @@ public class SignupActivity extends AppCompatActivity { //implements LoaderManag
                 myNetwork.Disconnect();
                 Log.i(TAG, "ENTRO A SignUp:signupUser: DISCONNECT");
 
-                hideProgressDialog();
+                myNetwork.hideProgressDialog();
 
                 AccountActivity.activity.finish();
 
@@ -347,7 +349,7 @@ public class SignupActivity extends AppCompatActivity { //implements LoaderManag
                 myNetwork.Disconnect();
                 Log.i(TAG, "ENTRO A Signup:signupUser: DISCONNECT");
 
-                hideProgressDialog();
+                myNetwork.hideProgressDialog();
                 if ( (error.equals("403") && (reason.equals("Username already exists."))) ) {
                     Toast.makeText(activity, getString(R.string.error_username_already_exists), Toast.LENGTH_LONG).show();
                 } else if ( (error.equals("403") && (reason.equals("Email already exists."))) ) {
@@ -372,9 +374,9 @@ public class SignupActivity extends AppCompatActivity { //implements LoaderManag
                     myNetwork.Disconnect();
                     Log.i(TAG, "ENTRO A Signup:signupUser:getSignupResponse: DISCONNECT");
 
-                    Log.i(TAG, "ENTRO A Signup:signupUser:getSignupResponse: COULD NOT SIGN UP");
+                    myNetwork.hideProgressDialog();
                     Toast.makeText(activity, getString(R.string.error_could_not_sign_up_the_user), Toast.LENGTH_LONG).show();
-                    hideProgressDialog();
+                    Log.i(TAG, "ENTRO A Signup:signupUser:getSignupResponse: COULD NOT SIGN UP");
                 }
 
             }
@@ -566,23 +568,4 @@ public class SignupActivity extends AppCompatActivity { //implements LoaderManag
         this.finish();
     }
     //-----------------------------------------------------------------------------------------
-
-    // **********
-    // FUNTIONS
-    // **********
-    // ----------------------------------------------------------------------------------------
-    private void showProgressDialog() {
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage(getString(R.string.loading));
-        mProgressDialog.setCancelable(false);
-
-        mProgressDialog.show();
-    }
-
-    private void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
-        }
-    }
-    // ----------------------------------------------------------------------------------------
 }

@@ -1,12 +1,12 @@
 package com.example.rachid.myapplication;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -88,11 +88,16 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         // Connect and Get data from Server
         // ----------------------------------------------------------------------------------------
-        showProgressDialog();
         myNetwork = new MyNetwork(TAG, activity);
+
+        if (myNetwork.isConnected()) {
+            myNetwork.Disconnect();
+        }
+
+        showProgressDialog();
         myNetwork.Connect();
 
-        // Wait 1 sec to Connect
+        // Wait 2 sec to Connect
         // ----------------------------------------------------------------------------------------
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -100,7 +105,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
                 if ( myNetwork.isConnected() ) {
 
-                    if ( (sDate != null ) & (!sDate.isEmpty()) ) { // Buscamos por "Lugar" y "Fecha"
+                    if ( !TextUtils.isEmpty(sDate) ) { // Buscamos por "Lugar" y "Fecha"
                         listViewValues = myNetwork.getAllEvents(sPlace, sDate);
                     } else { // Sino, buscamos solo por lugar
                         listViewValues = myNetwork.getAllEvents(sPlace);
@@ -154,7 +159,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                 }
 
             }
-        }, 1000);
+        }, 2000);
         // ----------------------------------------------------------------------------------------
     }
 

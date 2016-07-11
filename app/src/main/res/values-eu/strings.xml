@@ -48,12 +48,15 @@
     <string name="login_button_login">Sesioa hasi</string>
     <string name="login_button_forgotten_password">Pasahitza ahaztu duzu?</string>
     <string name="login_button_no_account">Konturik ez? Erregistratu</string>
+
     <string name="error_could_not_connect_to_server">Ezin izan da serbidorearekin konektatu</string>
     <string name="error_could_not_logged_to_server">Ezin izan da serbidorean sartu</string>
     <string name="error_could_not_logout_to_server">Ezin izan da serbidoretik atera</string>
     <string name="error_this_account_not_exists">Kontu hau ez da existitzen</string>
     <string name="error_user_not_exists">Erabiltzaile hau ez da existitzen</string>
     <string name="error_password_is_incorrect">Pasahitza ez da zuzena</string>
+
+    <string name="fatal_error_to_update_assistant_on_event">Fatal error updating the number of assistants of the event</string>
     <!-- *************************************************************************************** -->
 
     <!-- SIGNUP -->
@@ -223,9 +226,14 @@
     <!-- *************************************************************************************** -->
     <string name="tabEvents_button_retry">Saiatu berriro</string>
 
+    <string name="msg_no_connection">Deskonektatu</string>
+
     <string name="tabEvents_text_no_events">Ez dago ekitaldirik</string>
     <string name="tabPublished_text_no_events">Ez duzu ekitaldirik argitaratu</string>
     <string name="tabRegistered_text_no_events">Ez duzu erregistraturiko ekitaldirik</string>
+
+    <string name="tabPublished_text_loginForSee">Sartu zure ekitaldiak argitaratutako ikusteko</string>
+    <string name="tabRegistered_text_loginForSee">Sartu zure gertakari erregistratu ikusteko</string>
     <!-- *************************************************************************************** -->
 
     <!-- SHOW EVENT -->

@@ -18,6 +18,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import im.delight.android.ddp.ResultListener;
 import im.delight.android.ddp.SubscribeListener;
 
 /**
@@ -63,17 +64,29 @@ public class ShowEventActivity extends AppCompatActivity {
         sPlace = getIntent().getExtras().getString("place");
         sDate = getIntent().getExtras().getString("date");
 
+        Log.i(TAG, "ENTRO A ShowEvent:onCreate:EVENT: " + sEvent);
         Log.i(TAG, "ENTRO A ShowEvent:onCreate:PLACE: " + sPlace);
         Log.i(TAG, "ENTRO A ShowEvent:onCreate:DATE: " + sDate);
 
         // AÑADIDO: VISUALIZAR EVENTO
         // ----------------------------------------------------------------------------------------
         mImageView = (ImageView) findViewById(R.id.showEvent_image_event);
+
         DisplayMetrics metrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int heightPixels = 600; //metrics.heightPixels / 4;
         int widthPixels = metrics.widthPixels - 8;
-        Picasso.with(activity).load(sEvent.getPhoto()).resize(widthPixels, heightPixels).into(mImageView);
+
+        Log.i(TAG, "ENTRO A ShowEvent:onCreate: PHOTO: '" + sEvent.getPhoto() + "'");
+        if ( (!TextUtils.isEmpty(sEvent.getPhoto())) && (!TextUtils.equals(sEvent.getPhoto(), "/img/noimgFestival.png")) ) {
+            Log.i(TAG, "ENTRO A ShowEvent:onCreate: FESTIVAL_PHOTO");
+
+            Picasso.with(activity).load( sEvent.getPhoto() ).resize(widthPixels, heightPixels).into(mImageView);
+        } else {
+            Log.i(TAG, "ENTRO A ShowEvent:onCreate: DEFAULT_PHOTO");
+
+            Picasso.with(activity).load( "http://sozialmusfest.scalingo.io/img/noimgFestival.png" ).resize(widthPixels, heightPixels).into( mImageView );
+        }
 
         mNameView = (TextView) findViewById(R.id.showEvent_textEdit_name);
         mNameView.setText(sEvent.getName());
@@ -117,14 +130,20 @@ public class ShowEventActivity extends AppCompatActivity {
         // ESTADO
         // ---------------------------------------------------------------------------------------
         if (MyState.getLoged()) { // Si el usuario esta logeado
-
-            connectAndDo("getFestivalsAssisted", null);
-
+            Log.i(TAG, "ENTRO A ShowEvent:onCreate: ACTIVATE_BUTTON");
             // NO mostrar mensaje y habilitar boton
             mUserNotLoggedView.setVisibility(View.INVISIBLE);
             mButtonRegister.setActivated(true);
             mButtonRegister.setEnabled(true);
+
+            // Actualizamos estado del boton "Apuntarse" o "Desapuntarse"
+            updateButton(MyState.getUser(), sEvent);
+
+            // Actualizamos los festivales_assistidos del usuario actuales del servidor
+            connectAndDo("getFestivalsAssisted", null);
+
         } else {
+            Log.i(TAG, "ENTRO A ShowEvent:onCreate: NOT_ACTIVATE_BUTTON");
             // Mostrar mensaje y NO habilitar boton
             mUserNotLoggedView.setVisibility(View.VISIBLE);
             mButtonRegister.setActivated(false);
@@ -139,8 +158,8 @@ public class ShowEventActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (MyState.getLoged()) {
-                    final TextView asistentes = mAssistantsView;
-                    connectAndDo("registerOrUnregister", asistentes);
+                    final TextView textAssistants = mAssistantsView;
+                    connectAndDo("registerOrUnregister", textAssistants);
                 }
             }
         });
@@ -148,15 +167,22 @@ public class ShowEventActivity extends AppCompatActivity {
         // ****************************************************************************************
     }
 
-    public void connectAndDo(final String hacer, final TextView asistentes) {
+    // CONNECT
+    // ****************************************************************************************
+    public void connectAndDo(final String hacer, final TextView textAssistants) {
 
         if ( MyNetwork.isNetworkConnected(activity) ) {
 
             myNetwork = new MyNetwork(TAG, activity);
+
+            if (myNetwork.isConnected()) {
+                myNetwork.Disconnect();
+            }
+
             myNetwork.showProgressDialog();
             myNetwork.Connect();
 
-            // Wait 1 seconds to Connect
+            // Wait 2.5 seconds to Connect
             // -----------------------------------------------------------------------------------
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -165,35 +191,39 @@ public class ShowEventActivity extends AppCompatActivity {
                     if ( myNetwork.isConnected() ) {
 
                         if (myNetwork.isLoggedIn()) {
-                            Log.i(TAG, "ENTRO A ShowEvent:sButtonRegister: SUCCESSFULLY CONNECT");
+                            Log.i(TAG, "ENTRO A ShowEvent:connectAndDo: SUCCESSFULLY CONNECT");
 
-                            subscribeAndDo(hacer, asistentes);
+                            subscribeAndDo(hacer, textAssistants);
 
                         } else {
                             myNetwork.Disconnect();
-                            Log.i(TAG, "ENTRO A ShowEvent:sButtonRegister: DISCONNECT");
+                            Log.i(TAG, "ENTRO A ShowEvent:connectAndDo: DISCONNECT");
 
                             myNetwork.hideProgressDialog();
-                            Toast.makeText(getBaseContext(), getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
-                            Log.i(TAG, "ENTRO A ShowEvent:sButtonRegister: NO_LOGGIN_IN");
+                            //Toast.makeText(getBaseContext(), getString(R.string.error_could_not_logged_to_server), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                            Log.i(TAG, "ENTRO A ShowEvent:connectAndDo: NO_LOGGIN_IN");
                         }
 
                     } else {
                         myNetwork.hideProgressDialog();
                         Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "ENTRO A ShowEvent:onCreate: NO_CONNECT");
+                        Log.i(TAG, "ENTRO A ShowEvent:connectAndDo: NO_CONNECT");
                     }
                 }
-            }, 1000);
+            }, 2500);
             // -----------------------------------------------------------------------------------
 
         } else {
-            Log.i(TAG, "ENTRO A Profile:connectAndDo:Connect: ERROR_NETWORK");
+            Log.i(TAG, "ENTRO A Profile:connectAndDo: ERROR_NETWORK");
             Toast.makeText(activity, getString(R.string.error_not_network), Toast.LENGTH_SHORT).show();
         }
     }
+    // ****************************************************************************************
 
-    public void subscribeAndDo(final String hacer, final TextView asistentes) {
+    // SUBSCRIBE
+    // ****************************************************************************************
+    public void subscribeAndDo(final String hacer, final TextView textAssistants) {
 
         // Inicializamos variable error a true
         MyError.setSubscribeResponse(false);
@@ -203,10 +233,15 @@ public class ShowEventActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 MyError.setSubscribeResponse(true);
-                Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: SUCCESSFULLY SUBSCRIBE");
+                Log.i(TAG, "ENTRO A ShowEvent:subscribeAndDo: SUCCESSFULLY SUBSCRIBE");
 
-                // Obtenermos al usuario del servidor
+                //TODO: Obtenermos al Usuario ACTUALIZADO del servidor
                 final User userServer = myNetwork.getUserWithId(MyState.getUser().getID());
+                Log.i(TAG, "ENTRO A ShowEvent:subscribeAndDo: GET_USER_SERVER");
+
+                //TODO: Obtenermos el Evento ACTUALIZADO del servidor
+                final Event eventServer = myNetwork.getEventWithID( sEvent.getID() );
+                Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: GET_EVENT_SERVER");
 
                 // Wait 1 seconds
                 // ----------------------------------------------------------------------------------------
@@ -220,12 +255,16 @@ public class ShowEventActivity extends AppCompatActivity {
 
                         if ( hacer.equals("getFestivalsAssisted") ) {
                             //Actualizamos la ventana con el estado del boton
-                            updateButton();
+                            updateButton(userServer, eventServer);
+
+                            myNetwork.Disconnect();
+                            Log.i(TAG, "ENTRO A ShowEvent:subscribeAndDo: DISCONNECT");
+
                             myNetwork.hideProgressDialog();
 
                         } else if ( hacer.equals("registerOrUnregister") ) {
                             //Registramos o des-registramos del usuario este evento
-                            registerOrUnregisterUserEvent(userServer, asistentes);
+                            registerOrUnregisterUserEvent(userServer, eventServer, textAssistants);
 
                         } else {
                             throw new IllegalArgumentException("ShowEvent:SubscribeAndDo: It is not detected method");
@@ -241,13 +280,12 @@ public class ShowEventActivity extends AppCompatActivity {
                 MyError.setSubscribeResponse(true);
 
                 myNetwork.Disconnect();
-                Log.i(TAG, "ENTRO A ShowEvent:Subscribe: DISCONNECT");
+                Log.i(TAG, "ENTRO A ShowEvent:subscribeAndDo: DISCONNECT");
 
                 myNetwork.hideProgressDialog();
                 Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "ENTRO A ShowEvent:Subscribe: COULD NOT SUBSCRIBE");
+                Log.i(TAG, "ENTRO A ShowEvent:subscribeAndDo: COULD NOT SUBSCRIBE");
             }
-
         });
 
         // Wait 5 seconds, si no responde en este tiempo, cerrar.
@@ -257,166 +295,98 @@ public class ShowEventActivity extends AppCompatActivity {
             public void run() {
 
                 if (!MyError.getSubscribeResponse()) {
-                    Log.i(TAG, "ENTRO A ShowEvent:Subscribe:getSubscribeResponse: TIMES_EXPIRED");
+                    Log.i(TAG, "ENTRO A ShowEvent:subscribeAndDo:getSubscribeResponse: TIMES_EXPIRED");
 
                     myNetwork.Disconnect();
-                    Log.i(TAG, "ENTRO A ShowEvent:Subscribe:getSubscribeResponse: DISCONNECT");
+                    Log.i(TAG, "ENTRO A ShowEvent:subscribeAndDo:getSubscribeResponse: DISCONNECT");
 
                     myNetwork.hideProgressDialog();
                     Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "ENTRO A ShowEvent:Subscribe:getSubscribeResponse: COULD NOT SUBSCRIBE");
+                    Log.i(TAG, "ENTRO A ShowEvent:subscribeAndDo:getSubscribeResponse: COULD NOT SUBSCRIBE");
                 }
-
             }
         }, 5000);
         // ------------------------------------------------------------------------------------
     }
-
-    //
-    public void updateButton() {
-
-        // Darle estilo al boton "Apuntarse" o "Desapuntarse" segun si esta o no registrado el usuario a este evento
-        if ( thisUserRegisteredInThisEvent() ) {
-            mButtonRegister.setBackgroundColor(getResources().getColor(R.color.ROJO));
-            mButtonRegister.setText(getString(R.string.showEvent_text_unregister));
-        }
-        else {
-            mButtonRegister.setBackgroundColor(getResources().getColor(R.color.VERDE));
-            mButtonRegister.setText(getString(R.string.showEvent_text_register));
-        }
-    }
+    // ****************************************************************************************
 
     // AÑADIDO: Caso de uso "Apuntarse" o "Desapuntarse"
-    // --------------------------------------------------------------------------------------------
-    //
-    public void registerOrUnregisterUserEvent(final User userServer, final TextView asistentes) {
+    // ****************************************************************************************
+    public void registerOrUnregisterUserEvent(final User userServer, final Event eventServer, final TextView textAssistants) {
 
-        String button_state = mButtonRegister.getText().toString();
+        final String button_state = mButtonRegister.getText().toString();
 
-        if ( thisUserRegisteredInThisEvent() ) {
-            Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterOnEvent: USER_ARE_REGISTERED");
+        if ( thisUserRegisteredInThisEvent(userServer, eventServer) ) {
+            Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: USER_ARE_REGISTERED");
 
             // Comprobar posible error: por si el usuario se ha desapuntado desde la pagina web y no se ha cambiado el estado del boton en el transcurso
             if ( TextUtils.equals(button_state, getString(R.string.showEvent_text_unregister)) ) { // Si el boton es igual a des-registrarse
 
                 // TODO: Des-Registrar a este usuario en este evento
-                myNetwork.unregisterUserEvent(userServer, sEvent);
+                // --------------------------------------------------------------------
+                ArrayList<String> festivales_asistidos = userServer.getfestivalsAssisted();
+                Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent:Unregister: FESTIVALS_ASSISTED_OLD: " + festivales_asistidos);
+                if ( festivales_asistidos != null ) {
+                    userServer.getfestivalsAssisted().remove( eventServer.getName() );
+                }
+                Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent:Unregister: FESTIVALS_ASSISTED_NEW: " + festivales_asistidos);
+                // --------------------------------------------------------------------
 
-                // Wait 1 second
-                // --------------------------------------------------------------------------------
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        // Eliminamos este evento al usuario (DB Local)
-                        MyDatabase.unregisterUserEvent(TAG, activity, userServer, sEvent.getName());
-
-                        // Eliminamos este evento al usuario (System)
-                        userServer.getfestivalsAssisted().remove(sEvent.getName());
-                        Log.i(TAG, "ENTRO A ShowEvent:RegisterOrUnregisterUserEvent: FESTIVALS_ASSISTED: " + userServer.getfestivalsAssisted());
-
-                        // Actualizar estado del boton
-                        mButtonRegister.setBackgroundColor(getResources().getColor(R.color.VERDE));
-                        mButtonRegister.setText(getString(R.string.showEvent_text_register));
-
-                        int aux = sEvent.getAssistants() - 1;
-                        sEvent.setAssistants(aux);
-                        asistentes.setText("" + aux);
-
-                        // Cerramos la ventana de la cual provenimos para actualizar
-                        if ( (sPlace != null) && (!TextUtils.isEmpty(sPlace)) ) {
-                            SearchResultsActivity.activity.finish();
-                        } else {
-                            EventsActivity.activity.finish();
-                        }
-
-                        myNetwork.hideProgressDialog();
-                    }
-
-                }, 1000);
-                // --------------------------------------------------------------------------------
+                // TODO: Actualizar el usuario en el servidor
+                updateUserOnNetworkAndDo("Unregister", userServer, eventServer, textAssistants);
 
             } else {
-                // Actualizar estado del boton
-                mButtonRegister.setBackgroundColor(getResources().getColor(R.color.ROJO));
-                mButtonRegister.setText(getString(R.string.showEvent_text_unregister));
+                updateButton(userServer, eventServer);
 
-                int aux = sEvent.getAssistants() + 1;
-                sEvent.setAssistants(aux);
-                asistentes.setText("" + sEvent.getAssistants());
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: DISCONNECT");
 
                 myNetwork.hideProgressDialog();
                 Toast.makeText(activity, getString(R.string.error_you_are_already_unregistered), Toast.LENGTH_SHORT).show();
             }
         }
         else {
-            Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterOnEvent: USER_NOT_ARE_REGISTERED");
+            Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: USER_NOT_ARE_REGISTERED");
 
             // Comprobar posible error: por si el usuario se ha apuntado desde la pagina web y no se ha cambiado el estado del boton en el transcurso
             if ( TextUtils.equals(button_state, getString(R.string.showEvent_text_register)) ) { // Si el boton es igual a registrarse
 
-                //TODO: Comprobamos en VIVO si el evento no esta completo
-                final Event eventServer = myNetwork.getEventWithID(sEvent.getID());
+                if (eventServer.getAssistants() < eventServer.getCapacity()) {
 
-                // Wait 1 second
-                // ----------------------------------------------------------------------------------------
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if (eventServer.getAssistants() < eventServer.getCapacity()) {
-
-                            // TODO: Registrar a este usuario en este evento
-                            myNetwork.registerUserEvent(userServer, sEvent);
-
-                            // Wait 1 second
-                            // ----------------------------------------------------------------------------------------
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    // Añadimos este evento al usuario (DB Local)
-                                    MyDatabase.registerUserEvent(TAG, activity, userServer, sEvent.getName());
-
-                                    // Añadimos este evento al usuario (System)
-                                    //Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + userServer.getfestivalsAssisted());
-                                    //userServer.getfestivalsAssisted().add(sEvent.getName());
-                                    //Log.i(TAG, "ENTRO A ShowEvent:RegisterOrUnregisterUserEvent: FESTIVALS_ASSISTED_NEW: " + userServer.getfestivalsAssisted());
-
-                                    // Actualizar estado del boton
-                                    mButtonRegister.setBackgroundColor(getResources().getColor(R.color.ROJO));
-                                    mButtonRegister.setText(getString(R.string.showEvent_text_unregister));
-
-                                    int aux = sEvent.getAssistants() + 1;
-                                    sEvent.setAssistants(aux);
-                                    asistentes.setText("" + sEvent.getAssistants());
-
-                                    if (EventsActivity.activity != null) {
-                                        EventsActivity.activity.finish();
-                                    }
-
-                                    myNetwork.hideProgressDialog();
-                                }
-
-                            }, 1000);
-                            // ----------------------------------------------------------------------------------------
-
-                        } else {
-                            Toast.makeText(activity, getString(R.string.error_event_complete), Toast.LENGTH_SHORT).show();
+                    // TODO: Registrar a este usuario en este evento
+                    // --------------------------------------------------------------------
+                    ArrayList<String> festivales_asistidos = userServer.getfestivalsAssisted();
+                    Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent:Register: FESTIVALS_ASSISTED_OLD: " + festivales_asistidos);
+                    if ( festivales_asistidos == null ) {
+                        userServer.setfestivalsAssisted( new ArrayList<String>() );
+                        userServer.getfestivalsAssisted().add( eventServer.getName() );
+                    } else {
+                        if ( !festivales_asistidos.contains(eventServer.getName() )) {
+                            userServer.getfestivalsAssisted().add( eventServer.getName() );
                         }
                     }
+                    Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent:Register: FESTIVALS_ASSISTED_NEW: " + festivales_asistidos);
+                    Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent:Register: FESTIVALS_ASSISTED_USER: " + userServer.getfestivalsAssisted());
+                    // --------------------------------------------------------------------
 
-                }, 1000);
-                // ----------------------------------------------------------------------------------------
+                    // TODO: Actualizar el usuario en el servidor
+                    updateUserOnNetworkAndDo("Register", userServer, eventServer, textAssistants);
+
+                } else {
+                    updateButton(userServer, eventServer);
+
+                    myNetwork.Disconnect();
+                    Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: DISCONNECT");
+
+                    myNetwork.hideProgressDialog();
+                    Toast.makeText(activity, getString(R.string.error_event_complete), Toast.LENGTH_SHORT).show();
+                }
 
             } else {
-                // Actualizar estado del boton
-                mButtonRegister.setBackgroundColor(getResources().getColor(R.color.VERDE));
-                mButtonRegister.setText(getString(R.string.showEvent_text_register));
+                updateButton(userServer, eventServer);
 
-                int aux = sEvent.getAssistants() - 1;
-                sEvent.setAssistants(aux);
-                asistentes.setText("" + sEvent.getAssistants());
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A ShowEvent:registerOrUnregisterUserEvent: DISCONNECT");
 
                 myNetwork.hideProgressDialog();
                 Toast.makeText(activity, getString(R.string.error_you_are_already_registered), Toast.LENGTH_SHORT).show();
@@ -425,15 +395,184 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     //
-    public boolean thisUserRegisteredInThisEvent() {
+    public void updateUserOnNetworkAndDo(final String hacer, final User userServer, final Event eventServer, final TextView textAssistants) {
 
-        ArrayList<String> festivales_asistidos = MyState.getUser().getfestivalsAssisted();
-        for (String name : festivales_asistidos) {
-            if (sEvent.getName().equals(name)) {
-                return true;
+        // Inicializamos variable error a true
+        MyError.setUpdateUserResponse(false);
+
+        myNetwork.updateUser(userServer, new ResultListener() {
+
+            @Override
+            public void onSuccess(String result) {
+                MyError.setUpdateUserResponse(true);
+                Log.i(TAG, "ENTRO A ShowEvent:updateUserOnNetworkAndDo: SUCCESSFULLY UPDATE USER");
+
+                if (hacer.equals("Register")) {
+
+                    //TODO: Aumentar en 1 el numero de asistentes de este evento
+                    eventServer.setAssistants((eventServer.getAssistants() + 1));
+                    Log.i(TAG, "ENTRO A ShowEvent:updateUserOnNetworkAndDo:Register: ASSISTANTS: " + eventServer.getAssistants());
+
+                    //TODO: Actualizar el evento en el servidor
+                    updateEventOnNetwork(userServer, eventServer, textAssistants, 0);
+
+                } else if (hacer.equals("Unregister")) {
+
+                    //TODO: Disminuir en 1 el numero de asistentes de este evento
+                    eventServer.setAssistants((eventServer.getAssistants() - 1));
+                    Log.i(TAG, "ENTRO A ShowEvent:updateUserOnNetworkAndDo:Unregister: ASSISTANTS: " + eventServer.getAssistants());
+
+                    //TODO: Actualizar el evento en el servidor
+                    updateEventOnNetwork(userServer, eventServer, textAssistants, 0);
+
+                } else {
+                    throw new IllegalArgumentException("ShowEvent:updateUserOnNetworkAndDo: It is not detected method");
+                }
             }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+                MyError.setUpdateUserResponse(true);
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO A ShowEvent:updateUserOnNetworkAndDo: DISCONNECT");
+
+                myNetwork.hideProgressDialog();
+                //Toast.makeText(activity, getString(R.string.error_could_not_update_user), Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_LONG).show();
+                Log.i(TAG, "ENTRO A ShowEvent:updateUserOnNetworkAndDo: COULD NOT UPDATE: " + error + " / " + reason + " / " + details);
+            }
+        });
+
+        // Wait 5 seconds, si no responde en este tiempo, cerrar.
+        // ----------------------------------------------------------------------------------------
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (!MyError.getUpdateUserResponse()) {
+                    Log.i(TAG, "ShowEvent:updateUserOnNetworkAndDo:getUpdateUserResponse: TIMES_EXPIRED");
+
+                    myNetwork.Disconnect();
+                    Log.i(TAG, "ENTRO A ShowEvent:updateUserOnNetworkAndDo:getUpdateUserResponse: DISCONNECT");
+
+                    myNetwork.hideProgressDialog();
+                    Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "ENTRO A ShowEvent:updateUserOnNetworkAndDo:getUpdateUserResponse: COULD NOT SUBSCRIBE");
+                }
+            }
+        }, 5000);
+        // ----------------------------------------------------------------------------------------
+    }
+
+    //
+    public void updateEventOnNetwork(final User userServer, final Event eventServer, final TextView textAssistants, final int retry) {
+
+        // Inicializamos variable error a true
+        MyError.setUpdateEventResponse(false);
+
+        myNetwork.updateEvent(eventServer, new ResultListener() {
+
+            @Override
+            public void onSuccess(String result) {
+                MyError.setUpdateEventResponse(true);
+                Log.i(TAG, "ENTRO A ShowEvent:updateEventOnNetwork: SUCCESSFULLY UPDATE EVENT");
+
+                // Actualizamos el usuario en la DB (local)
+                MyDatabase.updateUser(TAG, activity, userServer);
+                // Actualizamos el usuario en el Sistema
+                MyState.setUser(userServer);
+                Log.i(TAG, "ENTRO a ShowEvent:updateEventOnNetwork: USER_FESTIVALS_ASSISTED: " + userServer.getfestivalsAssisted());
+
+                // Actualizamos el texto de numero de asistentes
+                mAssistantsView.setText("" + eventServer.getAssistants());
+                Log.i(TAG, "ENTRO a ShowEvent:updateEventOnNetwork: EVENT_ASSISTANTS: " + eventServer.getAssistants());
+
+                // Actualizar estado del boton
+                updateButton(userServer, eventServer);
+
+                if (EventsActivity.activity != null) {
+                    EventsActivity.activity.finish();
+                }
+
+                myNetwork.Disconnect();
+                Log.i(TAG, "ENTRO a ShowEvent:updateEventOnNetwork: DISCONNECT");
+
+                myNetwork.hideProgressDialog();
+            }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+                //MyError.setUpdateEventResponse(true);
+
+                //myNetwork.Disconnect();
+                //Log.i(TAG, "ENTRO A ShowEvent:updateEventOnNetwork: DISCONNECT");
+
+                //myNetwork.hideProgressDialog();
+                //Toast.makeText(activity, getString(R.string.error_could_not_update_user), Toast.LENGTH_LONG).show();
+                //Toast.makeText(activity, getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_LONG).show();
+                Log.i(TAG, "ENTRO A ShowEvent:updateEventOnNetwork: COULD_NOT_UPDATE_EVENT: " + error + " / " + reason + " / " + details);
+            }
+        });
+
+        // Wait 5 seconds, si no responde en este tiempo, REINTENTAR!!
+        // ----------------------------------------------------------------------------------------
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (!MyError.getUpdateEventResponse()) {
+                    Log.i(TAG, "ENTRO a ShowEvent:updateEventOnNetwork:getUpdateEventResponse: TIMES_EXPIRED");
+
+                    //TODO: Retry again the update
+                    if (retry <= 3) {
+                        Log.i(TAG, "ENTRO a ShowEvent:updateEventOnNetwork:getUpdateEventResponse: RETRY_NUMBER: " + retry);
+                        updateEventOnNetwork(userServer, eventServer, textAssistants, (retry + 1));
+
+                    } else {
+                        myNetwork.Disconnect();
+                        Log.i(TAG, "ENTRO a ShowEvent:updateEventOnNetwork:getUpdateEventResponse: DISCONNECT");
+
+                        myNetwork.hideProgressDialog();
+                        Toast.makeText(activity, getString(R.string.fatal_error_to_update_assistant_on_event), Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "ENTRO a ShowEvent:updateEventOnNetwork:getUpdateEventResponse: FATAL_ERROR!!!!!!!!! COULD NOT UPDATE EVENT: (The user have register the event, but event (assistants) not are update)!!!!");
+                    }
+                }
+            }
+        }, 5000);
+        // ----------------------------------------------------------------------------------------
+    }
+
+    //
+    public void updateButton(final User user, final Event event) {
+
+        // Darle estilo al boton "Apuntarse" o "Desapuntarse" segun si esta o no registrado el usuario a este evento
+        if ( thisUserRegisteredInThisEvent(user, event) ) {
+            mButtonRegister.setBackgroundColor(getResources().getColor(R.color.ROJO));
+            mButtonRegister.setText(getString(R.string.showEvent_text_unregister));
+        }
+        else {
+            mButtonRegister.setBackgroundColor(getResources().getColor(R.color.VERDE));
+            mButtonRegister.setText(getString(R.string.showEvent_text_register));
         }
 
+        // Actualizamos el texto de numero de asistentes
+        mAssistantsView.setText("" + event.getAssistants());
+        Log.i(TAG, "ENTRO a ShowEvent:updateEventOnNetwork: EVENT_ASSISTANTS: " + event.getAssistants());
+    }
+
+    //
+    public boolean thisUserRegisteredInThisEvent(final User user, final Event event) {
+        ArrayList<String> festivales_asistidos = user.getfestivalsAssisted();
+        Log.i(TAG, "ENTRO a ShowEvent:thisUserRegisteredInThisEvent: FESTIVALES_ASISTIDOS: " + festivales_asistidos);
+
+        if (festivales_asistidos != null) {
+            for (String name : festivales_asistidos) {
+                if (sEvent.getName().equals(name)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -443,12 +582,16 @@ public class ShowEventActivity extends AppCompatActivity {
     public void onBackPressed() {
 
         // Abrimos la ventana de la cual provenimos
-        if ( (sPlace != null) && (!TextUtils.isEmpty(sPlace)) ) {
+        if ( !TextUtils.isEmpty(sPlace) ) {
+            Log.i(TAG, "ENTRO a ShowEvent:onBackPressed: OPEN_SEARCH_WINDOW");
+
             Intent intent = new Intent(ShowEventActivity.this, SearchResultsActivity.class);
             intent.putExtra("place", sPlace);
             intent.putExtra("date", sDate);
             startActivity(intent);
         } else {
+            Log.i(TAG, "ENTRO a ShowEvent:onBackPressed: OPEN_EVENTS_WINDOW");
+
             startActivity(new Intent(ShowEventActivity.this, EventsActivity.class));
         }
 

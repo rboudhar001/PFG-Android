@@ -13,6 +13,7 @@ public abstract class MyError {
     private static boolean loginResponse;
     private static boolean changePasswordResponse;
     private static boolean updateUserResponse;
+    private static boolean updateEventResponse;
 
     // *****************
     // *** FUNCIONES ***
@@ -54,12 +55,21 @@ public abstract class MyError {
         return changePasswordResponse;
     }
 
-    // SET USER NAME
+    // UPDATE USER
     public static void setUpdateUserResponse(boolean update) {
         updateUserResponse = update;
     }
 
     public static boolean getUpdateUserResponse() {
         return updateUserResponse;
+    }
+
+    // UPDATE EVENT
+    public static void setUpdateEventResponse(boolean update) {
+        updateEventResponse = update;
+    }
+
+    public static boolean getUpdateEventResponse() {
+        return updateEventResponse;
     }
 }

@@ -1,28 +1,22 @@
 package com.example.rachid.myapplication;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.DatePicker;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * Created by Rachid on 25/03/2016.
@@ -33,7 +27,8 @@ public class SearchActivity extends AppCompatActivity {
     public static Activity activity;
 
     private AutoCompleteTextView mPlaceView;
-    private EditText mDateView;
+    private RelativeLayout relativeDate;
+    private TextView textEditDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +41,20 @@ public class SearchActivity extends AppCompatActivity {
         // ----------------------------------------------------------------------------------------
         mPlaceView = (AutoCompleteTextView) findViewById(R.id.search_place);
 
-        mDateView = (EditText) findViewById(R.id.search_date);
-        mDateView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        relativeDate = (RelativeLayout) findViewById(R.id.search_relative_date);
+        relativeDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Implement your edit date
+                DialogFragment newFragment = new DatePickerSearchFragment();
+                newFragment.show(getFragmentManager(), "datePicker");
+            }
+        });
+
+        textEditDate = (TextView) findViewById(R.id.search_text_date);
+
+        /*
+        relativeDate.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
 
@@ -64,6 +71,7 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
+        */
 
         Button mSearchButton = (Button) findViewById(R.id.search_button_search);
         mSearchButton.setOnClickListener(new View.OnClickListener() {
@@ -75,6 +83,11 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
         // ----------------------------------------------------------------------------------------
+    }
+
+    //
+    public void editTextDate(String date) {
+        textEditDate.setText(date);
     }
 
     //AÑADIDO : SEARCH
@@ -90,11 +103,9 @@ public class SearchActivity extends AppCompatActivity {
 
         // Reset errors.
         mPlaceView.setError(null);
-        mDateView.setError(null);
 
         // Store values at the time of the search attempt.
         String place = mPlaceView.getText().toString();
-        String date = mDateView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -118,7 +129,14 @@ public class SearchActivity extends AppCompatActivity {
 
             Intent intent = new Intent(SearchActivity.this, SearchResultsActivity.class);
             intent.putExtra("place", place);
-            intent.putExtra("date", date);
+
+            String date = textEditDate.getText().toString();
+            if ( !TextUtils.equals(date, getString(R.string.prompt_date)) ) {
+                intent.putExtra("date", date);
+            } else {
+                intent.putExtra("date", (String)null);
+            }
+
             startActivity(intent);
         }
     }
@@ -131,4 +149,35 @@ public class SearchActivity extends AppCompatActivity {
         this.finish();
     }
     //-----------------------------------------------------------------------------------------
+
+    // *******************
+    // CLASS: DatePicker
+    // *******************
+    //--------------------------------------------------------------------------------------------
+    public static class DatePickerSearchFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            month = month + 1;  // Currioso esto, el mes los da del 0 al 11 en lugar del 1 al 12 ... informaticos >.<
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            
+            // Editamos el cammpo texto de la fecha
+            SearchActivity search = (SearchActivity) getActivity();
+            String date = "" + day + "/" + month + "/" + year;
+            search.editTextDate( date );
+        }
+    }
+    //--------------------------------------------------------------------------------------------
 }

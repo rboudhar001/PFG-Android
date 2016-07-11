@@ -5,9 +5,10 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -117,6 +118,7 @@ public class MyMeteor implements MeteorCallback {
         if ( signedInAutomatically ) {
             Log.i(TAG, "ENTRO A MyMeteor:onConnect: Successfully logged in automatically");
         }
+
         /*
         else {
             Log.i(TAG, "ENTRO A MyMeteor:onConnect: NOT Successfully logged in automatically");
@@ -379,61 +381,9 @@ public class MyMeteor implements MeteorCallback {
         Collection collection = database.getCollection(Users);
         Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:Collection: " + collection);
 
-        // Get Document ID is "wjQvNQ6sGjzLMDyiJ"
-        //Document document = collection.getDocument("001");
-
-        // Get of Collection "Users" where Age of all users is equal to 30
-        //Query query = collection.whereEqual("age", 30);
-
-        // Get of Collection "Users" where ID of user is "001", your name.
-        //Object field = document.getField("name");
-
         // Get of Collection "Users" where Age of all users is equal to 30
         Document document = collection.getDocument(id);
-
-        //Query query = collection.whereEqual("_id", id);
-        //Document document = query.findOne();
         Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:Document: " + document);
-
-
-        // VER TODOS LOS CAMPOS DEL ODCUMENT
-        // ----------------------------------------------------------------------------------------
-        /*
-        String[] fields = document.getFieldNames();
-        for (String field : fields) {
-
-            Log.i(TAG, "ENTRO A MyMeteor:getUserWithId:FIELD: " + field);
-        }
-        */
-        // ----------------------------------------------------------------------------------------
-
-        // COMO SE GUARDAN LOS DATOS EN LA DB DEL SERVIDOR
-        // ----------------------------------------------------------------------------------------
-        /*
-        emails=
-        [
-        {address=mim@gmail.com, verified=false}
-        ]
-        username=mim,
-        name=,
-        surname=,
-        gender=,
-        birthday=,
-        place=,
-        music_style=,
-        image=,
-
-        createdAt={$date=1464178903761},
-
-        followers=[],
-        following=[],
-
-        festivals_created=[],
-        festivals_assisted=[],
-        */
-        // ----------------------------------------------------------------------------------------
-
-        //String id = document.getId();
 
         //String email = (String) document.getField("email");
         ArrayList emails = (ArrayList) document.getField("emails");//ArrayList de {LinkedHashMap}
@@ -589,13 +539,8 @@ public class MyMeteor implements MeteorCallback {
         // Values of User
         Map<String, Object> values = new HashMap<String, Object>();
 
-        // ------------------------
-        //EJEMPLO $SET
-        //$set:{"nombre":"mom"}
-        // ------------------------
-
         // ACTUALIZACION DE LOS CAMPOS
-        // ****************************************************************************************
+        // ----------------------------------------------------------------------------------------
         // ID
         //values.put("_id", user.getID());
 
@@ -608,147 +553,55 @@ public class MyMeteor implements MeteorCallback {
         ArrayList<LinkedHashMap<String, java.io.Serializable>> emails = new ArrayList<>();
         emails.add(email_complete);
 
-        //value = new HashMap<String, Object>();
         values.put("emails", emails);
-        //params.put("$set", value);
         // ---------------------------------------------------
 
         // USER_NAME
         values.put("username", user.getUsername());
+
         // PASSWORD
         //value = new HashMap<String, Object>();
         //value.put("password", user.getPassword());
         //params.put("$set", value);
+
         // NAME
         values.put("name", user.getName());
+
         // SURNAME
         values.put("surname", user.getSurname());
+
         // GENDER
         values.put("gender", user.getGender());
+
         // BIRTHDAY
         values.put("birthday", user.getBirthday());
+
         // PLACE
         values.put("place", user.getPlace());
+
         // MUSIC_STYLE
         values.put("music_style", user.getMusicStyle());
+
         // IMAGE
         values.put("image", user.getImage());
+
         // GOOGLE_ID
         values.put("google_id", user.getGoogle_id());
+
         // FACEBOOK_ID
-        //value = new HashMap<String, Object>();
         values.put("facebook_id", user.getFacebook_id());
+
         // FESTIVALS_CREATED
         values.put("festivals_created", user.getFestivalsCreated());
+
         // FESTIVALS_ASSISTED
         values.put("festivals_assisted", user.getfestivalsAssisted());
-        // ****************************************************************************************
+        // ----------------------------------------------------------------------------------------
 
         set.put("$set", values);
         Map<String, Object> emptyMap = new HashMap<String, Object>();
 
         mMeteor.update(Users, query, set, emptyMap, listener);
-        //mMeteor.update(Users, query, set);
-    }
-
-    //
-    public void registerUserEvent(final User mUser, final Event mEvent) {
-
-        // UPDATE USER
-        // ****************************************************************************************
-        // QUERY: ID of user to update
-        Map<String, Object> query = new HashMap<String, Object>();
-        query.put("_id", mUser.getID());
-
-        // Use the command "$set" for each value
-        Map<String, Object> set = new HashMap<String, Object>();
-
-        // Updating festivals_assisted into a collection "Users"
-        Map<String, Object> value = new HashMap<String, Object>();
-
-        ArrayList<String> festivales_asistidos = mUser.getfestivalsAssisted();
-        Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + festivales_asistidos);
-        festivales_asistidos.add(mEvent.getName());
-        Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_NEW: " + festivales_asistidos);
-
-        value.put("festivals_assisted", festivales_asistidos);
-
-        set.put("$set", value);
-
-        mMeteor.update(Users, query, set);
-        // ****************************************************************************************
-
-        // UPDATE EVENT
-        // ****************************************************************************************
-        // QUERY: NAME of event to update
-        query = new HashMap<String, Object>();
-        query.put("_id", mEvent.getID());
-
-        // Use the command "$set" for each value
-        set = new HashMap<String, Object>();
-
-        // Updating assistants into a collection "Festivales"
-        value = new HashMap<String, Object>();
-
-        int assistants = mEvent.getAssistants() ;
-        assistants = assistants + 1;
-        value.put("assistants", assistants);
-        Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: ASSISTANTS: " + assistants);
-
-        set.put("$set", value);
-
-        mMeteor.update(Events, query, set);
-        // ****************************************************************************************
-    }
-
-    //
-    public void unregisterUserEvent(final User mUser, final Event mEvent) {
-
-        // UPDATE EVENT
-        // ****************************************************************************************
-        // Get ID of user that update
-        Map<String, Object> query = new HashMap<String, Object>();
-        query.put("_id", mUser.getID());
-
-        // Use the command "$set" for each value
-        Map<String, Object> set = new HashMap<String, Object>();
-
-        // Updating festials_assisted into a collection "Users"
-        Map<String, Object> value = new HashMap<String, Object>();
-
-        ArrayList festivales_asistidos = mUser.getfestivalsAssisted();
-        Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_OLD: " + festivales_asistidos);
-        festivales_asistidos.remove(mEvent.getName());
-        Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: FESTIVALS_ASSISTED_NEW: " + festivales_asistidos);
-
-        value.put("festivals_assisted", festivales_asistidos);
-
-        set.put("$set", value);
-
-        mMeteor.update(Users, query, set);
-        // ****************************************************************************************
-
-        // UPDATE EVENT
-        // ****************************************************************************************
-        // QUERY: NAME of event to update
-        query = new HashMap<String, Object>();
-        query.put("_id", mEvent.getID());
-
-        // Use the command "$set" for each value
-        set = new HashMap<String, Object>();
-
-        // Updating assistants into a collection "Festivales"
-        value = new HashMap<String, Object>();
-
-        int assistants = mEvent.getAssistants();
-        assistants = assistants - 1;
-        value.put("assistants", assistants);
-        Log.i(TAG, "ENTRO A MyMeteor:RegisterUserEvent: ASSISTANTS: " + assistants);
-
-        set.put("$set", value);
-
-        mMeteor.update(Events, query, set);
-        // ****************************************************************************************
     }
     // ********************************************************************************************
 
@@ -774,7 +627,7 @@ public class MyMeteor implements MeteorCallback {
 
         values.put("sales", event.getSales());
         values.put("webpage", event.getWebpage());
-        values.put("contact_number", event.getContact_number());
+        values.put("contact_number", "" + event.getContact_number());
 
         values.put("creator", event.getCreator());
 
@@ -815,7 +668,7 @@ public class MyMeteor implements MeteorCallback {
         //String id = document.getId();
         String photo = (String) document.getField("photo");
         String name = (String) document.getField("name");
-        String description = (String) document.getField("descripton");
+        String description = (String) document.getField("description");
 
         String place = (String) document.getField("place");
         String firstDay = (String) document.getField("firstDay");
@@ -826,7 +679,24 @@ public class MyMeteor implements MeteorCallback {
 
         String sales = (String) document.getField("sales");
         String webpage = (String) document.getField("webpage");
-        int contact_number = (int) document.getField("contact_number");
+
+        // Esto es asi, porque en la DB del server, a veces este valor se guarda como "int" y otras como "string"
+        // -------------------------------------------------------------------------------
+        Object object = document.getField("contact_number");
+        int contact_number;
+        //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
+        if (object instanceof String) {
+            if ( (!TextUtils.isEmpty((String)object)) ) {
+                contact_number = Integer.parseInt( (String) object );
+            } else {
+                contact_number = 0;
+            }
+        } else if(object instanceof Integer) {
+            contact_number = (int) object;
+        } else {
+            contact_number = -1; //ERROR ...
+        }
+        // -------------------------------------------------------------------------------
 
         String creator = (String) document.getField("creator");
 
@@ -918,6 +788,10 @@ public class MyMeteor implements MeteorCallback {
         int capacity, assistants, contact_number;
         String id, photo, name, description, place, firstDay, lastDay, sales, webpage, creator;
 
+        Date mFirstDay, mLastDay;
+        Date mCurrentDate = getCurrentDate();
+        Log.i(TAG, "ENTRO A MyMeteor:getAllEvents: CURRENT_DATE: " + mCurrentDate);
+
         Event event;
         ArrayList<Event> list = new ArrayList<>();
 
@@ -945,58 +819,72 @@ public class MyMeteor implements MeteorCallback {
 
             for (Document doc : documents) {
 
+                // Buscamos eventos por localizacion
                 place = (String) doc.getField("place");
-                //if (place.contains(location)) {
+                if (place.contains( location )) {
 
-                id = doc.getId();
+                    firstDay = (String) doc.getField("firstDay");
+                    lastDay = (String) doc.getField("lastDay");
 
-                photo = (String) doc.getField("photo");
-                name = (String) doc.getField("name");
+                    //mFirstDay = convertDate(firstDay);
+                    mLastDay = convertDate(lastDay);
 
-                Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:NAME: " + name);
-                Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:IMAGE: " + photo);
+                    //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents: FIRST_DAY: " + mFirstDay);
+                    Log.i(TAG, "ENTRO A MyMeteor:getAllEvents: LAST_DAY: " + mLastDay);
 
-                description = (String) doc.getField("description");
+                    // Buscamos eventos que no hayan pasado
+                    if ( !mCurrentDate.after(mLastDay) ) {
 
-                //place = (String) doc.getField("place");
-                firstDay = (String) doc.getField("firstDay");
-                lastDay = (String) doc.getField("lastDay");
+                        id = doc.getId();
 
-                //
-                //Object o = doc.getField("capacity");
-                //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Capacity CLASS?: " + o.getClass());
-                //
+                        photo = (String) doc.getField("photo");
+                        name = (String) doc.getField("name");
 
-                capacity = (int) doc.getField("capacity");
-                assistants = (int) doc.getField("assistants");
+                        Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:NAME: " + name);
+                        Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:IMAGE: " + photo);
 
-                sales = (String) doc.getField("sales");
-                webpage = (String) doc.getField("webpage");
+                        description = (String) doc.getField("description");
 
-                // Esto es asi, porque en la DB del server, a veces este valor se guarda como "int" y otras como "string"
-                // -------------------------------------------------------------------------------
-                Object object = doc.getField("contact_number");
-                //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
-                if (object instanceof String) {
-                    if ( (!TextUtils.isEmpty((String)object)) ) {
-                        contact_number = Integer.parseInt( (String) object );
-                    } else {
-                        contact_number = 0;
+                        //place = (String) doc.getField("place");
+                        //firstDay = (String) doc.getField("firstDay");
+                        //lastDay = (String) doc.getField("lastDay");
+
+                        //
+                        //Object o = doc.getField("capacity");
+                        //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Capacity CLASS?: " + o.getClass());
+                        //
+
+                        capacity = (int) doc.getField("capacity");
+                        assistants = (int) doc.getField("assistants");
+
+                        sales = (String) doc.getField("sales");
+                        webpage = (String) doc.getField("webpage");
+
+                        // Esto es asi, porque en la DB del server, a veces este valor se guarda como "int" y otras como "string"
+                        // -------------------------------------------------------------------------------
+                        Object object = doc.getField("contact_number");
+                        //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
+                        if (object instanceof String) {
+                            if ((!TextUtils.isEmpty((String) object))) {
+                                contact_number = Integer.parseInt((String) object);
+                            } else {
+                                contact_number = 0;
+                            }
+                        } else if (object instanceof Integer) {
+                            contact_number = (int) object;
+                        } else {
+                            contact_number = -1; //ERROR ...
+                        }
+                        // -------------------------------------------------------------------------------
+
+                        creator = (String) doc.getField("creator");
+
+                        event = new Event(id, photo, name, description, place, firstDay, lastDay, capacity,
+                                assistants, sales, webpage, contact_number, creator);
+
+                        list.add(event);
                     }
-                } else if(object instanceof Integer) {
-                    contact_number = (int) object;
-                } else {
-                    contact_number = -1; //ERROR ...
                 }
-                // -------------------------------------------------------------------------------
-
-                creator = (String) doc.getField("creator");
-
-                event = new Event(id, photo, name, description, place, firstDay, lastDay, capacity,
-                        assistants, sales, webpage, contact_number, creator);
-
-                list.add(event);
-                //}
             }
 
         } catch (Exception e) {
@@ -1012,21 +900,16 @@ public class MyMeteor implements MeteorCallback {
         int capacity, assistants, contact_number;
         String id, photo, name, description, place, firstDay, lastDay, sales, webpage, creator;
 
-        Date mDate, mFirstDay, mLastDate;
-        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            mDate = format.parse(date);
-        }
-        catch (Exception e) {
-            mDate = null;
-            e.printStackTrace();
-        }
+        Date mFirstDay, mLastDay;
+        Date mCurrentDate = getCurrentDate();
+        Date mSearchDate = convertDate(date);
+        Log.i(TAG, "ENTRO A MyMeteor:getAllEventsWithDate: CURRENT_DATE: " + mCurrentDate);
+        Log.i(TAG, "ENTRO A MyMeteor:getAllEventsWithDate: SEARCH_DATE: " + mSearchDate);
 
         Event event;
         ArrayList<Event> list = new ArrayList<>();
 
         try {
-
             // Get Database
             Database database = mMeteor.getDatabase();
 
@@ -1042,73 +925,69 @@ public class MyMeteor implements MeteorCallback {
 
             for (Document doc : documents) {
 
+                // Buscamos eventos por localizacion
                 place = (String) doc.getField("place");
-                //if (place.contains(location)) {
+                if (place.contains(location)) {
 
-                firstDay = (String) doc.getField("firstDay");
-                try {
-                    mFirstDay = format.parse(firstDay);
-                } catch (Exception e) {
-                    mFirstDay = null;
-                    e.printStackTrace();
-                }
+                    firstDay = (String) doc.getField("firstDay");
+                    lastDay = (String) doc.getField("lastDay");
 
-                lastDay = (String) doc.getField("lastDay");
-                try {
-                    mLastDate = format.parse(lastDay);
-                } catch (Exception e) {
-                    mLastDate = null;
-                    e.printStackTrace();
-                }
+                    mFirstDay = convertDate(firstDay);
+                    mLastDay = convertDate(lastDay);
 
-                if ((mDate != null) && (mFirstDay != null) && (mLastDate != null)) {
+                    Log.i(TAG, "ENTRO A MyMeteor:getAllEventsWithDate: FIRST_DAY: " + mFirstDay);
+                    Log.i(TAG, "ENTRO A MyMeteor:getAllEventsWithDate: LAST_DAY: " + mLastDay);
 
-                    //(firstDay <= dia) && (dia <= lastDay)
-                    if ((mDate.after(mFirstDay)) && (mDate.before(mLastDate))) {
+                    // Buscamos eventos que no hayan pasado
+                    //if ( !mCurrentDate.after( mLastDay ) ) {
 
-                        //Añadimos este evento al ArrayList
-                        id = doc.getId();
+                        //Buscamos eventos para la fecha concreta
+                        //(firstDay <= dia) && (dia <= lastDay)
+                        if ((mSearchDate.after(mFirstDay)) && (mSearchDate.before(mLastDay))) {
 
-                        photo = (String) doc.getField("photo");
-                        name = (String) doc.getField("name");
-                        description = (String) doc.getField("descripton");
+                            //Añadimos este evento al ArrayList
+                            id = doc.getId();
 
-                        //place = (String) doc.getField("place");
-                        //firstDay = (String) doc.getField("firstDay");
-                        //lastDay = (String) doc.getField("lastDay");
+                            photo = (String) doc.getField("photo");
+                            name = (String) doc.getField("name");
+                            description = (String) doc.getField("description");
 
-                        capacity = (int) doc.getField("capacity");
-                        assistants = (int) doc.getField("assistants");
+                            //place = (String) doc.getField("place");
+                            //firstDay = (String) doc.getField("firstDay");
+                            //lastDay = (String) doc.getField("lastDay");
 
-                        sales = (String) doc.getField("sales");
-                        webpage = (String) doc.getField("webpage");
+                            capacity = (int) doc.getField("capacity");
+                            assistants = (int) doc.getField("assistants");
 
-                        // Esto es asi, porque en la DB del server, a veces este valor se guarda como "int" y otras como "string"
-                        // -------------------------------------------------------------------------------
-                        Object object = doc.getField("contact_number");
-                        //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
-                        if (object instanceof String) {
-                            if ( (!TextUtils.isEmpty((String)object)) ) {
-                                contact_number = Integer.parseInt( (String) object );
+                            sales = (String) doc.getField("sales");
+                            webpage = (String) doc.getField("webpage");
+
+                            // Esto es asi, porque en la DB del server, a veces este valor se guarda como "int" y otras como "string"
+                            // -------------------------------------------------------------------------------
+                            Object object = doc.getField("contact_number");
+                            //Log.i(TAG, "ENTRO A MyMeteor:getAllEvents:Contact_Number CLASS?: " + o.getClass());
+                            if (object instanceof String) {
+                                if ( (!TextUtils.isEmpty((String)object)) ) {
+                                    contact_number = Integer.parseInt( (String) object );
+                                } else {
+                                    contact_number = 0;
+                                }
+                            } else if(object instanceof Integer) {
+                                contact_number = (int) object;
                             } else {
-                                contact_number = 0;
+                                contact_number = -1; //ERROR ...
                             }
-                        } else if(object instanceof Integer) {
-                            contact_number = (int) object;
-                        } else {
-                            contact_number = -1; //ERROR ...
+                            // -------------------------------------------------------------------------------
+
+                            creator = (String) doc.getField("creator");
+
+                            event = new Event(id, photo, name, description, place, firstDay, lastDay, capacity,
+                                    assistants, sales, webpage, contact_number, creator);
+
+                            list.add(event);
                         }
-                        // -------------------------------------------------------------------------------
-
-                        creator = (String) doc.getField("creator");
-
-                        event = new Event(id, photo, name, description, place, firstDay, lastDay, capacity,
-                                assistants, sales, webpage, contact_number, creator);
-
-                        list.add(event);
-                    }
+                    //}
                 }
-                //}
             }
 
         } catch (Exception e) {
@@ -1125,13 +1004,20 @@ public class MyMeteor implements MeteorCallback {
     }
 
     //
-    public void updateEvent(Event event) {
+    public void updateEvent(Event event, final ResultListener listener) {
+
         // Get NAME of event that update
         Map<String, Object> query = new HashMap<String, Object>();
         query.put("_id", event.getID());
 
-        // Updating user into a collection "Users"
+        // Use the command "$set" for each value
+        Map<String, Object> set = new HashMap<String, Object>();
+
+        // Values of Event
         Map<String, Object> values = new HashMap<String, Object>();
+
+        // ACTUALIZACION DE LOS CAMPOS
+        // ---------------------------------------------------------------------------------------
         values.put("photo", event.getPhoto());
         values.put("name", event.getName());
         values.put("description", event.getDescription());
@@ -1145,11 +1031,47 @@ public class MyMeteor implements MeteorCallback {
 
         values.put("sales", event.getSales());
         values.put("webpage", event.getWebpage());
-        values.put("contact_number", event.getContact_number());
+        values.put("contact_number", "" + event.getContact_number());
 
         values.put("creator", event.getCreator());
+        // ---------------------------------------------------------------------------------------
 
-        mMeteor.update(Users, query, values);
+        set.put("$set", values);
+        Map<String, Object> emptyMap = new HashMap<String, Object>();
+
+        mMeteor.update(Events, query, set, emptyMap, listener);
     }
     // ********************************************************************************************
+
+    //
+    public Date convertDate(String dateString) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date convertedDate;
+
+        try {
+
+            convertedDate = dateFormat.parse( dateString );
+
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            convertedDate = new Date();
+        }
+
+        return convertedDate;
+    }
+
+    public Date getCurrentDate() {
+
+        // Use the current date as the default date in the picker
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        month = month + 1;  // Currioso esto, el mes los da del 0 al 11 en lugar del 1 al 12 ... informaticos >.<
+        int day = c.get(Calendar.DAY_OF_MONTH);
+
+        String dateString = "" + day + "/" + month + "/" + year;
+        return convertDate(dateString);
+    }
 }

@@ -3,8 +3,7 @@ package com.example.rachid.myapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -115,8 +114,10 @@ public class EventsAdapter extends BaseAdapter implements View.OnClickListener {
             //Log.i("EventsAdapter", "ENTRO A Events:getView: WIDTH-PIXELS: " + metrics.widthPixels);
             //Log.i("EventsAdapter", "ENTRO A Events:getView: HEIGHT-PIXELS: " + metrics.heightPixels);
 
-            if ( (tempValues.getPhoto() != null) && (!tempValues.getPhoto().isEmpty()) ) {
+            if ( (!TextUtils.isEmpty(tempValues.getPhoto())) && (!TextUtils.equals(tempValues.getPhoto(), "/img/noimgFestival.png")) ) {
                 Picasso.with(activity).load(tempValues.getPhoto()).resize(widthPixels, heightPixels).into(holder.image);
+            } else {
+                Picasso.with(activity).load( "http://sozialmusfest.scalingo.io/img/noimgFestival.png" ).resize(widthPixels, heightPixels).into(holder.image);
             }
 
             holder.name.setText(tempValues.getName());

@@ -184,24 +184,6 @@ public class MyNetwork {
         myMeteor.updateUser(user, listener);
         // ------------------------------------------------------------------------------------
     }
-
-    //
-    public void registerUserEvent(User user, Event event) {
-
-        // TODO: Apuntar al usuario el evento
-        // ------------------------------------------------------------------------------------
-        myMeteor.registerUserEvent(user, event);
-        // ------------------------------------------------------------------------------------
-    }
-
-    //
-    public void unregisterUserEvent(User user, Event event) {
-
-        // TODO: Desapuntar del usuario el evento
-        // ------------------------------------------------------------------------------------
-        myMeteor.unregisterUserEvent(user, event);
-        // ------------------------------------------------------------------------------------
-    }
     // ********************************************************************************************
 
     // EVENTOS
@@ -273,6 +255,15 @@ public class MyNetwork {
         }
 
         return list;
+    }
+
+    //
+    public void updateEvent(Event event, final ResultListener listener) {
+
+        // TODO: Actualiza en la DB el usuario pasado como parametro
+        // ------------------------------------------------------------------------------------
+        myMeteor.updateEvent(event, listener);
+        // ------------------------------------------------------------------------------------
     }
     // ********************************************************************************************
 

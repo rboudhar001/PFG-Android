@@ -240,10 +240,15 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
                 // LOGIN USER
                 // ------------------------------------------------------------------------------------
                 myNetwork = new MyNetwork(TAG, activity);
+
+                if (myNetwork.isConnected()) {
+                    myNetwork.Disconnect();
+                }
+
                 myNetwork.showProgressDialog();
                 myNetwork.Connect();
 
-                // Wait 1 second to Connect
+                // Wait 2 second to Connect
                 // ----------------------------------------------------------------------------------------
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -262,7 +267,7 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
                         }
 
                     }
-                }, 1000);
+                }, 2000);
                 // ----------------------------------------------------------------------------------------
             } else {
                 Log.i(TAG, "ENTRO A Login:attemptLogin:Connect: ERROR_NETWORK");
@@ -426,7 +431,7 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
 
         });
 
-        // Wait 6 seconds, si no responde en este tiempo, cerrar.
+        // Wait 5 seconds, si no responde en este tiempo, cerrar.
         // ----------------------------------------------------------------------------------------
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -445,7 +450,7 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderManage
                 }
 
             }
-        }, 6000);
+        }, 5000);
         // ----------------------------------------------------------------------------------------
     }
     // --------------------------------------------------------------------------------------------

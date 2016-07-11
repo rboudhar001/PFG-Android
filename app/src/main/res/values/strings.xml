@@ -20,7 +20,6 @@
     <string name="title_activity_profile">Profile</string>
     <string name="title_activity_location">Location</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="title_activity_change_password">Change Password</string>
     <!-- *************************************************************************************** -->
 
     <!-- ACCOUNT -->
@@ -36,7 +35,7 @@
     <string name="prompt_birthday">Birthday</string>
     <string name="prompt_place">Place</string>
     <string name="prompt_musicstyle">Music Styles</string>
-    <string name="error_could_not_connect_with_this_service">No se ha podido iniciar sesion con este servicio</string>
+    <string name="error_could_not_connect_with_this_service">The sesion can\'t log in with this service </string>
 
     <string name="account_button_google">GOOGLE</string>
     <string name="account_button_facebook">FACEBOOK</string>
@@ -46,26 +45,26 @@
 
     <!-- LOGIN -->
     <!-- *************************************************************************************** -->
-    <string name="login_text_title">Inicia sesión</string>
-    <string name="login_button_login">Iniciar sesión</string>
-    <string name="login_button_forgotten_password">¿Has olvidado tu contraseña?</string>
-    <string name="login_button_no_account">¿No tienes un cuenta? Registrate</string>
-    <string name="error_could_not_connect_to_server">No se ha podido conectar al servidor</string>
-    <string name="error_could_not_logged_to_server">No se ha podido logear al servidor</string>
-    <string name="error_could_not_logout_to_server">No se ha podido des-logear al servidor</string>
-    <string name="error_this_account_not_exists">Esta cuenta no existe</string>
-    <string name="error_user_not_exists">El usuario no existe</string>
-    <string name="error_password_is_incorrect">La contraseña es incorrecta</string>
+    <string name="login_text_title">Sign in</string>
+    <string name="login_button_login">Sign in</string>
+    <string name="login_button_forgotten_password">Have you forgotten your password?</string>
+    <string name="login_button_no_account">Don\'t you have an account? Sing in</string>
+    <string name="error_could_not_connect_to_server"> It couldn\'t conect to the server </string>
+    <string name="error_could_not_logged_to_server">It is imposible to log in the server</string>
+    <string name="error_could_not_logout_to_server">It is impossible to log out the server</string>
+    <string name="error_this_account_not_exists">This account doesn\'t exist </string>
+    <string name="error_user_not_exists">The user doesn\'t exist </string>
+    <string name="error_password_is_incorrect">The password is incorrect</string>
     <!-- *************************************************************************************** -->
 
     <!-- SIGNUP -->
     <!-- *************************************************************************************** -->
-    <string name="signup_text_title">Registrate</string>
-    <string name="signup_button_signup">Registrarse</string>
-    <string name="signup_button_have_account">¿Ya tienes una cuenta? Inicia sesión</string>
-    <string name="error_could_not_sign_up_the_user">No se ha podido registrar al usuario</string>
-    <string name="error_username_already_exists">Ya existe una cuenta con ese Nombre de usuario</string>
-    <string name="error_email_already_exists">Ya existe una cuenta con ese Email</string>
+    <string name="signup_text_title">Log in</string>
+    <string name="signup_button_signup">Log in</string>
+    <string name="signup_button_have_account">Do you already have an account?¿Ya tienes una cuenta? Inicia sesión</string>
+    <string name="error_could_not_sign_up_the_user">iT can\'t be possible to sing the user No se ha podido registrar al usuario</string>
+    <string name="error_username_already_exists">It already exist an account with this username </string>
+    <string name="error_email_already_exists">It already exist an account with this email </string>
 
     <string name="action_login_short">Login</string>
     <string name="action_sign_up_short">Sign up</string>
@@ -79,87 +78,66 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <!-- *************************************************************************************** -->
 
-    <!-- CHANGE PASSWORD-->
-    <!-- *************************************************************************************** -->
-    <string name="changePassword_text_changePassword">Change Password</string>
-    <string name="changePassword_button_changePassword">Change password</string>
-    <!-- *************************************************************************************** -->
-
     <!-- MAIN ACTIVITY -->
     <!-- *************************************************************************************** -->
-    <string name="geolocation_title">¿Empezamos a buscar eventos?</string>
-    <string name="know_the_events">¿Quieres conocer los eventos mas cercanos a ti?</string>
-    <string name="button_use_location">ACTIVAR LOCALIZACIÓN</string>
+    <string name="geolocation_title">Let\'s start to search events</string>
+    <string name="know_the_events">Do you want to know the closest events to you?</string>
+    <string name="button_use_location">ACTIVATE LOCALIZATION</string>
     <!-- *************************************************************************************** -->
 
     <!-- PROFILE: Account Info -->
     <!-- *************************************************************************************** -->
-    <string name="profile_text_info_account">Información de Cuenta</string>
-    <string name="profile_text_username">Usuario</string>
-    <string name="profile_text_cl_username">USUARIO</string>
+    <string name="profile_text_info_account">Account information</string>
+    <string name="profile_text_username">User</string>
+    <string name="profile_text_cl_username">USER</string>
     <string name="profile_text_email">Email</string>
     <string name="profile_text_cl_email">EMAIL</string>
     <!-- *************************************************************************************** -->
 
     <!-- PROFILE: Personal Info -->
     <!-- *************************************************************************************** -->
-    <string name="profile_text_info_personal">Información Personal</string>
-    <string name="profile_text_name">Nombre</string>
-    <string name="profile_text_cl_name">NOMBRE</string>
-    <string name="profile_text_surname">Apellido</string>
-    <string name="profile_text_cl_surname">APELLIDO</string>
-    <string name="profile_text_gender">Genero</string>
-    <string name="profile_text_cl_gender">GENERO</string>
-    <string name="profile_text_birthday">Cumpleaños</string>
-    <string name="profile_text_cl_birthday">CUMPLEAÑOS</string>
-    <string name="profile_text_place">Lugar</string>
-    <string name="profile_text_cl_place">LUGAR</string>
-    <string name="profile_text_musicstyle">Estilo de musica</string>
-    <string name="profile_text_cl_musicstyle">ESTILO DE MUSICA</string>
+    <string name="profile_text_info_personal">Personal information</string>
+    <string name="profile_text_name">Name</string>
+    <string name="profile_text_cl_name">NAME</string>
+    <string name="profile_text_surname">Surname</string>
+    <string name="profile_text_cl_surname">SURNAME</string>
+    <string name="profile_text_gender">Gender</string>
+    <string name="profile_text_cl_gender">GENDER</string>
+    <string name="profile_text_birthday">Birthday</string>
+    <string name="profile_text_cl_birthday">Birthday</string>
+    <string name="profile_text_place">Place</string>
+    <string name="profile_text_cl_place">PLACE</string>
+    <string name="profile_text_musicstyle">Music style</string>
+    <string name="profile_text_cl_musicstyle">MUSIC STYLE</string>
 
-    <string name="text_male">Hombre</string>
-    <string name="text_female">Mujer</string>
-    <string name="text_other">Otro</string>
+    <string name="text_male">Man</string>
+    <string name="text_female">Woman</string>
+    <string name="text_other">Other</string>
 
-    <string name="text_music_styles">Music Styles</string>
-    <string name="text_music_rock">Rock</string>
-    <string name="text_music_jazz">Jazz</string>
-    <string name="text_music_rap">Rap</string>
-    <string name="text_music_pop">Pop</string>
-    <string name="text_music_classic">Classic</string>
-    <string name="text_music_alternative">Alternative</string>
-    <string name="text_music_dance">Dance</string>
-    <string name="text_music_other">Other</string>
-
-    <string name="text_spain">Spain</string>
+    <string name="text_spain">Spanish</string>
     <string name="text_english">English</string>
-    <string name="text_basque">Basque</string>
+    <string name="text_basque">Euskera</string>
 
-    <string name="simbol_next">></string>
-    <string name="profile_text_complete_name">Nombre completo</string>
+    <string name="simbol_next">\></string>
+    <string name="profile_text_complete_name">Full name</string>
 
-    <string name="text_cancel">Cancelar</string>
+    <string name="text_cancel">Cancell</string>
     <string name="text_done">Ok</string>
     <string name="text_logout">Logout</string>
     <string name="text_log_out">Log Out</string>
-    <string name="text_are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
+    <string name="text_are_you_sure_you_want_to_logout">Are you sure do you want to logout?</string>
 
-    <string name="error_the_username_can_not_be_empty">Error, the username can not be empty</string>
-    <string name="error_the_email_can_not_be_empty">Error, the email can not be empty</string>
+    <string name="error_could_not_update_username">Error, it isn\'t possible to update the username</string>
+    <string name="error_could_not_update_email">Error, it isn\'t possibe to update the email</string>
+    <string name="error_could_not_update_password">Error, it isn\'t possible to update the password</string>
+    <string name="error_could_not_update_name">Error, it isn\'t possible to update the name</string>
+    <string name="error_could_not_update_gender">Error,it isn\'t possible to update the gender</string>
+    <string name="error_could_not_update_birthday">Error,it isn\'t possible to update the birthday</string>
+    <string name="error_could_not_update_place">Error, it isn\'t possible to update the place</string>
+    <string name="error_could_not_update_musicstyle">Error, it isn\'t possible to update the musical style</string>
 
-    <string name="error_could_not_update_user">Error, no se ha podido actualizar al usuario</string>
-    <string name="error_could_not_update_username">Error, no se ha podido actualizar el nombre de usuario</string>
-    <string name="error_could_not_update_email">Error, no se ha podido actualizar el email</string>
-    <string name="error_could_not_update_password">Error, no se ha podido actualizar la contraseña</string>
-    <string name="error_the_current_password_is_not_correct">Error, the current password is not correct</string>
-    <string name="error_could_not_update_name">Error, no se ha podido actualizar el nombre</string>
-    <string name="error_could_not_update_gender">Error, no se ha podido actualizar el genero</string>
-    <string name="error_could_not_update_birthday">Error, no se ha podido actualizar el cumpleaños</string>
-    <string name="error_could_not_update_place">Error, no se ha podido actualizar el lugar</string>
-    <string name="error_could_not_update_musicstyle">Error, no se ha podido actualizar el estilo de musica</string>
-
-    <string name="error_could_not_view_event">Error, no se ha podido visualizar el evento</string>
-    <string name="error_could_not_view_events">Error, no se ha podido visualizar los eventos</string>
+    <string name="error_could_not_view_event">Error,it isn\'t possible to visualize the event</string>
+    <string name="error_could_not_view_events">Error, it isn\'t possible to visualizate the events</string>
     <!-- *************************************************************************************** -->
 
     <!-- SETTINGS -->
@@ -170,113 +148,99 @@
     <string name="settings_changeLanguage">Change Language</string>
     <string name="settings_text_language">Language</string>
 
-    <string name="prompt_old_password">Contraseña actual</string>
-    <string name="prompt_new_password">Nueva contraseña</string>
-    <string name="prompt_repeat_new_password">Repetir nueva contraseña</string>
-
-    <string name="password_update_succesfull">Password update!!</string>
+    <string name="prompt_old_password">Current password</string>
+    <string name="prompt_new_password">New password</string>
+    <string name="prompt_repeat_new_password">Repit new password</string>
     <!-- *************************************************************************************** -->
 
     <!-- TOOLBAR TabLayout -->
     <!-- *************************************************************************************** -->
-    <string name="text_events">Eventos</string>
-    <string name="text_registered">Registrados</string>
-    <string name="text_published">Publicados</string>
+    <string name="text_events">Events</string>
+    <string name="text_registered">Registered</string>
+    <string name="text_published">Published</string>
     <!-- *************************************************************************************** -->
 
     <!-- MENU -->
     <!-- *************************************************************************************** -->
-    <string name="text_main_page">Pagina Principal</string>
-    <string name="text_my_account">Mi Cuenta</string>
-    <string name="text_publish">Publicar</string>
-    <string name="text_search">Buscar</string>
-    <string name="text_info">Información</string>
+    <string name="text_main_page">Main page</string>
+    <string name="text_my_account">My account</string>
+    <string name="text_publish">Publish</string>
+    <string name="text_search">Search</string>
+    <string name="text_info">Information</string>
 
     <!-- MENU_LOGIN -->
     <string name="text_not_exists_location">___________________</string>
 
     <!-- MENU_LOCATION -->
-    <string name="button_update_location">Actualizar localización</string>
+    <string name="button_update_location">Update localization</string>
 
     <!-- MENU_INFO -->
-    <string name="info_button_help">Ayuda</string>
-    <string name="info_button_terms_of_service">Términos de Servicio</string>
-    <string name="info_button_privacy_policy">Políticas de Privacidad</string>
-    <string name="info_button_version">Versión</string>
+    <string name="info_button_help">Help</string>
+    <string name="info_button_terms_of_service">Service terms</string>
+    <string name="info_button_privacy_policy">Privacy policies </string>
+    <string name="info_button_version">Version</string>
 
     <!-- MENU_INFO -->
-    <string name="version_text_version">Versión 1.0.0</string>
+    <string name="version_text_version">Version 1.0.0</string>
     <string name="version_text_autor">Rachid Boudhar Tannaoui</string>
-    <string name="version_text_info">Proyecto TFG</string>
+    <string name="version_text_info">FGJ proyect</string>
     <!-- *************************************************************************************** -->
 
     <!-- LOCATION -->
     <!-- *************************************************************************************** -->
-    <string name="button_use_my_current_location">Usar mi propia localización</string>
-    <string name="text_popular_location">Localizaciónes mas populares</string>
-
-    <string name="error_not_detect_location">Error, impossible to detect the location</string>
+    <string name="button_use_my_current_location">Use my own location</string>
+    <string name="text_popular_location">Most popular locations</string>
     <!-- *************************************************************************************** -->
-
-    <!-- NETWORK -->
-    <!-- *************************************************************************************** -->
-    <string name="error_not_network">Error, Not network connected</string>
-    <!-- *************************************************************************************** -->
-
 
     <!--AÑADIDO: FACEBOOK y GOOGLE-->
     <!-- *************************************************************************************** -->
     <integer name="google_play_services_version">8298000</integer>
-    <string name="loading">Cargando...</string>
+    <string name="loading">Loading...</string>
     <string name="facebook_app_id">1592965991028641</string>
     <!-- *************************************************************************************** -->
 
     <!-- EVENTS -->
     <!-- *************************************************************************************** -->
-    <string name="tabEvents_button_retry">Retry</string>
-
-    <string name="tabEvents_text_no_events">No hay eventos</string>
-    <string name="tabPublished_text_no_events">No has publicado ningun evento</string>
-    <string name="tabRegistered_text_no_events">No te has registrado en ningun evento</string>
+    <string name="tabEvents_text_no_events">there\'re no events</string>
+    <string name="tabPublished_text_no_events">You haven\'t posted any event yet</string>
+    <string name="tabRegistered_text_no_events">You haven\'t signed up in any event</string>
     <!-- *************************************************************************************** -->
 
     <!-- SHOW EVENT -->
     <!-- *************************************************************************************** -->
-    <string name="showEvent_text_place">LUGAR:</string>
-    <string name="showEvent_text_dates">FECHAS:</string>
-    <string name="showEvent_text_sales">ENTRADAS:</string>
-    <string name="showEvent_text_contact_number">CONTACTO:</string>
-    <string name="showEvent_text_webpage">ENLACE DEL SITIO:</string>
-    <string name="showEvent_text_creator">CREADO POR:</string>
-    <string name="showEvent_text_assistants_capacity">ASISTENTES / CAPACIDAD</string>
-    <string name="showEvent_text_user_not_logged">Inicia sesion para poder registrarte</string>
-    <string name="showEvent_button_register">REGISTRARSE</string>
+    <string name="showEvent_text_place">PLACE:</string>
+    <string name="showEvent_text_dates">DATES:</string>
+    <string name="showEvent_text_sales">TICKETS:</string>
+    <string name="showEvent_text_contact_number">CONTACT:</string>
+    <string name="showEvent_text_webpage">LINK SPACE:</string>
+    <string name="showEvent_text_creator">CREATED BY:</string>
+    <string name="showEvent_text_assistants_capacity">PARTICIPANTS / CAPACITY</string>
+    <string name="showEvent_text_user_not_logged">Log in to register</string>
+    <string name="showEvent_button_register">Register</string>
 
-    <string name="showEvent_text_register">Apuntarse</string>
-    <string name="showEvent_text_unregister">Desapuntarse</string>
+    <string name="showEvent_text_register">Sign up</string>
+    <string name="showEvent_text_unregister">Sign out</string>
 
-    <string name="error_event_complete">El evento esta completo, no tiene mas plazas</string>
-    <string name="error_you_are_already_registered">Error, you are already Registered</string>
-    <string name="error_you_are_already_unregistered">Error, you are already Unregistered</string>
+    <string name="error_event_complete">The event is full, you don\'t have more vacancies</string>
     <!-- *************************************************************************************** -->
 
     <!-- SEARCH -->
     <!-- *************************************************************************************** -->
-    <string name="searchResult_text_no_events">No se han encontrado eventos</string>
-    <string name="search_text_title">Buscar eventos</string>
+    <string name="searchResult_text_no_events">No events found</string>
+    <string name="search_text_title">Search events</string>
     <string name="action_search_short">Search</string>
-    <string name="prompt_city_or_country">Ciudad o Pais</string>
-    <string name="prompt_date">Fecha del dia</string>
-    <string name="prompt_first_day">Fecha de inicio</string>
-    <string name="prompt_last_day">Fecha final</string>
-    <string name="search_button_search">Buscar</string>
+    <string name="prompt_city_or_country">City or country</string>
+    <string name="prompt_date">Date of the day</string>
+    <string name="prompt_first_day">Start date</string>
+    <string name="prompt_last_day">Finish date</string>
+    <string name="search_button_search">Search</string>
     <!-- *************************************************************************************** -->
 
     <!-- SEARCH -->
     <!-- *************************************************************************************** -->
-    <string name="publish_text_publishEvent">Publicar Evento</string>
-    <string name="publish_text_publishWithWeb">"Si desea publicar un evento realicelo desde nuestra pagina web"</string>
-    <string name="publish_button_publish">Publicar</string>
+    <string name="publish_text_publishEvent">Publish a event</string>
+    <string name="publish_text_publishWithWeb">"If you want to publish an event, you can do it from our website"</string>
+    <string name="publish_button_publish">Publish</string>
     <!-- *************************************************************************************** -->
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -284,14 +248,13 @@
 
     <!-- Strings related to Settings -->
     <!-- *************************************************************************************** -->
-    <string name="action_edit">Editar</string>
-    <string name="action_settings">Opciones</string>
-    <string name="action_log_out">Cerrar sesión</string>
-    <string name="action_refresh">Refresh</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_settings">Options</string>
+    <string name="action_log_out">Log out</string>
     <!-- *************************************************************************************** -->
 
 
-    <!-- CONFIGURATIONS -->
+    <!-- NO_BORRAR!!! - CONFIGURATIONS -->
     <!-- *************************************************************************************** -->
     <!-- *************************************************************************************** -->
     <!-- Example General settings -->
@@ -354,5 +317,32 @@
     <!-- *************************************************************************************** -->
 
     <!-- AÑADIDAS POR EL EDITOR -->
+    <string name="action_refresh">Refresh</string>
+    <string name="changePassword_button_changePassword">Change password</string>
+    <string name="changePassword_text_changePassword">Change Password</string>
+    <string name="error_could_not_update_user">Error, it isn\'t possible to update the user</string>
+    <string name="error_not_detect_location">Error, impossible to detect the location</string>
+    <string name="error_not_network">Error, Not network connected</string>
+    <string name="error_the_current_password_is_not_correct">Error, the current password is not correct</string>
+    <string name="error_the_email_can_not_be_empty">Error, the email can not be empty</string>
+    <string name="error_the_username_can_not_be_empty">Error, the username can not be empty</string>
+    <string name="error_you_are_already_registered">Error, you are already Registered</string>
+    <string name="error_you_are_already_unregistered">Error, you are already Un-Registered</string>
+    <string name="fatal_error_to_update_assistant_on_event">Fatal error updating the number of assistants of the event</string>
+    <string name="msg_no_connection">Without connection</string>
+    <string name="password_update_succesfull">Password update!!</string>
+    <string name="tabEvents_button_retry">Retry</string>
+    <string name="tabPublished_text_loginForSee">Login to see your events published</string>
+    <string name="tabRegistered_text_loginForSee">Login to see your events registered</string>
+    <string name="text_music_alternative">Alternative</string>
+    <string name="text_music_classic">Classic</string>
+    <string name="text_music_dance">Dance</string>
+    <string name="text_music_jazz">Jazz</string>
+    <string name="text_music_other">Other</string>
+    <string name="text_music_pop">Pop</string>
+    <string name="text_music_rap">Rap</string>
+    <string name="text_music_rock">Rock</string>
+    <string name="text_music_styles">Music Styles</string>
+    <string name="title_activity_change_password">Change Password</string>
 
 </resources>

@@ -85,7 +85,42 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
 
         activity = this;
 
-        //AÑADIDO FACEBOOK
+        //AÑADIDO: INICIALIZATE GOOGLE
+        // ----------------------------------------------------------------------------------------
+        // [START configure_signin]
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        // [END configure_signin]
+
+        // [START build_client]
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Plus.API)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        // [END build_client]
+
+        // [START customize_button]
+        // Customize sign-in button. The sign-in button can be displayed in
+        // multiple sizes and color schemes. It can also be contextually
+        // rendered based on the requested scopes. For example. a red button may
+        // be displayed when Google+ scopes are requested, but a white button
+        // may be displayed when only basic profile is requested. Try adding the
+        // Scopes.PLUS_LOGIN scope to the GoogleSignInOptions to see the
+        // difference.
+
+        //mButtonLoginGoogle = (Button) findViewById(R.id.account_button_google);
+        //signInButtonLoginGoogle.setSize(SignInButton.SIZE_STANDARD);
+        //signInButtonLoginGoogle.setScopes(gso.getScopeArray());
+        // [END customize_button]
+        //-----------------------------------------------------------------------------------------
+
+        //AÑADIDO: INICIALIZATE FACEBOOK
         // ----------------------------------------------------------------------------------------
         FacebookSdk.sdkInitialize(getApplicationContext(), 9002);
         AppEventsLogger.activateApp(this);
@@ -178,49 +213,10 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
     // ********************************************************************************************
     // [START signIn]
     private void signIn() {
-
-        //AÑADIDO GOOGLE
-        // ----------------------------------------------------------------------------------------
-        // [START configure_signin]
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        // [END configure_signin]
-
-        // [START build_client]
-        // Build a GoogleApiClient with access to the Google Sign-In API and the
-        // options specified by gso.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Plus.API)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-        // [END build_client]
-
-        // [START customize_button]
-        // Customize sign-in button. The sign-in button can be displayed in
-        // multiple sizes and color schemes. It can also be contextually
-        // rendered based on the requested scopes. For example. a red button may
-        // be displayed when Google+ scopes are requested, but a white button
-        // may be displayed when only basic profile is requested. Try adding the
-        // Scopes.PLUS_LOGIN scope to the GoogleSignInOptions to see the
-        // difference.
-
-        //mButtonLoginGoogle = (Button) findViewById(R.id.account_button_google);
-        //signInButtonLoginGoogle.setSize(SignInButton.SIZE_STANDARD);
-        //signInButtonLoginGoogle.setScopes(gso.getScopeArray());
-        // [END customize_button]
-        //-----------------------------------------------------------------------------------------
-
         Log.i(TAG, "ENTRO A Account:signIn:0");
-
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_GOOGLE);
-
         Log.i(TAG, "ENTRO A Account:signIn:1");
-
     }
     // [END signIn]
 
@@ -342,9 +338,11 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
             }
         }
         // Save the Birthday
+        /*
         if (personProfile.hasBirthday()) { // it's not guaranteed
-            user.setBirthday(personProfile.getBirthday());
+            user.setBirthday( personProfile.getBirthday() );
         }
+        */
         // Save the Place
         if (personProfile.hasCurrentLocation()) { // it's not guaranteed
             user.setPlace(personProfile.getCurrentLocation());
@@ -359,17 +357,6 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
         // Save the Location
         user.setLocation(MyState.getUser().getLocation());
         // ------------------------------------------------------------------------------------
-
-        // LogOut Google
-        // --------------------------------------------------------------------------------
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        mGoogleApiClient.disconnect();
-                    }
-                });
-        // --------------------------------------------------------------------------------
 
         //TODO: Login or Signup with Facebook
         connectAndDo("Google", user);
@@ -452,10 +439,15 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
         if ( MyNetwork.isNetworkConnected(activity) ) {
 
             myNetwork = new MyNetwork(TAG, activity);
+
+            if (myNetwork.isConnected()) {
+                myNetwork.Disconnect();
+            }
+
             myNetwork.showProgressDialog();
             myNetwork.Connect();
 
-            // Wait 1 second to Connect
+            // Wait 2 second to Connect
             // ------------------------------------------------------------------------------------
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -474,7 +466,7 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
                     }
 
                 }
-            }, 1000);
+            }, 2000);
             // ------------------------------------------------------------------------------------
 
         } else {
@@ -607,6 +599,17 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
                             EventsActivity.myMenu.loadHeaderLogin();
                         }
 
+                        // LogOut Google
+                        // --------------------------------------------------------------------------------
+                        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                                new ResultCallback<Status>() {
+                                    @Override
+                                    public void onResult(Status status) {
+                                        mGoogleApiClient.disconnect();
+                                    }
+                                });
+                        // --------------------------------------------------------------------------------
+
                         finish();
 
                     }
@@ -627,7 +630,7 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
             }
         });
 
-        // Wait 6 seconds, si no responde en este tiempo, cerrar.
+        // Wait 5 seconds, si no responde en este tiempo, cerrar.
         // ----------------------------------------------------------------------------------------
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -645,7 +648,7 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
                 }
 
             }
-        }, 6000);
+        }, 5000);
         // ----------------------------------------------------------------------------------------
     }
     // ********************************************************************************************
@@ -694,7 +697,7 @@ public class AccountActivity extends AppCompatActivity implements GoogleApiClien
                 MyState.setUser(user);
                 MyState.setLoged(true);
 
-                //TODO: Actualizar el usuario en la DB servidor
+                //TODO: Actualizar el usuario en la DB (servidor)
                 updateUserOnNetwork(hacer, user);
             }
 

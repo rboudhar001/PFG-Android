@@ -119,62 +119,75 @@ public class TabEvents extends Fragment {
         if ( MyNetwork.isNetworkConnected(fragment.getActivity()) ) {
 
             myNetwork = new MyNetwork(TAG, fragment);
+
+            if (myNetwork.isConnected()) {
+                myNetwork.Disconnect();
+            }
+
             showProgressDialog();
             myNetwork.Connect();
 
-            // Wait 1 sec to Connect
+            // Wait 2 sec to Connect
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
 
                     if ( myNetwork.isConnected() ) {
 
-                            listViewValues = myNetwork.getAllEvents(MyState.getUser().getLocation());
-                            Log.i(TAG, "ENTRO A TabEvents:onCreateView: GET_EVENTS_SUCCESFULL");
+                        // ------------------------------------------------------------------------
+                        listViewValues = myNetwork.getAllEvents( MyState.getUser().getLocation() );
+                        Log.i(TAG, "ENTRO A TabEvents:onCreateView: GET_EVENTS_SUCCESFULL");
 
-                            myNetwork.Disconnect();
-                            Log.i(TAG, "ENTRO A TabEvents:onCreateView: DISCONNECT");
+                        myNetwork.Disconnect();
+                        Log.i(TAG, "ENTRO A TabEvents:onCreateView: DISCONNECT");
+                        // ------------------------------------------------------------------------
 
-                            hideProgressDialog();
-                            // ----------------------------------------------------------------------------------------
+                        if (listViewValues == null) {
+                            Log.i(TAG, "ENTRO A TabEvents:onCreateView:listViewValues: NULL");
+                            listViewValues = new ArrayList<>();
+                        }
 
-                            if (listViewValues == null) {
-                                Log.i(TAG, "ENTRO A TabEvents:onCreateView:listViewValues: NULL");
-                                listViewValues = new ArrayList<>();
-                            }
+                        if ( !listViewValues.isEmpty() ) {
+                            Log.i(TAG, "ENTRO A TabEvents:onCreateView:listViewValues: NO_EMPTY");
+                            mNoEventsView.setVisibility(View.INVISIBLE);
+                            mButtonRetry.setVisibility(View.INVISIBLE);
+                            mListView.setVisibility(View.VISIBLE);
 
-                            if ( !listViewValues.isEmpty() ) {
-                                Log.i(TAG, "ENTRO A TabEvents:onCreateView:listViewValues: NO_EMPTY");
-                                mNoEventsView.setVisibility(View.INVISIBLE);
-                                mButtonRetry.setVisibility(View.INVISIBLE);
-                                mListView.setVisibility(View.VISIBLE);
+                        } else {
+                            Log.i(TAG, "ENTRO A TabEvents:onCreateView:listViewValues: EMPTY");
+                            mNoEventsView.setVisibility(View.VISIBLE);
+                            mButtonRetry.setVisibility(View.VISIBLE);
+                            mListView.setVisibility(View.INVISIBLE);
+                        }
 
-                            } else {
-                                Log.i(TAG, "ENTRO A TabEvents:onCreateView:listViewValues: EMPTY");
-                                mNoEventsView.setVisibility(View.VISIBLE);
-                                mButtonRetry.setVisibility(View.VISIBLE);
-                                mListView.setVisibility(View.INVISIBLE);
+                        //Log.i(TAG, "ENTRO A TabEvents:onCreateView:FRAGMENT.ACTIVITY: " + fragment.getActivity());
+                        //Log.i(TAG, "ENTRO A TabEvents:onCreateView:ACTIVITY: " + EventsActivity.activity);
+                        //adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
+                        adapter = new EventsAdapter(TAG, EventsActivity.activity, listViewValues, res);
+                        mListView.setAdapter(adapter);
 
-                            }
-
-                            //Log.i(TAG, "ENTRO A TabEvents:onCreateView:FRAGMENT.ACTIVITY: " + fragment.getActivity());
-                            //Log.i(TAG, "ENTRO A TabEvents:onCreateView:ACTIVITY: " + EventsActivity.activity);
-                            //adapter = new EventsAdapter(fragment.getActivity(), listViewValues, res);
-                            adapter = new EventsAdapter(TAG, EventsActivity.activity, listViewValues, res);
-                            mListView.setAdapter(adapter);
+                        hideProgressDialog();
 
                     } else {
-                        Log.i(TAG, "ENTRO A TabEvents:onCreateView: NO_CONNECT");
-                        Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                        mNoEventsView.setVisibility(View.VISIBLE);
+                        mButtonRetry.setVisibility(View.VISIBLE);
+                        mListView.setVisibility(View.INVISIBLE);
+
                         hideProgressDialog();
+                        Toast.makeText(fragment.getActivity(), getString(R.string.error_could_not_connect_to_server), Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "ENTRO A TabEvents:onCreateView: NO_CONNECT");
                     }
 
                 }
-            }, 1000);
+            }, 2000);
             // ----------------------------------------------------------------------------------------
         } else {
-            Log.i(TAG, "ENTRO A Profile:connectAndDo:Connect: ERROR_NETWORK");
+            mNoEventsView.setVisibility(View.VISIBLE);
+            mButtonRetry.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.INVISIBLE);
+
             Toast.makeText(fragment.getContext(), getString(R.string.error_not_network), Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "ENTRO A Profile:connectAndDo:Connect: ERROR_NETWORK");
         }
 
         return view;

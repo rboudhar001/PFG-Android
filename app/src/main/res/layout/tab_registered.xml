@@ -15,10 +15,21 @@
         android:gravity="center" />
 
     <TextView
+        android:id="@+id/tabRegistered_text_loginForSee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/tabRegistered_text_loginForSee"
+        android:textSize="20dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center" />
+
+    <TextView
         android:id="@+id/tabRegistered_text_no_events"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/tabRegistered_text_no_events"
         android:textSize="22dp"
         android:layout_centerVertical="true"

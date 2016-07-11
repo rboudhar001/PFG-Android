@@ -5,6 +5,8 @@ package com.example.rachid.myapplication;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -20,12 +22,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+
+import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import im.delight.android.ddp.ResultListener;
@@ -47,7 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView textEditEmail;
     private TextView textEditName;
     private TextView textEditGender;
-    private static TextView textEditBirthday;
+    private TextView textEditBirthday;
     private TextView textEditPlace;
     private TextView textEditMusicStyle;
 
@@ -473,7 +478,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     //
     private void showAlertDialogEditBirthday() {
-        DialogFragment newFragment = new DatePickerFragment();
+        DialogFragment newFragment = new DatePickerProfileFragment();
         newFragment.show(getFragmentManager(), "datePicker");
     }
 
@@ -558,10 +563,15 @@ public class ProfileActivity extends AppCompatActivity {
         if ( MyNetwork.isNetworkConnected(activity) ) {
 
             myNetwork = new MyNetwork(TAG, activity);
+
+            if (myNetwork.isConnected()) {
+                myNetwork.Disconnect();
+            }
+
             myNetwork.showProgressDialog();
             myNetwork.Connect();
 
-            // Wait 1 second
+            // Wait 2 second
             // ------------------------------------------------------------------------------------
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -595,7 +605,7 @@ public class ProfileActivity extends AppCompatActivity {
                         Log.i(TAG, "ENTRO A Profile:connectAndDo:Connect: COULD NOT CONNECT");
                     }
                 }
-            }, 1000);
+            }, 2000);
             // ------------------------------------------------------------------------------------
 
         } else {
@@ -747,7 +757,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         });
 
-        // Wait 6 seconds, si no responde en este tiempo, cerrar.
+        // Wait 5 seconds, si no responde en este tiempo, cerrar.
         // ----------------------------------------------------------------------------------------
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -765,7 +775,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
 
             }
-        }, 6000);
+        }, 5000);
         // ----------------------------------------------------------------------------------------
     }
 
@@ -1008,10 +1018,63 @@ public class ProfileActivity extends AppCompatActivity {
     // --------------------------------------------------------------------------------------------
 
     //AÑADIDO: BOTON ATRAS
-    // ----------------------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------
     @Override
     public void onBackPressed() {
         this.finish();
     }
-    //-----------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+
+    // *******************
+    // CLASS: DatePicker
+    // *******************
+    //--------------------------------------------------------------------------------------------
+    public static class DatePickerProfileFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+
+        private int year;
+        private int month;
+        private int day;
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            String birthday = MyState.getUser().getBirthday();
+            if ( (birthday != null) && (!TextUtils.isEmpty(birthday)) ) {
+                // Use the old birthday as date in the picker
+                String[] pieces = birthday.split("/");
+                day = Integer.parseInt(pieces[0]);
+                month = Integer.parseInt(pieces[1]);
+                month = month - 1; // Currioso esto, el mes los da del 0 al 11 en lugar del 1 al 12 ... informaticos >.<
+                year = Integer.parseInt(pieces[2]);
+            }
+            else {
+                // Use the current date as the default date in the picker
+                final Calendar c = Calendar.getInstance();
+                year = c.get(Calendar.YEAR);
+                month = c.get(Calendar.MONTH);
+                month = month + 1;  // Currioso esto, el mes los da del 0 al 11 en lugar del 1 al 12 ... informaticos >.<
+                day = c.get(Calendar.DAY_OF_MONTH);
+            }
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Do something with the date chosen by the user
+
+            month = month + 1; // Currioso esto, el mes los da del 0 al 11 en lugar del 1 al 12 ... informaticos >.<
+            if ( (this.day != day) || (this.month != month) || (this.year != year) ) { // Si no se ha cambiado la fecha, no actualizamos nada
+
+                User user = new User();
+                user.setBirthday("" + day + "/" + month + "/" + year);
+
+                // Llamamos al metodo generico para actualizar el BIRTHDAY
+                ProfileActivity profile = (ProfileActivity) getActivity();
+                profile.connectAndDo("birthday", user);
+            }
+        }
+    }
+    //--------------------------------------------------------------------------------------------
 }

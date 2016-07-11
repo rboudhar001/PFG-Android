@@ -106,7 +106,7 @@ public class ChangePasswordActivity  extends AppCompatActivity {
                 myNetwork.showProgressDialog();
                 myNetwork.Connect();
 
-                // Wait 1 sec to Connect
+                // Wait 2 sec to Connect
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -136,7 +136,7 @@ public class ChangePasswordActivity  extends AppCompatActivity {
                         }
 
                     }
-                }, 1000);
+                }, 2000);
 
             }
             // ----------------------------------------------------------------------------

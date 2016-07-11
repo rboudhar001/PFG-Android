@@ -48,12 +48,15 @@
     <string name="login_button_login">Iniciar sesión</string>
     <string name="login_button_forgotten_password">¿Has olvidado tu contraseña?</string>
     <string name="login_button_no_account">¿No tienes un cuenta? Registrate</string>
+
     <string name="error_could_not_connect_to_server">No se ha podido conectar al servidor</string>
     <string name="error_could_not_logged_to_server">No se ha podido logear al servidor</string>
     <string name="error_could_not_logout_to_server">No se ha podido des-logear al servidor</string>
     <string name="error_this_account_not_exists">Esta cuenta no existe</string>
     <string name="error_user_not_exists">El usuario no existe</string>
     <string name="error_password_is_incorrect">La contraseña es incorrecta</string>
+
+    <string name="fatal_error_to_update_assistant_on_event">Errro fatal al actualizar los asistantes del evento</string>
     <!-- *************************************************************************************** -->
 
     <!-- SIGNUP -->
@@ -66,14 +69,14 @@
     <string name="error_email_already_exists">Ya existe una cuenta con ese Email</string>
 
     <string name="action_login_short">Login</string>
-    <string name="action_sign_up_short">Sign up</string>
-    <string name="action_done_short">Done</string>
+    <string name="action_sign_up_short">Registrarse</string>
+    <string name="action_done_short">Hecho</string>
 
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_password_not_same">The password not same</string>
-    <string name="error_field_required">This field is required</string>
+    <string name="error_invalid_email">Este email es invalido</string>
+    <string name="error_invalid_password">Esta contraseña es muy corta</string>
+    <string name="error_incorrect_password">Esta contraseña es incorrecta</string>
+    <string name="error_password_not_same">La contraseña no es igual</string>
+    <string name="error_field_required">Este campo es requerido</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <!-- *************************************************************************************** -->
 
@@ -162,17 +165,17 @@
 
     <!-- SETTINGS -->
     <!-- *************************************************************************************** -->
-    <string name="settings_button_changePassword">Change the Password</string>
-    <string name="settings_button_changeLanguage">Change the Language</string>
-    <string name="settings_changePassowrd">Change Password</string>
-    <string name="settings_changeLanguage">Change Language</string>
-    <string name="settings_text_language">Language</string>
+    <string name="settings_button_changePassword">Cambiar la Contraseña</string>
+    <string name="settings_button_changeLanguage">Cambiar el idioma</string>
+    <string name="settings_changePassowrd">Cambiar Contraseña</string>
+    <string name="settings_changeLanguage">Cambiar idioma</string>
+    <string name="settings_text_language">Idioma</string>
 
     <string name="prompt_old_password">Contraseña actual</string>
     <string name="prompt_new_password">Nueva contraseña</string>
     <string name="prompt_repeat_new_password">Repetir nueva contraseña</string>
 
-    <string name="password_update_succesfull">Password update!!</string>
+    <string name="password_update_succesfull">Contraseña Actualizada!!</string>
     <!-- *************************************************************************************** -->
 
     <!-- TOOLBAR TabLayout -->
@@ -213,12 +216,12 @@
     <string name="button_use_my_current_location">Usar mi propia localización</string>
     <string name="text_popular_location">Localizaciónes mas populares</string>
 
-    <string name="error_not_detect_location">Error, impossible to detect the location</string>
+    <string name="error_not_detect_location">Error, imposible detectar la localización</string>
     <!-- *************************************************************************************** -->
 
     <!-- NETWORK -->
     <!-- *************************************************************************************** -->
-    <string name="error_not_network">Error, Not network connected</string>
+    <string name="error_not_network">Error, No hay conexión</string>
     <!-- *************************************************************************************** -->
 
 
@@ -233,9 +236,14 @@
     <!-- *************************************************************************************** -->
     <string name="tabEvents_button_retry">Reintentar</string>
 
+    <string name="msg_no_connection">Sin Conexión</string>
+
     <string name="tabEvents_text_no_events">No hay eventos</string>
     <string name="tabPublished_text_no_events">No has publicado ningun evento</string>
     <string name="tabRegistered_text_no_events">No te has registrado en ningun evento</string>
+
+    <string name="tabPublished_text_loginForSee">Inicia sesión para ver tus eventos publicados</string>
+    <string name="tabRegistered_text_loginForSee">Inicia sesión para ver tus eventos registrados</string>
     <!-- *************************************************************************************** -->
 
     <!-- SHOW EVENT -->
@@ -255,7 +263,7 @@
 
     <string name="error_event_complete">El evento esta completo, no tiene mas plazas</string>
     <string name="error_you_are_already_registered">Error, ya estabas Registrado</string>
-    <string name="error_you_are_already_unregistered">Error, ya estabas Desregistrado</string>
+    <string name="error_you_are_already_unregistered">Error, ya estabas Des-registrado</string>
     <!-- *************************************************************************************** -->
 
     <!-- SEARCH -->
