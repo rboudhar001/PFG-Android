@@ -141,8 +141,8 @@
 
     <string name="text_cancel">Cancelar</string>
     <string name="text_done">Ok</string>
-    <string name="text_logout">Logout</string>
-    <string name="text_log_out">Log Out</string>
+    <string name="text_logout">Cerrar sesión</string>
+    <string name="text_log_out">Cerrar sesión</string>
     <string name="text_are_you_sure_you_want_to_logout">¿Estas seguro de cerrar sesión?</string>
 
     <string name="error_the_username_can_not_be_empty">Error, el nombre de usuario no puede ser vacio</string>

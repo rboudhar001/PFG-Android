@@ -1,7 +1,6 @@
 package com.example.rachid.myapplication;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -491,9 +490,11 @@ public class ShowEventActivity extends AppCompatActivity {
                 // Actualizar estado del boton
                 updateButton(userServer, eventServer);
 
+                /*
                 if (EventsActivity.activity != null) {
                     EventsActivity.activity.finish();
                 }
+                */
 
                 myNetwork.Disconnect();
                 Log.i(TAG, "ENTRO a ShowEvent:updateEventOnNetwork: DISCONNECT");
@@ -581,6 +582,7 @@ public class ShowEventActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
+        /*
         // Abrimos la ventana de la cual provenimos
         if ( !TextUtils.isEmpty(sPlace) ) {
             Log.i(TAG, "ENTRO a ShowEvent:onBackPressed: OPEN_SEARCH_WINDOW");
@@ -594,6 +596,7 @@ public class ShowEventActivity extends AppCompatActivity {
 
             startActivity(new Intent(ShowEventActivity.this, EventsActivity.class));
         }
+        */
 
         this.finish();
     }

@@ -59,12 +59,12 @@
 
     <!-- SIGNUP -->
     <!-- *************************************************************************************** -->
-    <string name="signup_text_title">Log in</string>
-    <string name="signup_button_signup">Log in</string>
-    <string name="signup_button_have_account">Do you already have an account?¿Ya tienes una cuenta? Inicia sesión</string>
-    <string name="error_could_not_sign_up_the_user">iT can\'t be possible to sing the user No se ha podido registrar al usuario</string>
-    <string name="error_username_already_exists">It already exist an account with this username </string>
-    <string name="error_email_already_exists">It already exist an account with this email </string>
+    <string name="signup_text_title">Sign up</string>
+    <string name="signup_button_signup">Sign up</string>
+    <string name="signup_button_have_account">Do you already have an account? Login</string>
+    <string name="error_could_not_sign_up_the_user">It can\'t be possible to sing up the user</string>
+    <string name="error_username_already_exists">It already exist an account with this username</string>
+    <string name="error_email_already_exists">It already exist an account with this email</string>
 
     <string name="action_login_short">Login</string>
     <string name="action_sign_up_short">Sign up</string>
@@ -118,7 +118,7 @@
     <string name="text_english">English</string>
     <string name="text_basque">Euskera</string>
 
-    <string name="simbol_next">\></string>
+    <string name="simbol_next">></string>
     <string name="profile_text_complete_name">Full name</string>
 
     <string name="text_cancel">Cancell</string>
@@ -216,10 +216,10 @@
     <string name="showEvent_text_creator">CREATED BY:</string>
     <string name="showEvent_text_assistants_capacity">PARTICIPANTS / CAPACITY</string>
     <string name="showEvent_text_user_not_logged">Log in to register</string>
-    <string name="showEvent_button_register">Register</string>
+    <string name="showEvent_button_register">Sign up Event</string>
 
-    <string name="showEvent_text_register">Sign up</string>
-    <string name="showEvent_text_unregister">Sign out</string>
+    <string name="showEvent_text_register">Sign up Event</string>
+    <string name="showEvent_text_unregister">Sign out Event</string>
 
     <string name="error_event_complete">The event is full, you don\'t have more vacancies</string>
     <!-- *************************************************************************************** -->

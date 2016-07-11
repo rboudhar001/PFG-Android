@@ -627,8 +627,9 @@ public class ProfileActivity extends AppCompatActivity {
         // --------------------------------------------------------------------------------
         MyDatabase.deleteUser(TAG, activity, MyState.getUser());
 
-        MyState.setUser(new User(MyState.getUser().getLocation()));
-        MyState.setLoged(false);
+        User userLocal = new User(MyState.getUser().getLocation(), MyState.getUser().getLanguage());
+        MyState.setUser( userLocal );
+        MyState.setLoged( false );
         // --------------------------------------------------------------------------------
 
         myNetwork.Disconnect();
@@ -666,7 +667,7 @@ public class ProfileActivity extends AppCompatActivity {
                 // --------------------------------------------------------------------------------
                 MyDatabase.deleteUser(TAG, activity, MyState.getUser());
 
-                MyState.setUser(new User(MyState.getUser().getLocation()));
+                MyState.setUser(new User(MyState.getUser().getLocation(), MyState.getUser().getLanguage()));
                 MyState.setLoged(false);
                 // --------------------------------------------------------------------------------
 

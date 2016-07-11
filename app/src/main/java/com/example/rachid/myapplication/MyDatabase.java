@@ -429,7 +429,7 @@ public abstract class MyDatabase {
         }
 
         db = mDB_Activity.getWritableDatabase();
-        if (existsLocation) { //Existe la localizacion
+        if ( existsLocation ) { //Existe la localizacion
             if (db != null) {
 
                 Log.i(TAG, "ENTRO A MyDatabase:deleteUser:2");
@@ -451,8 +451,9 @@ public abstract class MyDatabase {
                 valores.put("facebook_id", (String)null);
                 valores.put("festivals_created", (String)null);
                 valores.put("festivals_assisted", (String)null);
+                valores.put("language", user.getLanguage());
 
-                String[] args = new String[]{location};
+                String[] args = new String[]{ location };
 
                 db.update("Users", valores, "location=?", args);
                 db.close();

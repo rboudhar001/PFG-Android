@@ -833,7 +833,8 @@ public class MyMeteor implements MeteorCallback {
                     Log.i(TAG, "ENTRO A MyMeteor:getAllEvents: LAST_DAY: " + mLastDay);
 
                     // Buscamos eventos que no hayan pasado
-                    if ( !mCurrentDate.after(mLastDay) ) {
+                    if (mCurrentDate.compareTo(mLastDay) <= 0) {
+                    //if ( !mCurrentDate.after(mLastDay) ) {
 
                         id = doc.getId();
 
@@ -939,11 +940,13 @@ public class MyMeteor implements MeteorCallback {
                     Log.i(TAG, "ENTRO A MyMeteor:getAllEventsWithDate: LAST_DAY: " + mLastDay);
 
                     // Buscamos eventos que no hayan pasado
+                    if (mCurrentDate.compareTo(mLastDay) <= 0) {
                     //if ( !mCurrentDate.after( mLastDay ) ) {
 
                         //Buscamos eventos para la fecha concreta
                         //(firstDay <= dia) && (dia <= lastDay)
-                        if ((mSearchDate.after(mFirstDay)) && (mSearchDate.before(mLastDay))) {
+                        if ( (0 <= mSearchDate.compareTo(mFirstDay)) && (mSearchDate.compareTo(mLastDay) <= 0) ) {
+                        //if ((mSearchDate.after(mFirstDay)) && (mSearchDate.before(mLastDay))) {
 
                             //Añadimos este evento al ArrayList
                             id = doc.getId();
@@ -986,7 +989,7 @@ public class MyMeteor implements MeteorCallback {
 
                             list.add(event);
                         }
-                    //}
+                    }
                 }
             }
 

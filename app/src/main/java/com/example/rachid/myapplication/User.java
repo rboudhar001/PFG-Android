@@ -30,7 +30,6 @@ public class User implements Serializable {
     private ArrayList<String> festivalsAssisted;
 
     private String location;
-
     private String language;
 
     // **************
@@ -39,8 +38,9 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String location) {
+    public User(String location, String language) {
         this.location = location;
+        this.language = language;
     }
 
     public User(String id, String email, String username, String password, String name,
